@@ -1,0 +1,9 @@
+This example creates two 200x200 excel sheets a) by calling a compiled
+java class and b) by using 40000 java reflections calls from PHP.
+
+When the java JIT compiler is switched off, this program can be used
+to calculate the JNI/reflection overhead.
+
+This example requires a library "poi.jar" which can be obtained from
+apache.org or from http://php-java-bridge.sf.net/poi.jar.
+

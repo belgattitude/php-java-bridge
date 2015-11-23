@@ -1,0 +1,5 @@
+This file contains tests for php 5 and above.
+
+THESE FILES ARE TESTS, NOT EXAMPLES. Especially statements like
+"java_reset()" and "java_set_library_path()" should never be used
+outside of a test environment.

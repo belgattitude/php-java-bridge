@@ -1,0 +1,167 @@
+This package was debianized by Andre Felipe Machado 
+<andremachado@techforce.com.br> on Thu, 23 Nov 2006 13:32:33 -0200.
+
+It was downloaded from http://php-java-bridge.sourceforge.net
+
+Upstream Author: http://php-java-bridge.sourceforge.net
+
+Copyright: 2006 http://php-java-bridge.sourceforge.net
+
+License:
+
+    This package is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL'.
+
+
+The Debian packaging is (C) 2006, Andre Felipe Machado 
+<andremachado@techforce.com.br> and is licensed under the GPL, 
+see `/usr/share/common-licenses/GPL'.
+
+Portions of the code are licensed under terms and conditions of 
+GNU Lesser General Public License (LGPL) 2.0.
+A copy of the license is available at
+http://www.gnu.org/copyleft/lesser.html
+
+Portions of code at unsupported/platforms/plugins are licensed under
+COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+A copy of the license is available at
+http://www.sun.com/cddl/cddl.html .
+
+Portions of code at unsupported/platforms/plugins are licensed under
+Eclipse Public License Version 1.0 ("EPL"). 
+A copy of the EPL is available at http://www.eclipse.org/legal/epl-v10.html.
+
+Portions of Rhino code at unsupported/platforms/plugins are licensed under
+Mozilla Public License Version 1.1 ("MPL"). 
+A copy of the license is available at
+http://www.mozilla.org/MPL/MPL-1.1.html
+
+Portions of Rhino code at unsupported/platforms/plugins are licensed under
+Netscape Public License Version 1.1 ("MPL"). 
+A copy of the license is available at
+http://www.mozilla.org/MPL/NPL-1.1.html
+
+Portions of code at unsupported/platforms/plugins are licensed under
+the terms and conditions of the Apache License, Version 2.0 ("Apache License").
+A copy of the license can be found at http://www.apache.org/licenses/LICENSE-2.0.txt.
+
+Portions of code at unsupported/platforms/plugins are licensed under
+the terms and conditions of the W3C software license, dated December 31 2002 ("W3C License"). 
+A copy of the W3C License is vailable at http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.
+
+Portions of code at unsupported/platforms/plugins are licensed under
+the terms and conditions of the  
+UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
+A copy of the terms is available at http://www.unicode.org/copyright.html.
+
+Portions of code at unsupported/platforms/plugins are licensed under
+the terms and conditions of the  following text:
+
+  Copyright (c) 2001 Sun Microsystems, Inc. All Rights Reserved.
+ 
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+ 
+  -Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+ 
+  -Redistribution in binary form must reproduct the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+ 
+  Neither the name of Sun Microsystems, Inc. or the names of contributors may
+  be used to endorse or promote products derived from this software without
+  specific prior written permission.
+ 
+  This software is provided "AS IS," without a warranty of any kind. ALL
+  EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY
+  IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
+  NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN AND ITS LICENSORS SHALL NOT BE
+  LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING
+  OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR ITS
+  LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT,
+  INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER
+  CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF
+  OR INABILITY TO USE SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGES.
+ 
+  You acknowledge that Software is not designed or intended for use in
+  the design, construction, operation or maintenance of any nuclear facility.
+
+
+Portions of code at unsupported/platforms/plugins are licensed under
+the terms and conditions of the  following text:
+
+The package com.lowagie.bc.asn1 was integrated into iText by Paulo Soares in November 2004.
+This package is an adaptation of package org.bouncycastle.asn1 by The Legion of the Bouncy Castle.
+This is the license of the org.bouncycastle.asn1 package:
+
+License
+Copyright (c) 2000 - 2006 The Legion Of The Bouncy Castle (http://www.bouncycastle.org)
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies
+or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Portions of code at unsupported/platforms/plugins and of the Servlet code are licensed under
+the terms and conditions of the Apache Software License, Version 1.1
+http://www.apache.org/licenses/LICENSE-1.1
+
+
+Portions of code of the servlet  are licensed under
+the terms and conditions of the following text:
+
+/*
+ * Copyright (C) 2003-2007 Jost Boekemeier
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+
+
+Portions of code and or documentation are licensed under the terms and 
+conditions of the PHP License.
+A copy of the license is available at
+http://www.php.net/license/
+

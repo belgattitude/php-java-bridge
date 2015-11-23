@@ -1,0 +1,81 @@
+Overview
+--------
+
+The PHP JSR 223 interface associates a managed and persistent PHP
+executable with a JSR 223 ScriptEngine.
+
+This document describes how to call PHP methods from Java using the
+JSR 223 interface. For example it is possible to use PHP as a script
+plugin for a Java report engine such as BIRT; for formula fields,
+group selection formulas, etc. Please see the INSTALL.J2EE document
+for details how to embed PHP into a pure J2EE application server or
+how to call Java methods from PHP.
+
+The PHP/Java Bridge can be installed with one copy operation:
+
+* the "JavaBridge.jar" and the "php-script.jar" should be copied into
+the J2SE java.ext.dirs directory.
+
+
+Install PHP into J2SE
+---------------------
+
+* Install Java 1.6 or above. For older Java versions you'll need the
+  script-api.jar contained in the JavaBridge.war file.
+
+* Install PHP 5.1.4 or above into the operating system PATH. Or use
+  the Java system property -Dphp.java.bridge.php_exec=... to direct
+  Java to a specific PHP executable.
+
+* Type: java -classpath JavaBridge.war TestInstallation
+
+* Copy the created "JavaBridge.jar" and "php-script.jar" from the
+  "ext" folder to the J2SE library path. On Windows the location
+  depends on the version and vendor of the JDK (see java.ext.dirs from
+  the above RESULT.html). On Linux the directory is:
+
+  /usr/java/packages/lib/ext/
+
+
+* Use the command "jrunscript" to evaluate PHP scripts from Java, for
+  example:
+
+    jrunscript -l php phpFile.php 
+
+  or:
+
+    jrunscript -J-Dphp.java.bridge.php_exec=/usr/bin/php-cgi -l php phpFile.php
+
+
+* A convenience ScriptEngine is available which makes it easier to
+  invoke PHP methods from Java. Example:
+
+    ScriptEngineManager manager = new ScriptEngineManager();
+    ScriptEngine e = manager.getEngineByName("php-invocable");
+
+    e.eval("<?php class f {function a($p) {return ((int)(string)$p)+1;}}\n" +
+                     "java_context()->setAttribute('f', 
+                                  java_closure(new f()), 100); ?>");
+    Invocable i = (Invocable)e;
+
+    Object f = e.getContext().getAttribute("f", 100);
+    System.out.println(i.invokeMethod(f, "a", new Object[] {new Integer(1)}));
+
+    ((Closeable)e).close(); // release the continuation, flush output
+    
+
+* Another convenience ScriptEngine can be used to implement a
+  REPL. Example:
+
+  ScriptEngineManager manager = new ScriptEngineManager();
+  ScriptEngine e = manager.getEngineByName("php-interactive");
+  System.out.println(e.eval("$a=122"));
+  System.out.println(e.eval("$a=$a+1;"));
+  System.out.println(e.eval("echo $a;"));
+
+* Please see the JSR 223 specification for details.
+
+* Please report bugs/problems to the mailing list:
+
+    php-java-bridge-users@lists.sourceforge.net
+

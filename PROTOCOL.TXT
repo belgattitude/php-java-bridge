@@ -1,0 +1,339 @@
+VM Bridge protocol version 5.5
+
+Requests are marked with "->", request arguments with -), responses
+with "<-".  The server continues to process requests until EOF. Only
+the first character is significant.
+
+The communication must begin with ReferenceClass, CreateInstance,
+Invoke or PropertyAccess. If the client waits for a response
+(predicate==1) the server sends back a single ARG, as defined
+below. Returned object id's ("CID") are 32 bit unsigned integer values
+starting with 1, increased by 1.
+
+
+Example:
+
+     $o = new java("java.lang.Long", 6);
+     $o->toString(); // discard result
+
+->  <CreateInstance value="java.lang.Long" predicate="I"> 
+      <Long value="6"/> 
+    </CreateInstance>
+
+<-  <Object value="1" predicate="O"/>
+
+->  <Invoke value="1" method="toString" predicate="I">
+    </Invoke>
+
+<-  <Object value="2" predicate="O"/>
+
+->  <Unref value="2" />
+
+->  <Unref value="1" />
+
+A second example which shows how to avoid round-trips. 
+
+     $o = new java("java.lang.Long", 6);
+     $o->toString(); // discard result
+
+->  <K p="2" v="java.lang.Long" i="0"> 
+      <L v="6" /> 
+    </K
+
+->  <Y p="3" v="1" m="toString" i="0"></Y>
+
+->  <U value="1" /> # result from CreateInstance
+
+
+Optional requests:
+
+All acquired [O]bject handles may be destroyed by invoking U (destroy).
+However, the server tracks all handles and automatically destroys them
+after EOF. It is an error to further reference destroyed handles.
+
+If [F]inish is called, the server closes or recycles the connection
+and responds with F p=A, if the connection has been recycled, p=E
+otherwise. Instead of sending <F p=E/> and waiting for the response,
+it is also possible to simply close the connection.
+
+
+
+Main requests:
+
+
+->
+CreateInstance:
+<C v=name p=C|I> ...ARGS...
+</C>
+v: string
+p: char (Reference[C]lass, Create[I]nstance)
+
+->
+Invoke:
+<I v=object m=method p=P|I> ...ARGS...
+</I>
+v: unsigned long
+m: string
+p: char (examine[P]roperty, [I]nvoke method)
+
+When v=0, the call is directed to the current request-handling
+instance of the java bridge.
+
+->
+ReferenceClass (alternate form)
+<H p=1|2|3 v=name> ...ARGS...
+</H>
+p: char 
+v: string
+Predicate 2 does not write a result, but stores a result proxy under ++CID.
+Predicate 3 does not write a result and does not create a result proxy.
+
+->
+CreateInstance (alternate form)
+<K p=1|2|3 v=name> ...ARGS...
+</K>
+p: char
+v: string
+Predicate 2 does not write a result, but stores a result proxy under ++CID.
+Predicate 3 does not write a result and does not create a result proxy.
+
+->
+PropertyAccess (alternate form)
+<G p=1|2|3 v=object m=method> ...ARGS...
+</G>
+p: char 
+v: unsigned long
+m: string
+Predicate 2 does not write a result, but stores a result proxy under ++CID.
+Predicate 3 does not write a result and does not create a result proxy.
+
+->
+Invoke (alternate form)
+<Y p=1|2|3 v=object m=method> ...ARGS...
+</Y>
+p: char (examine[P]roperty, [I]nvoke method)
+v: unsigned long
+m: string
+Predicate 2 does not write a result, but stores a result proxy under ++CID.
+Predicate 3 does not write a result and does not create a result proxy.
+
+
+When v=0, the call is directed to the current request-handling
+instance of the java bridge.
+
+
+
+ARGS or response:
+<-)
+String:
+<S v=str/>
+v: string
+
+<-)
+Boolean:
+<B v=T|F/>
+v: char ([T]rue, [F]alse)
+
+-)
+Boolean:(alternate form)
+<T v=1]OTHER />
+v: char [1]: true, everything else: false
+
+<-)
+Long: 
+<L v=l p=[O|A]/>
+v: unsigned long
+p: char (p[O]sitive, neg[A]tive)
+
+-)
+Long: (alternate form)
+<J v=l />
+v: long (signed number)
+
+<-)
+Double:
+<D v=d/>
+v: double
+
+-)
+Object:
+<O v=object />
+v: unsigned long
+NULL values can be sent as either v="" or v="0"
+
+<-
+Object:
+<O v=object m=TYPE p=TYPE n=[T|F]/>
+v: unsigned long
+m: string
+p: char ([A]rray/Map, [C]ollection, [O]bject, [E]xception)
+n: char result can be cached (T) or not (F)
+
+<-
+Null:
+<N/>
+
+<-
+Void:
+<V m=[T|F]/>
+n: char result can be cached (T) or not (F)
+
+<-
+Apply:
+<A v=object p=cname m=fname n=param#> ...PAIRS...
+</A>
+v: unsigned long
+p: string
+m: string
+n: unsigned long
+Result can be used to send back the result of the current apply
+call. If v is null, the function name p must be searched in the
+"current" environment.
+
+->
+Result:
+<R > ...ARG...
+</R>
+
+<-)
+Exception:
+<E v=object m=[T|F]/>
+v: unsigned long
+m: T signals an unchecked exception, F a checked exception. 
+Unchecked exceptions (e.g.: RuntimeException or Error) should
+terminate the script immediately
+
+<-)
+Composite:
+<X t=A|H /> ...PAIRS...
+</X>
+t: char ([A]rray, [H]ashtable)
+
+<-)
+Pair:
+<P [t=N|S v=key]> ...ARG...
+</P>
+t: char (key is [N]umeric, [S]tring or doesn't exist (if X=A))
+v: unsigned long (if X=H and t=N)
+v: string (if X=H and t=S)
+
+
+
+OPTIONAL requests:
+->
+Destroy:
+<U v=object />
+v: unsigned long
+
+<->
+EndConnection:
+<F p=A|E|a|e />
+p: char (Keep [A]live, [E]nd connection).
+Lower-case letters signal that an unchecked exception occured during
+script execution.
+
+
+
+
+NOTES:
+
+If the first byte is 0177, the following byte has a special meaning:
+
+Bit 1 0
+-------
+         return values  binary             comment
+         as proxies(*)  data              
+                                        
+    0 0    yes          binary             default
+    0 1    no           binary             if JAVA_PREFER_VALUES=1
+    1 0    no           base64 encoded     if JAVA_PREFER_VALUES=1
+    1 1    yes          base64 encoded     default
+
+Bit 2,3,4: log level (from java.log_level)
+
+Bit 5: always 0
+
+Bit 6: set to 1 if bit[0,1] are used
+Bit 7: set to 1 if bit[2,4] are used
+
+
+If the header is missing, the following default values are used
+
+         return values  binary             comment
+         as proxies(*)  data              
+
+           no           base64 encoded     default
+
+
+(*) Primitive values like null, 1, false, etc. are proxied by
+Request$PhpNull, Integer, Boolean, etc. by default.
+
+
+Process communication
+---------------------
+
+  1) a simple client connects to a simple socket listener
+
+  2) php connects to a simple socket or unix-domain socket listener
+
+  3) php connects to a JEE server
+
+  4) php is running within a JEE server
+
+
+ad 1) 
+  client opens socket connection
+  client sends protocol requests
+  client closes the socket connection
+
+ad 2)
+  php opens a socket connection
+  php sends the bytes \0177 OPTIONS to initiate the communication
+  php sends protocol requests
+  php finishes the communication sending <F p="A"/>
+   java sends back a <F p="A"/>
+  ...
+  php transparently re-uses the socket connection
+  php sends the bytes \0177 OPTIONS
+  php sends protocol requests
+  php finishes the communication sending <F p="E"/>
+   java sends back a <F p="E"/>
+  php closes the socket connection
+
+ad 3)
+  php opens a HTTP socket connection to ${JAVA_HOSTS}[0] e.g.: localhost:8080
+  php sends PUT ${JAVA_SERVLET}\r\rTransfer-Encoding: chunked\r\n\r\n
+                      e.g.: PUT /JavaBridge/servlet.phpjavabridge\r\n\r\n
+  php sends the bytes \0177 OPTIONS to initiate the communication
+  php sends protocol requests
+   java servlet responds with protocol responses
+  php finishes the communication sending <F p="E"/>
+   java servlet sends back a <F p="E"/>
+  php sends final chunk: 0000\r\n\r\n
+   java servlet sends final chunk: 0000\r\n\r\n
+  php closes the socket connection
+
+ad 4)
+  php opens a socket connection
+  php sends the bytes \0177 OPTIONS LEN_ID[1] LEN_ID[0] ID
+   java thread sends \0 to avoid ack delay[1]
+  php sends protocol requests
+  php finishes the communication sending <F p="A"/> 
+   java thread sends back a <F p="A"/>
+  ...
+  php transparently re-uses the socket connection
+  php sends the bytes \0177 OPTIONS LEN_ID[1] LEN_ID[0] ID
+   java thread sends \0 to avoid ack delay[1]
+  php sends protocol requests
+  php finishes the communication sending <F p="E"/> 
+   java thread sends back a <F p="E"/>
+  php closes the socket connection
+
+
+[1] write/write/read delay is up to 500ms on free bsd operating
+system.
+
+NOTES  
+-----
+It is possible to "ping" the server by sending it the byte 0x0. If
+alive it will send back a 0x0.

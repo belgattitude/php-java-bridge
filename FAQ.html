@@ -1,0 +1,1040 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html">
+	<TITLE>VM Bridge FAQ</TITLE>
+</HEAD>
+<H1>VM Bridge FAQ</H1>
+This file contains answers to frequently asked questions. Please see <a href="http://php-java-bridge.sourceforge.net/pjb">http://php-java-bridge.sourceforge.net</a> for more information.
+
+<H2>General questions</H2>
+
+<H4>Which alternatives exist?</H4>
+<p>There are at least 4 other php to java bridges which offer a similar API. One was distributed with PHP 4.0.0 and has been discontinued. Two other bridges are proprietary software, built into a vendor-specific framework from Zend or a J2EE application server from Caucho.
+Furthermore IBM's Zero framework for Eclipse contains a PHP interpreter written in pure Java and a php to java bridge which can call Java methods in-process.</p>
+<p>The only free alternatives are SOAP and XML-RPC, which are up to 50 times slower than the XML protocol implementation used by this VM Bridge.</p>
+
+<H4>How do I enable the Java extension in my php.ini file?</H4>
+<p>A Java extension does not exist, so you can't enable it.</p>
+<p>The VM Bridge is a network protocol, it requires a running Java VM, for example the servlet container Apache/Tomcat. Or, if you want to call PHP libraries from Java, a running PHP container, e.g. Apache or IIS.</p>
+
+<H4>What do I need to communicate with Java?</H4>
+<p>Only the PHP code from <code>Java.inc</code> and a running Java application, for example <code>JavaBridge.jar</code>, or a running Java servlet, for example <code>JavaBridge.war</code>.</p>
+<p>Test code: 
+<blockquote>
+<code>
+&lt;?php require_once("http://localhost:8080/JavaBridge/java/Java.inc"); <br>
+echo java("java.lang.System")->getProperties(); ?&gt;
+</code>
+</blockquote>
+</p>
+
+<H4>What do I need to communicate with PHP?</H4>
+<p>Only the PHP code from <code>JavaProxy.php</code> within your PHP web application, the Java libraries <code>JavaBridge.jar</code>, <code>php-script.jar</code> and <code>php-servlet.jar</code>, and a <code>ContextLoaderListener</code> declaration in your <code>WEB-INF/web.xml</code></p>
+<p>Test code: 
+<blockquote>
+<code>
+&lt;% javax.script.ScriptEngine e = php.java.script.servlet.EngineFactory.getInvocablePhpScriptEngine (this, application, request, response, new java.net.URI("http://yourIntranetHost:80/yourPhpWebApp/JavaProxy.php"));<br>
+out.println("yourIntranetHost running PHP version: " + (String)((javax.script.Invocable)e).invokeFunction("phpversion", new Object[]{}));<br>
+((java.io.Closeable)e).close();
+%&gt;
+</code>
+</blockquote>
+</p>
+
+<H4>Which versions are supported?</H4>
+<ul>
+<li>PHP >= 5.1.2. PHP >= 5.3 recommended.</li>
+<li>Java >= 1.4. Java >= 6 recommended.</li>
+<li>J2EE >= 1.3.</li>
+</ul>
+
+<H4>Why doesn't the bridge throw a java.lang.RuntimeException or Error as a PHP JavaException by default?</H4>
+<p>
+All exceptions crossing the php/java container <strong>must</strong> be declared. If you want to catch <code>java.lang.RuntimeException</code> or <code>java.lang.Error</code> from PHP code, add a "throws" declaration. Example:
+<blockquote>
+<code>
+public Object calculateValue(...) throws RuntimeException;
+</code>
+</blockquote>
+It is a good programming practice to not allow <code>java.lang.RuntimeException</code> and <code>java.lang.Error</code> to cross an application container boundary. A JEE "enterprise java beans" container for example will terminate a transaction immediately if it encounters an exception derived from Error or RuntimeException.
+</p>
+<p>
+However, since PHP/Java Bridge version 5.5.3 the bridge reports a java.lang.RuntimeException/Error as a PHP JavaException if the option <code>JAVA_PREFER_VALUES</code> is set. Please see the NEWS entry for version 5.5.3 from the PHP/Java Bridge documentation download for details.
+</p>
+
+<H4>Do I need a Java Application Server or Servlet Engine?</H4>
+<p>Yes, Java needs an execution environment. Experienced users may use the execution environment built into JavaBridge.jar, see <code>java -jar JavaBridge.jar --help</code> for help.
+</p>
+<p>
+You can also add PHP support to your standalone Java application by
+adding the following line to its main class:
+<blockquote>
+<code>
+static final php.java.bridge.JavaBridgeRunner runner = php.java.bridge.JavaBridgeRunner.getInstance(8087);
+</code>
+</blockquote>
+The above code opens the port 8087, so that local PHP scripts can call
+methods/procedures from your Java application, as long as your Java
+application is running.
+</p>
+<p>The third option is the standard JSR 223 script interface, which
+allows one to execute PHP code/scripts from Java applications.
+</p>
+<H4>Ho do I enable logging?</H4>
+<p>
+Copy <code>log4j.jar</code> into <code>java.ext.dirs</code>. Example for JDK 6:
+<blockquote>
+<code>
+cp log4j.jar /usr/java/packages/lib/ext
+</code>
+</blockquote>
+</p>
+<p>
+Start the log4j viewer. Example for JDK 6:
+<blockquote>
+<code>
+/opt/jdk1.6/bin/java org.apache.log4j.chainsaw.Main
+</code>
+</blockquote>
+</p>
+<p>
+Start the application server with the options <code>-Dphp.java.bridge.default_log_level=LEVEL</code>. Example for tomcat:
+<blockquote>
+<code>
+JAVA_HOME=/opt/jdk1.6 JAVA_OPTS="-Dphp.java.bridge.default_log_level=5" bin/catalina.sh run
+</code>
+</blockquote>
+Example for the standalone container:
+<blockquote>
+<code>
+java -Dphp.java.bridge.default_log_level=5 -jar JavaBridge.jar SERVLET:8080
+</code>
+</blockquote>
+</p>
+
+<H4>How can I set Java options?</H4>
+<p>
+With the -D flag. See <code>java -jar JavaBridge.jar --help for details. If tomcat is being used, one can set these options as follows:
+<blockquote>
+<code>
+JAVA_OPTS="-D... -D..." /opt/tomcat/bin/catalina.sh run
+</code>
+</blockquote>
+</p>
+
+<H4>How can I increase the memory available to Java?</H4>
+<p>
+Use a VM >= 1.6 and add more RAM to your computer. Older Java versions
+support the <code>Xmx</code> flag:
+<blockquote>
+<code>
+java -Xmx512M ... -jar JavaBridge.jar SERVLET:8080 
+</code>
+</blockquote>
+</p>
+
+<H4>How can I set PHP options?</H4>
+<p>
+With a <code>define</code> before a PHP library is loaded. Global options can also be set in the <code>php.ini</code> file. Use phpinfo() to see the location of this file.
+</p>
+
+<H4>How can I configure the bridge?</H4>
+
+<p>Useful options which can be set before the Java.inc is loaded are:
+<blockquote>
+<code>
+define ("JAVA_PREFER_VALUES", false);<br>
+define ("JAVA_HOSTS", "127.0.0.1:8080");<br>
+require_once ("java/Java.inc");<br>
+...
+</code>
+</blockquote>
+Please see the Options.inc for details.
+</p>
+<p>Server-side options can be set in the
+php.java.bridge.global.properties file, see the JavaBridge.jar zip
+file (contained in the JavaBridge.war zip file) for details.
+</p>
+
+<H4>Can I use Java libraries without installing java?</H4> <p>Yes. On a GNU operating system (e.g.: GNU/Linux, GNU/windows (aka "cygwin"), ...) you can use the GCC compiler to compile Java classes to native code. 
+Simply compile the C based extension and omit the
+<code>--with-java=</code> configure option. The bridge will use the
+<code>libgcj</code> library, which is part of the GNU gcc compiler. This library also uses much less system
+resources (memory, files) than a "real" Java VM.</p> 
+<p>GCJ support has been removed in PHP/Java Bridge version 6. If
+you want to compile JavaBridge.jar to native code, please use PHP/Java
+Bridge version 5.5.4 instead.</p>
+
+<H4>I can't load the resource or file from the current working directory!?!</H4>
+<p>
+The "current working directory" is not useful, as the Java back end may be running
+on a different server or from a different working directory. Use a full path or a URL resource instead.
+</p>
+
+<H4>I get a blank page or some other error!?!</H4>
+<p>
+Check the PHP error log, see your <code>php.ini</code> file for details. If the command:
+<blockquote>
+<code>
+echo '&lt;?php require_once("http://localhost:8080/JavaBridge/java/Java.inc"); echo java("java.lang.System")-&gt;getProperties();?&gt;' | php -n -d allow_url_include=On
+</code>
+</blockquote>
+works in the shell but not within apache, then there's something wrong with your <code>php.ini</code> file.
+</p>
+
+<H4>Can I use Python instead of PHP?</H4>
+<p>Yes, see the examples folder from the source download.</p>
+
+<H4>Can I access Mono or .NET libraries using the pure PHP implementation?</H4>
+<p>Yes, PHP/Java Bridge version < 6 contains a PHP library
+"Mono.inc" generated from "Java.inc" and a "MonoBridge.exe" generated
+from "JavaBridge.jar". If you want to compile from source, use the
+configure option <code>--with-mono</code>.</p>
+<p>Mono/.NET support has been removed in PHP/Java Bridge version
+6. If you want to access Mono/.NET libraries, please use PHP/Java
+Bridge version 5.5.4 instead.</p>
+
+<H4>What does a "protocol error ..." mean?</H4>
+<p>That your Java has problems, for example an OutOfMemoryError. Check the back end (Tomcat/J2EE/...) log for details.</p>
+<p>It could also indicate a setup problem. If you use a servlet back end but haven't set the <code>java.servlet</code> or <code>JAVA_SERVLET</code> option, the PHP library <code>Java.inc</code> will confuse the HTML response from the servlet engine with the XML protocol used by the bridge.</p>
+
+<H4>Does it support PHP 4?</H4>
+<p>Start a simple socket listener and use the following "Java" class:
+<blockquote>
+<code>
+&lt;?php<br>
+// The following is the "Java" class definition, stripped down to fit<br>
+// into one line. To use this sample start Java with: java -jar<br>
+// JavaBridge.jar INET:9267. Then type: php sample.php<br>
+//<br>
+class P{var$Pc="&lt;C v=\"%s\" p=\"I\"&gt;",$PC="&lt;/C&gt;",$Pi="&lt;I v=\"%d\" m=\"%s\" p=\"I\"&gt;",$PI="&lt;/I&gt;",$Ps="&lt;S v=\"%s\"/&gt;",$Pl="&lt;L v=\"%d\" p=\"%s\"/&gt;",$Po="&lt;O v=\"%d\"/&gt;",$c;function str($s){fwrite($this-&gt;c,sprintf($this-&gt;Ps,$s));}function obj($s){fwrite($this-&gt;c,sprintf($this-&gt;Po,$s-&gt;j));}function P(){$this-&gt;c=fsockopen("127.0.0.1",9267);}function cB($s){fwrite($this-&gt;c,sprintf($this-&gt;Pc,$s));}function cE(){fwrite($this-&gt;c,$this-&gt;PC);}function iB($o,$m){fwrite($this-&gt;c,sprintf($this-&gt;Pi,$o,$m));}function iE(){fwrite($this-&gt;c,$this-&gt;PI);}function v($s){if(is_object($s))$this-&gt;obj($s);else$this-&gt;str((string)$s);}function res(){$r=sscanf(fread($this-&gt;c,8192),"%s v=\"%[^\"]\"");return$r[1];}}function gP(){static$p;if(!$p)$p=new P();return$p;}class Java{var$j,$p;function Java(){if(!func_num_args())return;$this-&gt;p=gP();$ar=func_get_args();$this-&gt;p-&gt;cB(array_shift($ar));foreach($ar as$arg)$this-&gt;p-&gt;v($arg);$this-&gt;p-&gt;cE();$ar=sscanf($this-&gt;p-&gt;res(),"%d");$this-&gt;j=$ar[0];}function __call($m,$a,&$rv){$this-&gt;p-&gt;iB($this-&gt;j,$m);foreach($a as$arg)$this-&gt;p-&gt;v($arg);$this-&gt;p-&gt;iE();$p=new Java();$ar=sscanf($this-&gt;p-&gt;res(),"%d");$p-&gt;j=$ar[0];$p-&gt;p=$this-&gt;p;$rv=$p;return true;}function toString(){$this-&gt;p-&gt;iB("","castToString");$this-&gt;p-&gt;v($this);$this-&gt;p-&gt;iE();return base64_decode($this-&gt;p-&gt;res());}}overload("Java");<br>
+<br>
+<br>
+// Test<br>
+$i1 = new Java("java.math.BigInteger",  "1");<br>
+$i2 = new Java("java.math.BigInteger",  "2");<br>
+$i3 = $i1-&gt;add($i2);<br>
+echo $i3-&gt;toString() . "\n";<br>
+?&gt;<br>
+</code>
+</blockquote>
+</p> 
+
+<H2>Class loading questions</H2>
+
+<a name="java-require"></a>
+<H4>Why has java_require() been deprecated?</H4>
+
+<p>
+Because Java doesn't have a module system.
+</p>
+<p>
+For example a library "lucene-2.3.1.jar" required by application B,
+cannot be loaded if an older version of the library, required by
+application A, is already cached.<br>
+An attempt to link the library anyway will cause "NoClassDefFound" or "NoSuchMethod" errors at runtime. Or some procedures may throw checked exceptions even though they haven't declared them.
+</p>
+<p>
+To protect PHP developers from Java's "<a href="http://en.wikipedia.org/wiki/JAR_hell">jar hell</a>", I have removed the
+dynamic class loading mechanism from PHP/Java Bridge version 6.0;
+java_require() issues a warning.
+</p>
+<p>
+A proper Java module system must use special Java VM hooks, which don't
+exist until now.
+</p>
+
+<H4>How do I load Java libraries?</H4>
+<p>You should link your Java application as described in the 
+<a href="http://php-java-bridge.sourceforge.net/pjb/standalone.php">Java standalone</a>
+or 
+<a href="http://php-java-bridge.sourceforge.net/pjb/webapp.php">Java webapps</a>
+documents. 
+</p>
+
+<H4>Where can I store my java libraries for the VM Bridge?</H4>
+<p>In your web application <code>WEB-INF/lib</code> directory.</p>
+<p> If libraries should be available globally, store them in <code>java.ext.dirs</code>, for example in <code>/usr/share/java/ext</code>.</p>
+
+<H4>Why do I get a ClassNotFoundException?</H4>
+<p>You probably haven't loaded the relevant Java library. Or the
+class doesn't exist or it is not public or it throws a java.lang.Error
+during initialization. Check which library exports the feature and add the library to your web application WEB-INF/lib directory.</p>
+
+<a name="java-dll-hell"></a>
+<H4>Why do I get a NoClassDefFoundError?</H4>
+<p>Because Java doesn't have a module system.</p>
+<p>All libraries and their dependencies must be loaded by one, and only one class loader.</p>
+<p>Please read the previous sentence until you understand what it means; for example a simple file system copy(!) operation may be the cause for a NoClassDefFoundError.</p>
+<p><em>Please do not report NoClassDefFoundErrors to the mailing list or via the bug tracker. This is not a bug and we cannot help you any further!</em></p>
+
+<H4>How do I load impure Java libraries?</H4>
+<p>You can't. Java libraries must be pure Java.</p>
+<p> Please read the
+documentation of your J2EE server, Servlet engine or Java VM to see if and
+how the environment can handle impure Java libraries. A common approach is to store the Java part in <code>java.ext.dirs</code> and the native part in <code>java.library.path</code>.</p>
+
+<H2>J2EE/Servlet questions</H2>
+
+<a name="php-extensions">
+<H4>I want to ship my own PHP web application. Where do I put PHP and PHP extensions?</H4>
+<p>
+PHP binaries go to <code>WEB-INF/cgi/</code> and should be named <code>php-cgi-ARCHITECTURE-OS.exe</code> (Windows) or <code>php-cgi-ARCHITECTURE-OS</code> (Linux/Unix).
+</p>
+<p>
+PHP extensions go to <code>WEB-INF/cgi/ARCHITECTORE-OS/ext</code>. The extension can be customized with a <code>WEB-INF/cgi/ARCHITECTURE-OS/conf.d/EXTENSION.ini</code> file.
+<p>
+Pure PHP libraries go to <code>WEB-INF/pear/</code>.
+</p>
+<p>
+Example for the PHP mysql extension for Linux and Windows (i386/x86):
+<blockquote>
+<code>
+WEB-INF&nbsp;---&nbsp;cgi&nbsp;---&nbsp;php-cgi-x86-windows.exe<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;x86-windows&nbsp;---&nbsp;conf.d&nbsp;---&nbsp;mysql.ini&nbsp;[extension="php_mysql.dll"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;ext&nbsp;---&nbsp;php_mysql.dll<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;php-cgi-i386-linux<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;i386-linux&nbsp;---&nbsp;conf.d&nbsp;---&nbsp;mysql.ini&nbsp;[extension="mysql.so"]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;ext&nbsp;---&nbsp;mysql.so<br>
+</code>
+</blockquote>
+
+<a name="custom-servlet">
+<H4>I have written my own servlet. How do I call it from PHP?</H4>
+<p>
+Add the following code to your servlet:
+<blockquote>
+<code>
+public String hello() { return "hello from MyServlet"; }<br>
+[...]<br>
+protected void doPut (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {<br>
+&nbsp;IContextFactory ctx = new RemoteHttpServletContextFactory(this, getServletContext(), req, req, res);<br>
+&nbsp;res.setHeader("X_JAVABRIDGE_CONTEXT", ctx.getId());<br>
+&nbsp;res.setHeader("Pragma", "no-cache");<br>
+&nbsp;res.setHeader("Cache-Control", "no-cache");<br>
+&nbsp;try { ctx.getBridge().handleRequests(req.getInputStream(), res.getOutputStream()); } finally { ctx.destroy(); }<br>
+}<br>
+</code>
+</blockquote>
+</p>
+<p>
+Then copy the libraries <code>JavaBridge.jar</code> and <code>php-servlet.jar</code> to your <code>WEB-INF/lib</code> directory and re-deploy your web application.
+</p>
+<p>
+If your servlet is programmed so that it listens on localhost:8080/MyWebApp/MyServlet, set <code>JAVA_HOSTS</code> and <code>JAVA_SERVLET</code> to these values:
+<blockquote>
+<code>
+&lt;?php
+define("JAVA_HOSTS", "localhost:8080");<br>
+define("JAVA_SERVLET", "/MyWebApp/MyServlet");<br>
+require_once("java/Java.inc");<br>
+<br>
+echo java_context()-&gt;getServlet()-&gt;hello();<br>
+?&gt;
+</code>
+</blockquote>
+</p>
+
+<a name="load-balancing">
+<H4>How do I set up a load balancer for the VM Bridge cluster?</H4>
+<p>
+Set up the VM Bridge cluster as <a href="#cluster">described below</a>. The example uses two nodes named "carlos" and "diego". The HTTP server front end runs on the web server "timon".
+</p>
+<p>Install Apache 2.2.0 or higher.</p>
+<p>Enable <code>proxy_module</code> and <code>proxy_balancer_module</code>. The following example is for Linux (lines marked with "+" should be added to the <code>conf/httpd.conf</code> file):
+<blockquote>
+<code>
+&nbsp;&nbsp;&nbsp;LoadModule rewrite_module modules/mod_rewrite.so<br>
+&nbsp;+&nbsp;LoadModule proxy_module modules/mod_proxy.so<br>
+&nbsp;+&nbsp;LoadModule proxy_balancer_module modules/mod_proxy_balancer.so<br>
+&nbsp;&nbsp;&nbsp;LoadModule cache_module modules/mod_cache.so<br>
+</code>
+</blockquote>
+</p>
+<p>
+Add the following code to the bottom of your <code>conf/httpd.conf</code> file:
+<blockquote>
+<code>
+ProxyPass /JavaBridge balancer://mycluster maxattempts=2<br>
+&lt;Proxy balancer://mycluster&gt;<br>
+&nbsp;&nbsp;BalancerMember http://diego:8080/JavaBridge<br>
+&nbsp;&nbsp;BalancerMember http://carlos:8080/JavaBridge<br>
+&lt;/Proxy&gt;<br>
+&lt;Location /balancer-manager&gt;<br>
+&nbsp;&nbsp;SetHandler balancer-manager<br>
+&nbsp;&nbsp;Deny from all<br>
+&nbsp;&nbsp;Allow from 127.0.0.1<br>
+&lt;/Location&gt;<br>
+</code>
+</blockquote>
+</p>
+<p>Start the cluster nodes on "carlos" and "diego".</p>
+<p>Browse to <code>http://timon/JavaBridge/</code> (note the trailing slash) and click on the test.php. Click on refresh. Check if both nodes respond.</p>
+<p>Browse to <code>http://timon/JavaBridge/sessionSharing.php</code> and click on refresh. Check the cookie value.</p>
+<p>Browse to <code>http://timon/balancer-manager/</code>.
+<p>Please see the <code>mod_rewrite</code> documentation for more information how to rewrite incoming URLs.</p>
+</a>
+
+
+<a name="cluster">
+<H4>Ho do I set up a tomcat cluster?</H4>
+<p>
+Download tomcat 5 or higher, a Java JRE 5 or higher and the VM Bridge 4.1.6 or higher.
+</p>
+<p>
+The following example uses two nodes running on two machines called
+"carlos" and "diego".
+</p>
+<p>
+On all nodes: Extract the tomcat distribution into a directory.
+</p>
+<p>On <strong>"diego"</strong> add the following to <code>conf/server.xml</code>:
+<blockquote>
+<code>
+&lt;Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"<br>
+&nbsp;&nbsp;channelSendOptions="8"&gt;<br>
+&nbsp;&nbsp;&lt;Manager className="org.apache.catalina.ha.session.DeltaManager"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;expireSessionsOnShutdown="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;notifyListenersOnReplication="true"/&gt;<br>
+&nbsp;&nbsp;&lt;Channel className="org.apache.catalina.tribes.group.GroupChannel"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;address="<strong>diego</strong>"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;port="4000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;autoBind="100"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;selectorTimeout="5000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;maxThreads="6"/&gt;<br>
+&nbsp;&nbsp;&lt;/Channel&gt;<br>
+&lt;/Cluster&gt;<br>
+</code>
+</blockquote>
+</p>
+<p>On <strong>"carlos"</strong> add the following to <code>conf/server.xml</code>:
+<blockquote>
+<code>
+&lt;Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"<br>
+&nbsp;&nbsp;channelSendOptions="8"&gt;<br>
+&nbsp;&nbsp;&lt;Manager className="org.apache.catalina.ha.session.DeltaManager"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;expireSessionsOnShutdown="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;notifyListenersOnReplication="true"/&gt;<br>
+&nbsp;&nbsp;&lt;Channel className="org.apache.catalina.tribes.group.GroupChannel"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;address="<strong>carlos</strong>"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;port="4000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;autoBind="100"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;selectorTimeout="5000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;maxThreads="6"/&gt;<br>
+&nbsp;&nbsp;&lt;/Channel&gt;<br>
+&lt;/Cluster&gt;<br>
+</code>
+</blockquote>
+</p>
+<p>Copy the "JavaBridge.war" into the "webapps" directory on "diego" and "carlos" and start both nodes. For example with the command:
+<blockquote>
+<code>
+JAVA_OPTS="-Dphp.java.bridge.promiscuous=true" JAVA_HOME=/usr/java/default bin/catalina.sh run
+</code>
+</blockquote>
+</p>
+
+<p>
+Please see your HTTP server documentation and <a href="#load-balancing">the description above</a> how to set it up as a load balancer.
+</p>
+</a>
+<a name="global-servlet">
+<H4>I want to use PHP for all tomcat applications. Apache and IIS are not available, but performance is important. How do I install it?</H4>
+</a>
+<ol>
+<li>
+Download the PHP/Java Bridge binary.
+<li>
+Copy <code>JavaBridge.jar</code>, <code>php-servlet.jar</code> and <code>php-script.jar</code> from the <code>JavaBridge.war</code> zip archive to <code>$CATALINA_HOME/lib</code>.
+<li>
+Add the following 9 lines marked with a <code>+</code> to the tomcat <code>$CATALINA_HOME/conf/web.xml</code> web app:
+<blockquote>
+<code>
+<br>
+&lt;<em>web-app</em> xmlns=... &gt
+<br><br>
++    &lt;listener&gt;&lt;listener-class&gt;php.java.servlet.ContextLoaderListener&lt;/listener-class&gt;&lt;/listener&gt;<br>
++    &lt;servlet&gt;&lt;servlet-name&gt;PhpJavaServlet&lt;/servlet-name&gt;&lt;servlet-class&gt;php.java.servlet.PhpJavaServlet&lt;/servlet-class&gt;<br>
++    &lt;/servlet&gt;<br>
++    &lt;servlet&gt;&lt;servlet-name&gt;PhpCGIServlet&lt;/servlet-name&gt;&lt;servlet-class&gt;php.java.servlet.fastcgi.FastCGIServlet&lt;/servlet-class&gt;<br>
++        &lt;init-param&gt;&lt;param-name&gt;prefer_system_php_exec&lt;/param-name&gt;&lt;param-value&gt;On&lt;/param-value&gt;&lt;/init-param&gt;<br>
++        &lt;init-param&gt;&lt;param-name&gt;php_include_java&lt;/param-name&gt;&lt;param-value&gt;On&lt;/param-value&gt;&lt;/init-param&gt;<br>
++    &lt;/servlet&gt;<br>
++    &lt;servlet-mapping&gt;&lt;servlet-name&gt;PhpJavaServlet&lt;/servlet-name&gt;&lt;url-pattern&gt;*.phpjavabridge&lt;/url-pattern&gt; &lt;/servlet-mapping&gt;<br>
++    &lt;servlet-mapping&gt;&lt;servlet-name&gt;PhpCGIServlet&lt;/servlet-name&gt;&lt;url-pattern&gt;*.php&lt;/url-pattern&gt;&lt;/servlet-mapping&gt;<br>
+...<br>
+<br>
+&lt;<em>/web-app</em>&gt;
+
+</code>
+</blockquote>
+<li>
+Start tomcat.
+</ol>
+To test the above settings, add a file <code>test.php</code>:
+<blockquote>
+<code>
+&lt;?php echo java("java.lang.System")-&gt;getProperties(); ?&gt;
+</code>
+</blockquote>
+to some web context, for example "examples", and browse to <code>http://yourHost.com:8080/examples/test.php</code>.
+<p>
+In case you don't need to access Java from all of your scripts, you can set the <code>php_include_java</code> option to <code>Off</code> and <code>require_once("java/Java.inc")</code>, if needed.
+<p>
+
+<a name="php-web-app">
+<H4>How do I create a standalone PHP web application for distribution and how can users deploy it into tomcat?</H4>
+</a>
+<p>
+Create a directory <code>myApplication</code>, create the directories <code>myApplication/WEB-INF/lib/</code> and <code>myApplication/WEB-INF/cgi/</code>.
+Download the J2EE binary and copy the <code>JavaBridge.jar</code> and the <code>php-servlet.jar</code> from the JavaBridge.war to the <code>myApplication/WEB-INF/lib/</code> folder. Copy the contents of the <code>cgi</code> folder to <code>myApplication/WEB-INF/cgi/</code>. Create the file <code>myApplication/WEB-INF/web.xml</code> with the following content:
+<blockquote>
+<code>
+<br>
+&lt;web-app&gt;<br>
+    &lt;!-- PHP Servlet --&gt;<br>
+    &lt;servlet&gt;<br>
+        &lt;servlet-name&gt;PhpJavaServlet&lt;/servlet-name&gt;<br>
+        &lt;servlet-class&gt;php.java.servlet.PhpJavaServlet&lt;/servlet-class&gt;<br>
+    &lt;/servlet&gt;<br>
+    &lt;!-- PHP CGI processing servlet, used when Apache/IIS are not available --&gt;<br>
+    &lt;servlet&gt;<br>
+        &lt;servlet-name&gt;PhpCGIServlet&lt;/servlet-name&gt;<br>
+        &lt;servlet-class&gt;php.java.servlet.fastcgi.FastCGIServlet&lt;/servlet-class&gt;<br>
+    &lt;/servlet&gt;<br>
+<br>
+    &lt;!-- PHP Servlet Mapping --&gt;<br>
+    &lt;servlet-mapping&gt;<br>
+        &lt;servlet-name&gt;PhpJavaServlet&lt;/servlet-name&gt;<br>
+        &lt;url-pattern&gt;*.phpjavabridge&lt;/url-pattern&gt;<br>
+    &lt;/servlet-mapping&gt;<br>
+    &lt;!--PHP CGI Servlet Mapping --&gt;<br>
+    &lt;servlet-mapping&gt;<br>
+        &lt;servlet-name&gt;PhpCGIServlet&lt;/servlet-name&gt;<br>
+        &lt;url-pattern&gt;*.php&lt;/url-pattern&gt;<br>
+    &lt;/servlet-mapping&gt;<br>
+<br>
+    &lt;!-- Welcome files --&gt;<br>
+    &lt;welcome-file-list&gt;<br>
+        &lt;welcome-file&gt;index.php&lt;/welcome-file&gt;<br>
+    &lt;/welcome-file-list&gt;<br>
+ &lt;/web-app&gt;<br>
+</code>
+</blockquote>
+</p>
+<p>
+
+<p>
+Copy the files <code>sessionSharing.jsp</code> and <code>sessionSharing.php</code> from the <code>JavaBridge.war</code> to <code>myApplication</code> and create <code>myApplication.war</code>, for example with the commands: <code>cd myApplication; jar cf ../myApplication.war *</code>. </p>
+<p>The web archive can now be distributed, copy it to the tomcat <code>webapps</code> directory and re-start tomcat. Visit <code>http://localhost/myApplication/sessionSharing.php</code> and <code>http://localhost/myApplication/sessionSharing.jsp</code>.
+</p>
+
+<a name="tomcat-security">
+<H4>I want to use Tomcat's security manager, how do I install the bridge?</H4>
+</a>
+<p>
+Install the PHP/Java Bridge for all web application as described <a href="#global-servlet">here</a>.
+</p>
+
+
+<a name="php-jsp-session-sharing">
+<H4>I want to use Apache/IIS as a front-end and tomcat as a back end. How do I enable PHP and JSP for all my applications?</H4>
+</a>
+<p> Set up Apache or IIS so that it forwards requests to the back
+end. Please see <a href="#load-balancing">the description above</a>
+for details.
+</p>
+
+
+
+<H4>Does the
+bridge run native code within my servlet engine or application
+server?</H4> <p>No. The bridge back end is written in pure java, it
+doesn't use any native code. Native PHP runs within Apache, IIS, or a
+FCGI server. If the PHP instance crashes, an error page is
+returned to the client and the Apache, IIS, CGI container usually starts a new PHP instance for the next
+request.</p> 
+
+<H4>The EJB example works with the Sun J2EE server, but in JBoss I get a ClassCastException, what's wrong?</H4> 
+<p>It's a JBoss problem, although this problem may also appear in other application servers which do not strictly separate the application/bean domains. The JavaBridge.war already contains the <code>documentClient.jar</code> as a library, so JBoss references the library classes instead of the bean classes. Just remove the <code>documentClient.jar</code> from the <code>JavaBridge.war</code>, re-deploy <code>JavaBridge.war</code> and run the test again.
+</p><p>
+In JBoss' default setup the code:
+<blockquote>
+<code>
+  // access the home interface<br>
+  $DocumentHome = java("DocumentHome");<br>
+  $PortableRemoteObject = java("javax.rmi.PortableRemoteObject");<br>
+  $home=$PortableRemoteObject-&gt;narrow($objref, $DocumentHome);<br>
+</code>
+</blockquote>
+refences the <code>DocumentHome</code> from the library, which is assignment-incompatible to <code>DocumentHome</code> from the enterprise bean (<code>DocumentHome@WebAppClassLoader</code> !=  <code>DocumentHome@BeanClassLoader</code>), so you get a ClassCastException in <code>narrow</code>.
+</p>
+<p>
+In contrast the Sun J2EE server correctly separates the beans/applications; the <code>$objref</code> is a unique proxy generated by a parent of the <code>WebAppClassLoader</code>, so that <code>narrow</code> can always cast the proxy to <code>DocumentHome@WebAppClassLoader</code>, even if a class with the same name is already available from the <code>WebAppClassLoader</code>.</p>
+
+ <H4>How do I install PHP into the Nutch, Spring, JSF, ..., Framework?</H4> 
+<p>By providing JSR 223 based PHP beans and a description how to manage them, as usual. The code
+<blockquote>
+<code>
+  javax.script.ScriptEngine e = <br>
+      php.java.script.EngineFactory.getInvocablePhpScriptEngine (this, <br>
+                                                        application, <br>
+                                                        request, response);<br>
+</code>
+</blockquote>
+can be used to access the JSR 223 ScriptEngine from the framework, provided that a listener has been configured in the WEB-INF/web.xml:
+<blockquote>
+<code>
+   &lt;listener&gt;
+       &lt;listener-class&gt;php.java.servlet.ContextLoaderListener&lt;/listener-class&gt;
+   &lt;/listener&gt;
+</code>
+</blockquote>
+</p>
+
+<H2>General runtime questions</H2>
+
+<H4>How do I include a local (*.asp, *.jsp, ...) resource?</H4>
+<p>Use the <code><a href="http://us.php.net/manual/en/function.virtual.php">virtual()</a></code> or <code><a href="API/JavaBridge/_JavaBridge.inc.html#functionjava_virtual">java_virtual()</a></code> function.
+</p>
+<p><strong>Warning:</strong> Do not open a "loop back" url connection (e.g. via <code>fopen("http://localhost.../foo.asp")</code>) to include the <em>local</em> resource. This might exceed the HTTP server's pool size and create a deadlock!</p>
+
+<H4>How do I reference a class w/o creating an instance?</H4>
+<p>
+With the <code>java</code> function, for example: <code>java("java.lang.System")</code>.
+</p>
+<p>The function is defined in <code>http://localhost:8080/JavaBridge/java/Java.inc</code> as:
+<blockquote>
+<code>
+function java($clazz) {<br>
+&nbsp;&nbsp;static $classMap = array();<br>
+&nbsp;&nbsp;if(array_key_exists($clazz, $classMap)) return $classMap[$clazz];<br>
+&nbsp;&nbsp;return classMap[$clazz]=new JavaClass($clazz);<br>
+}
+</code>
+</blockquote>
+</p>
+
+<H4>Why does java_context()-&gt;getHttpServletRequest()-&gt;getSession() return null?</H4>
+<p>
+PHP scripts must explicitly allocate a session with <code><a href="API/JavaBridge/_JavaProxy.inc.html#functionjava_session">java_session()</a></code>. For example:
+<blockquote>
+<code>
+java_session(); <br>
+// now the (Remote-)HttpServletRequest knows about the session: <br>
+echo java_context()-&gt;getHttpServletRequest()-&gt;getSession(); <br>
+</code>
+</blockquote>
+</p>
+
+<H4>Where is my output?</H4> <p><code>System.out</code> and
+<code>System.err</code> are redirected to the server log file(s). When
+PHP scripts are invoked from a java framework (Java Server Faces for
+example), even the PHP output is redirected. For the standalone back
+end the output appears in the
+<code>/var/log/php-java-bridge.log</code> or in VMBridge.log, see
+.ini option <code>java.log_file</code>. For the j2ee back end the
+location of the log file(s) depends on the j2ee server
+configuration.</p>
+
+
+<H4>How do I make my script state (objects or variables) persistent?</H4> 
+<p>If you must code it yourself: with
+e.g. <code>java_session()-&gt;put("buf", $stringBuffer)</code></p> 
+
+
+<H4>How many threads does the bridge start?</H4> 
+<p>Request-handling threads are started
+from a thread pool, which limits the number of user requests to 20
+(default), see system property
+<code>php.java.bridge.threads</code>. All further requests have to
+wait until one of the worker threads returns to the pool. </p> 
+<p>When running in a servlet engine, a <a
+href="server/documentation/API/php/java/bridge/http/ContextServer.html">ContextServer</a>
+is started which handles the pipe or local socket communication
+channel.  </p> <p>When java invokes local scripts outside of a HTTP
+environment, the bridge starts a <a
+href="server/documentation/API/php/java/bridge/http/HttpServer.html">HttpServer</a>,
+a <a
+href="server/documentation/API/php/java/bridge/http/ContextServer.html">ContextServer</a>
+and a <a
+href="server/documentation/API/php/java/script/HttpProxy.html">HttpProxy</a>. The
+HttpProxy represents the PHP continuation and the HttpServer the
+request-handling java continuation associated with the JSR223 script.
+</p> 
+
+ <H4>How do I access enums or inner classes?</H4> 
+With the <code>classname$inner</code> syntax. For example <br><br>
+<code>
+public interface php {<br>
+&nbsp;public class java {<br>
+&nbsp;&nbsp;public enum bridge {JavaBridge, JavaBridgeRunner};<br>
+&nbsp;}<br>
+}<br>
+</code><br>
+can be accessed with:<br><br>
+<code>
+&lt;?php<br>
+$bridge = new java('php$java$bridge');<br>
+echo $bridge-&gt;JavaBridgeRunner;<br>
+?&gt;<br>
+</code><br>
+The above code is not a good programming example but it demonstrates why a different syntax is used to access inner classes. 
+</p>
+
+ <H4>How do I create a primitive array?</H4> 
+<p>
+Primitive types are wrapped by associated java classes. 
+The following example uses <code>reflect.Array</code> to create a new <code>byte</code> array:<br><br>
+<code>
+$Byte = java("java.lang.Byte");<br>
+$byte = $Byte-&gt;TYPE;<br>
+$Array = java("java.lang.reflect.Array");<br>
+$byteArray = $Array-&gt;newInstance($byte, 255);<br>
+$System = java("java.lang.System");<br>
+$length = $System-&gt;in-&gt;read($byteArray);<br>
+$str = new Java("java.lang.String", $byteArray, 0, $length);<br>
+echo "You have typed: $str\n";<br>
+</code>
+</p>
+
+<a name="performance"></a> <H4>How fast is it?</H4> <p> 
+The following scripts were
+executed on one 1.5 GHZ x86 cpu running RedHat Fedora 10 Linux and Sun jdk1.6.0_02.
+We have tested "Mozilla Rhino" 1.6 release 2 from <a href="http://java.sun.com">JDK 1.6</a>, <a href="http://caucho.com">Caucho "Quercus" version 3.2.1</a>, the <a href="http://php-java-bridge.sf.net">PHP/Java Bridge version 5.4.4</a>, and <a href="http://php.net/manual/en/book.java.php">PHP 4's ext/java</a>.
+</p>
+The PHP code (<code>t11.php</code>):<br>
+<p>
+<code>
+&lt;?php<br>
+$buf=new java("java.lang.StringBuilder");<br>
+for ($i=0; $i<400000; $i++) $buf-&gt;append($i);<br>
+echo $buf-&gt;length() . "\n";<br>
+?&gt;
+</code>
+</p>
+Another PHP code is necessary for Quercus 3.2.1 because it cannot run the above standard PHP code correctly (<code>t12.php</code>):<br>
+<p>
+<code>
+&lt;?php<br>
+$buf=new java("java.lang.StringBuilder");<br>
+for ($i=0; $i<400000; $i++) $buf-&gt;append(new java("java.lang.String", $i));<br>
+echo $buf-&gt;length() . "\n";<br>
+?&gt;
+</code>
+</p>
+The ECMAScript ("Mozilla Rhino") code (<code>t11.js</code>):<br>
+<p>
+<code>
+buf = new java.lang.StringBuilder();<br>
+for(i=0; i<400000; i++) buf.append(new java.lang.Integer(i));<br>
+print (buf.length());<br>
+</code>
+</p>
+<p>
+<center>
+<TABLE
+BORDER="1"
+><COL><COL><COL><COL><THEAD
+><TR
+><TH
+>Command</TH
+><TH
+>Script Engine</TH
+><TH
+>Communication Channel</TH
+><TH
+>Execution time (real, user, sys)</TH
+></TR
+></THEAD
+
+<TR
+><TD
+>time jrunscript -l js t11.js</TD
+><TD
+><a href="http://java.sun.com">"Mozilla Rhino" 1.6 release 2</a></TD
+><TD
+>none (native code)</TD
+><TD
+>0m7.932s,<br>
+0m7.701s,<br>
+0m0.113s
+</TD
+></TR
+>
+<TR
+><TD
+>time jrunscript -classpath quercus.jar:resin-util.jar:servlet-api.jar -l quercus t12.php</TD
+><TD
+><a href="http://caucho.com">Quercus 3.2.1</a></TD
+><TD
+>none (native code)</TD
+><TD
+>0m7.134s,<br>
+0m5.050s,<br>
+0m1.934s
+</TD
+></TR
+>
+
+<TR
+><TD
+>time jrunscript -classpath JavaBridge.jar -l php t11.php</TD
+><TD
+><a href="http://php-java-bridge.sf.net">PHP/Java Bridge 5.4.4</a></TD
+><TD
+>named pipes (XML protocol)</TD
+><TD
+>0m16.059s,<br>
+0m15.341s,<br>
+0m0.197s
+</TD
+></TR
+>
+
+<TR
+><TD
+>php t11.php</TD
+><TD
+><a href="http://php.net/manual/en/book.java.php">PHP 4.4.7/PHP-Java extension</a></TD
+><TD
+>JNI (binary protocol)</TD
+><TD
+>0m57.689s,<br>
+0m56.243s,<br>
+0m0.467s
+</TD
+></TR
+>
+
+</TABLE
+>
+</center>
+</p>
+<p>
+</p>
+
+ <H4>How does the bridge handle OutOfMemoryErrors?</H4> 
+<p>
+OutOfMemoryErrors may happen because a cached object cannot be released, either because <p>
+<ol>
+<li> the object is permanently referenced by a request-handling thread or</li>
+<li> the object has been entered into the session or application store or 
+ the object is referenced by a thread outside of the scope of the VM Bridge.</li>
+</ol>
+</p>
+</p>
+<p>When a <code>java.lang.OutOfMemoryError</code> reaches the request-handling thread, the VM Bridge thread pool removes the thread from its pool and writes a message <code>FATAL: OutOfMemoryError</code> to the VM Bridge log file. The session store is cleaned and all client connections are terminated without confirmation.
+</p>
+<p>
+If the OutOfMemoryError persists, this means that a thread outside of the VM Bridge has caused this error condition.
+</p>
+<p>
+OutOfMemory conditions can be debugged by running the back end with e.g.:<br><br>
+<code>
+java -agentlib:hprof=heap=sites -jar JavaBridge.jar<br>
+</code>
+</p>
+ 
+<H4>How can PHP classes extend Java classes and Java methods?</H4> 
+<p>
+By using <a href="API/JavaBridge/_JavaProxy.inc.html#functionjava_closure"><code>java_closure()</code></a> and the <a href="http://en.wikipedia.org/wiki/Visitor_pattern">visitor pattern</a> for example. 
+</p>
+<p> In PHP 5.3 or above the following code can be used:
+<blockquote>
+<code>
+use java\lang\String as JString;<br><br>
+class String extends JString {<br>
+&nbsp;&nbsp;function toString(){return "I am " . parent::toString();}<br>
+&nbsp;&nbsp;function __toString() {return $this->toString();}<br>
+}<br><br>
+echo new String("foo");<br><br>
+=&gt; I am foo
+</code>
+</blockquote>
+
+<H4>How can I convert a Java object into a PHP value?</H4>
+<p>
+With <code>java_values()</code>. For example:
+<blockquote>
+<code>
+&nbsp;&nbsp;$ar = java("java.lang.reflect.Array")->newInstance(java("java.lang.Integer"), 2);<br>
+&nbsp;&nbsp;$ar[0] = new java("java.lang.Integer", 2);$ar[1] = new java("java.lang.Integer", 5);<br>
+&nbsp;&nbsp;print_r(java_values($ar));<br>
+</code>
+</blockquote>
+</p>
+<H4> How can I convert a PHP object into a Java object?</H4>
+<p>
+With <code>java_closure()</code>. For example:
+<blockquote>
+<code>
+&nbsp;&nbsp;class Foo {<br>
+&nbsp;&nbsp;&nbsp;function toString() {return "php::foo";}<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;$foo = new Foo();<br>
+&nbsp;&nbsp;$jObj = java_closure($foo);<br>
+&nbsp;&nbsp;$String = java("java.lang.String");<br>
+&nbsp;&nbsp;echo $String-&gt;valueOf($jObj);<br>
+</code>
+</blockquote>
+</p>
+<H4>How do I call JSP tags from PHP?</H4>
+<p>
+Example:
+<blockquote>
+<code>
+require_once("http://localhost:8080/JavaBridge/java/Java.inc");<br>
+$tag = new Java("foo.bar.BazTag");<br>
+<br>
+$session = java_session();<br>
+$ctx = java_context();<br>
+$servlet = $ctx-&gt;getAttribute("php.java.servlet.Servlet");<br>
+$response = $ctx-&gt;getAttribute("php.java.servlet.HttpServletResponse");<br>
+$request = $ctx-&gt;getAttribute("php.java.servlet.HttpServletRequest");<br>
+$factory = java("javax.servlet.jsp.JspFactory")-&gt;getDefaultFactory();<br>
+$pc = $factory-&gt;getPageContext($servlet, $request, $response, null, true, 8192, false);<br>
+<br>
+$tag-&gt;setPageContext($pc);<br>
+$value = $tag-&gt;doStartTag();<br>
+if(($value != Java("javax.servlet.jsp.tagext.Tag")-&gt;SKIP_BODY) {<br>
+&nbsp;&nbsp;if($value != Java("javax.servlet.jsp.tagext.Tag")-&gt;EVAL_BODY_INCLUDE)) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$tag-&gt;setBodyContent($pc-&gt;pushBody());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$tag-&gt;doInitBody();<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;do {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;} while($tag-&gt;doAfterBody() == Java("javax.servlet.jsp.tagext.BodyTag")-&gt;EVAL_BODY_AGAIN)<br>
+}<br>
+if($value != Java("javax.servlet.jsp.tagext.Tag")-&gt;EVAL_BODY_INCLUDE) $pc-&gt;popBody();<br>
+$tag-&gt;doEndTag();<br>
+</blockquote>
+</code>
+</p><p>
+The generated content (if any) can be retrieved from the servlet output stream with:
+<blockquote>
+<code>
+java_values($response-&gt;getBufferContents();
+</code>
+</blockquote>
+</p>
+<p>Please see the <code>php_java_lib/JspTag.php</code> and <code>tests.php5/tag.php</code> for details.</p>
+<H4>How does the bridge support Java generics?</H4>
+<p>
+You can ignore the parameter type.
+</p>
+<p>
+Java doesn't support real generics on byte-code level. The generics in JDK 1.5 and above are implemented as "erasures"; they are syntactic sugar, useful only for the Java compiler. The generated byte-code is the same as in JDK 1.4.
+</p>
+<H4>What about Java 5 varargs?</H4>
+<p>
+Pass them as a PHP array. Example:
+</p>
+<p>
+<blockquote>
+<code>
+&lt;?php require_once("http://localhost:8080/JavaBridge/java/Java.inc");<br>
+$t1 = new java('Varargs$Test', 1);<br>
+$t2 = new java('Varargs$Test', 2);<br>
+echo java("Varargs")-&gt;varargs(array($t1, $t2));<br>
+?&gt;
+</code>
+</blockquote>
+</p>
+<p>
+<blockquote>
+<code>
+public class Varargs {<br>
+&nbsp;public static class Test {<br>
+&nbsp;&nbsp;public int i;<br>
+&nbsp;&nbsp;public Test (int i) {<br>
+&nbsp;&nbsp;&nbsp;this.i = i;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;public String toString() {<br>
+&nbsp;&nbsp;&nbsp;return String.valueOf(i);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;}<br>
+&nbsp;public static String varargs(Test ...tests) {<br>
+&nbsp;&nbsp;StringBuffer buf = new StringBuffer();<br>
+&nbsp;&nbsp;for (Test test : tests) {<br>
+&nbsp;&nbsp;&nbsp;buf.append(test);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;return buf.toString();<br>
+&nbsp;}<br>
+}<br>
+</code>
+</blockquote>
+</p>
+<H4>NULL tests</H4>
+<p>
+Use <code>java_is_null($value)</code> or <code>is_null (java_values ($value))</code> to test for a (Java-) NULL value.
+</p>
+
+<H4>How do I start the bridge back end when there's another Java VM listening on port 8080?</H4>
+<p>Simply deploy the VM Bridge web archive into the servlet engine or application server listening on port 8080. Or use a different port.</p>
+
+<H4>What's the difference between SERVLET_LOCAL:8080 and INET_LOCAL:8080?</H4>
+<p>The standalone option SERVLET_LOCAL emulates a servlet engine and starts a HTTP server which can select the fastest channel supported on this operating system. On Linux this is a named pipe created in /dev/shm or INET_LOCAL as a fall back.</p>
+<p>INET_LOCAL always uses local TCP socket communication.</p>
+
+<H4>Whenever I reboot my computer I have to start the bridge back end again. How can I automate this?</H4>
+<p>Download and install a servlet engine or J2EE server as a Windows
+or Unix service.</p>
+
+<H4>Do I have to require Java.inc in each of my scripts? Isn't that very slow?</H4>
+<p>In order to communicate with Java, a PHP "Java" class definition is needed. Here's a simple PHP "Java" class definition which fits into one line:
+<blockquote>
+<code>
+&lt;?php<br>
+// The following is the "Java" class definition, stripped down to fit<br>
+// into one line. To use this sample start Java with: java -jar<br>
+// JavaBridge.jar INET:9267.Then type: php sample.php<br>
+//<br>
+class P{var$Pc="&lt;C v=\"%s\" p=\"I\"&gt;",$PC="&lt;/C&gt;",$Pi="&lt;I v=\"%d\" m=\"%s\" p=\"I\"&gt;",$PI="&lt;/I&gt;",$Ps="&lt;S v=\"%s\"/&gt;",$Pl="&lt;L v=\"%d\" p=\"%s\"/&gt;",$Po="&lt;O v=\"%d\"/&gt;",$c;function str($s){fwrite($this-&gt;c,sprintf($this-&gt;Ps,$s));}function obj($s){fwrite($this-&gt;c,sprintf($this-&gt;Po,$s-&gt;j));}function P(){$this-&gt;c=fsockopen("127.0.0.1",9267);}function cB($s){fwrite($this-&gt;c,sprintf($this-&gt;Pc,$s));}function cE(){fwrite($this-&gt;c,$this-&gt;PC);}function iB($o,$m){fwrite($this-&gt;c,sprintf($this-&gt;Pi,$o,$m));}function iE(){fwrite($this-&gt;c,$this-&gt;PI);}function v($s){if(is_object($s))$this-&gt;obj($s);else$this-&gt;str((string)$s);}function res(){$r=sscanf(fread($this-&gt;c,8192),"%s v=\"%[^\"]\"");return$r[1];}}function gP(){static$p;if(!$p)$p=new P();return$p;}class Java{var$j,$p;function Java(){if(!func_num_args())return;$this-&gt;p=gP();$ar=func_get_args();$this-&gt;p-&gt;cB(array_shift($ar));foreach($ar as$arg)$this-&gt;p-&gt;v($arg);$this-&gt;p-&gt;cE();$ar=sscanf($this-&gt;p-&gt;res(),"%d");$this-&gt;j=$ar[0];}function __call($m,$a){$this-&gt;p-&gt;iB($this-&gt;j,$m);foreach($a as$arg)$this-&gt;p-&gt;v($arg);$this-&gt;p-&gt;iE();$p=new Java();$ar=sscanf($this-&gt;p-&gt;res(),"%d");$p-&gt;j=$ar[0];$p-&gt;p=$this-&gt;p;return$p;}function toString(){$this-&gt;p-&gt;iB("","castToString");$this-&gt;p-&gt;v($this);$this-&gt;p-&gt;iE();return base64_decode($this-&gt;p-&gt;res());}};<br>
+<br>
+<br>
+// Test<br>
+$i1 = new Java("java.math.BigInteger",  "1");<br>
+$i2 = new Java("java.math.BigInteger",  "2");<br>
+$i3 = $i1-&gt;add($i2);<br>
+echo $i3-&gt;toString() . "\n";<br>
+?&gt;<br>
+</code>
+</blockquote>
+</p>
+<p>The above simple "Java" class assumes that some Java VM has been
+started on host "127.0.0.1", port "9267". And it cannot handle values
+larger than 8192 bytes. Therefore the VM Bridge
+library <code>Java.inc</code> should be used. Scripts should contain
+the statement
+<blockquote>
+<code>
+&nbsp;&nbsp;require_once("...java/Java.inc");
+</code>
+</blockquote>
+at the beginning of each script. PHP compiles and caches PHP scripts, the <code>Java.inc</code> library is loaded only once.
+</p>
+
+<H4>What does "The requested method PUT is not allowed ... at localhost Port 80" mean?</H4>
+<p>It means that <code>request.getServerPort()</code> is lying. Port 80 is privileged and therefore cannot be the servlet engine's server port.</p>
+<p>If you use the AJP connector, for example via <code>ProxyPassMatch ^(/.*\.jsp)$ ajp://127.0.0.1$1</code>, set the correct <code>proxyPort</code> in <code>tomcat/conf/server.xml</code>. Example:
+<blockquote>
+<code>
+&lt;!-- Define an AJP 1.3 Connector on port 8009 --&gt;<br>
+- &lt;Connector port="8009" protocol="AJP/1.3" redirectPort="8443" /&gt;<br>
++ &lt;Connector port="8009" protocol="AJP/1.3" proxyPort="8080" redirectPort="8443" /&gt;<br>
+</code>
+</blockquote>
+ Please see the <a href="http://tomcat.apache.org/tomcat-5.5-doc/config/ajp.html">AJP documentation<a> for details.
+
+</BODY>
+</HTML>

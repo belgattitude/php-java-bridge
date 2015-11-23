@@ -1,0 +1,147 @@
+Overview
+--------
+
+The JEE interface associates a PHP web context or the entire JEE
+server with a managed and persistent PHP executable or an external
+HTTP server running PHP.
+
+This document describes how to call Java methods from PHP. And how to
+embed PHP applications in a pure Java application server or servlet
+engine. Please see the INSTALL.J2SE document for details how to call
+PHP methods from a pure Java application.
+
+Installation
+------------
+
+* Install a JEE application server or servlet engine, for example
+  Apache Geronimo, Tomcat, Glassfish, ...
+
+* Copy your Java libraries, PHP executables or PHP libraries in
+  "JavaBridge.war" or JavaBridgeTemplate.war and rename it to
+  "myPhpApp.war" or similar.
+
+* Copy your web application myPhpApp.war to the autodeploy folder of
+  your JEE server or servlet engine. If you don't have a myPhpApp.war
+  yet, simply rename "JavaBridge.war" to "myPhpApp.war".
+
+  Example for Tomcat on Unix:
+  
+    cp myPhpApp.war $CATALINA_HOME/webapps/
+
+  Example for Apache Geronimo on Windows:
+
+    copy myPhpApp.war "\Program Files\IBM\WebSphereCommunityEdition\deploy"
+
+  Wait until the "myPhpApp" directory appears (restart your JEE
+  server, if necessary).
+
+
+* If you want to run PHP as a sub component of the JEE server or
+  servlet engine, visit http://localhost:8080/myPhpApp and click on
+  test.php. 
+
+* If you want to run PHP as a sub component of Apache or IIS or from
+  the command line, require() Java.inc directly from the back
+  end. Example:
+
+    <?php
+      require_once("http://127.0.0.1:8080/JavaBridge/java/Java.inc");
+      echo java("java.lang.System")->getProperties();
+      ...
+    ?>
+
+  Or embed it in your PHP application and use the provided Java class
+  as usual. Example:
+
+    <?php
+      define("JAVA_HOSTS", 127.0.0.1:8080);
+      define("JAVA_SERVLET", "/JavaBridge/servlet.phpjavabridge");
+      require_once("java/Java.inc");
+      echo java("java.lang.System")->getProperties();
+      ...
+    ?>
+
+
+* Firewall-out the JEE/Servlet port 8080, if necessary. Or modify the
+  JEE/Servlet so that it listens only on the local interface. Note that
+  in the default setup the PHP/Java Bridge rejects requests from non-local
+  PHP clients. For a intranet server start the JEE/Servlet VM with the
+  parameter -Dphp.java.bridge.promiscuous=true or set the "promiscuous"
+  init-param in the JEE WEB-INF/web.xml and make sure that your
+  computer cannot be accessed from the internet. At least firewall-out
+  the ports 8080 and all ports in the range [9267,...,[9367 and read the
+  "security" sections from README.
+
+
+JSR 223 Script API
+------------------
+
+* It is possible to run PHP scripts in servlets. The examples below
+  use JSP to demonstrate the features (in JSP "this" is the Servlet,
+  "application" is the ServletContext and "request", "response" the
+  HttpServletRequest and HttpServletResponse objects.
+
+  The web application needs a context listener declared in 
+  WEB-INF/web.xml:
+
+   <listener>
+       <listener-class>php.java.servlet.ContextLoaderListener</listener-class>
+   </listener>
+
+  And the JavaBridge.jar, php-servlet.jar, php-script.jar, script-api.jar
+  must be available in the WEB-INF/lib directory.
+
+  Servlets can then access PHP scripts as follows:
+
+  <%! 
+    private static final Reader HELLO_SCRIPT = 
+      php.java.script.servlet.EngineFactory.createPhpScriptReader(
+        "<?php echo 'Hello java world!'; ?>"); 
+  %>
+  <%
+    javax.script.ScriptEngine e = 
+      php.java.script.servlet.EngineFactory.getPhpScriptEngine (this, 
+                                                        application, 
+                                                        request, response);
+    e.getContext().setWriter (out);
+    Reader r = php.java.script.servlet.EngineFactory.createPhpScriptFileReader(
+      getClass().getName()+"._cache_.php", HELLO_SCRIPT);
+    e.eval (r);
+    r.close ();
+  %>
+  
+  The code above is equivalent to:  
+
+   rd=application.getRequestDispatcher(request.getServletPath()+"._cache_.php");
+   rd.include(request, response);
+
+
+  The InvocablePhpScriptEngine can be accessed as follows:
+
+  <%
+    javax.script.ScriptEngine e = 
+      php.java.script.servlet.EngineFactory.getInvocablePhpScriptEngine(this, 
+        application, reqest, response, 
+         new java.net.URI("http://PHP_SERVER:80/JavaProxy.php"));
+
+    Object result = ((javax.script.Invocable)e).invokeFunction ("phpversion", 
+      new Object[]{});
+
+    out.println("result from remote invocation:" + result);
+    ((java.io.Closeable)e).close();
+  %>
+
+
+Further information
+-------------------
+
+Our FAQ contains examples which show how to create a distributable PHP
+web application, how to enable PHP for all Tomcat web applications and
+and how to set up a load balancer for a Tomcat cluster.
+
+
+* Please report bugs/problems to the mailing list:
+
+    php-java-bridge-users@lists.sourceforge.net
+
+

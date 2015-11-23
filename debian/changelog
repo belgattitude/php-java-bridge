@@ -1,0 +1,294 @@
+php-java-bridge (6.1.2.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * Correction of SE Linux Tomcat Debian patch.
+
+ -- Andre Felipe Machado <andre.machado@serpro.gov.br>  Mon, 04 May 2010 16:15:04 -0300
+
+
+php-java-bridge (6.1.2-1) unstable; urgency=low
+
+  * New upstream version.
+  * Rules file cleanup, removing deprecated packages.
+
+ -- Andre Felipe Machado <andre.machado@serpro.gov.br>  Mon, 22 Apr 2010 10:12:21 -0300
+
+
+
+php-java-bridge (6.1.1-2) unstable; urgency=low
+
+  * Corrections at control file, removing deprecated packages.
+  * Files clean up.
+
+ -- Andre Felipe Machado <andre.machado@serpro.gov.br>  Mon, 06 Apr 2010 14:34:35 -0300
+
+
+
+php-java-bridge (6.1.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * Removed C binary package and its SE Linux companion package.
+  * Dependency on debhelper from backports.org
+
+ -- Andre Felipe Machado <andre.machado@serpro.gov.br>  Mon, 06 Apr 2010 13:57:23 -0300
+
+
+
+php-java-bridge (5.5.5-1) unstable; urgency=low
+
+  * New upstream version.
+  * Improved README.Debian.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 26 Jan 2009 10:40:12 -0200
+
+
+php-java-bridge (5.5.4.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 09 Dec 2009 14:15:41 -0300
+
+php-java-bridge (5.5.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * SE Linux Debian patch is not needed anymore.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 31 Aug 2009 12:05:43 -0300
+
+php-java-bridge (5.5-2) unstable; urgency=low
+
+  * Correction of SE Linux Debian patch for right bridge version.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 31 Aug 2009 11:32:15 -0300
+
+
+php-java-bridge (5.5-1) unstable; urgency=low
+
+  * New upstream version.
+  * build dependency on php-pear.
+  * improved dependency control (rules and control files).
+  * build dependency on PhpDocumentor (manually installed by php-pear)
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 07 Aug 2009 15:20:18 -0300
+
+
+php-java-bridge (5.4.4.2-3) unstable; urgency=low
+
+  * SELinux EXPERIMENTAL packaging.
+  * Corrections at directories packaging.
+  * Corrections at JavaBridge TomCat security policy file for default Lenny.
+  * Improved dependency configuration.
+  * Corrections at installation scripts sequence.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Tue, 16 Jul 2009 17:44:32 -0300
+
+
+php-java-bridge (5.4.4.2-2) unstable; urgency=low
+
+  * Corrections at Tomcat 5.5 security policy. EXPERIMENTAL and TOO permissive.
+    Only suitable for security benign development environments.
+    Java security is not actually enough for blocking malicious code from php.
+    The production quality solution should be using Security Enhanced Linux 
+    policies. Read more at the "devel" package, 
+    "/usr/share/doc/php-java-bridge-devel/examples/security" directory.
+    As of today, you have to edit and compile SE Linux rules yourself.
+    Please, contribute improved rules.
+  * Compiled in Debian GNU/Linux 5.0 Lenny with Sun Java 6.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Mon, 29 Jun 2009 14:28:05 -0300
+
+
+php-java-bridge (5.4.4.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * Corrections at the rules for installing at the Tomcat 5.5 auto deploy 
+    directory.
+  * Compiled in Debian GNU/Linux 5.0 Lenny with Sun Java 6.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Thu, 30 Apr 2009 10:03:31 -0300
+
+
+php-java-bridge (5.4.4.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Dependencies corrections for Tomcat 5.5 in Lenny.
+  * Correction at postrm and postinst scripts for Tomcat 5.5.
+  * Compiled in Debian GNU/Linux 5.0 Lenny with Sun Java 6.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Thu, 30 Mar 2009 11:15:23 -0300
+
+
+php-java-bridge (5.4.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * Compiled in Debian GNU/Linux 5.0 Lenny with Sun Java 6.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Thu, 12 Mar 2009 14:05:04 -0300
+
+php-java-bridge (5.4.3.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Thu, 19 Feb 2009 16:55:08 -0300
+
+php-java-bridge (5.4.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * README.GNU_JAVA renamed to README.GCJ.
+  * java-servlet.ini not installed anymore.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Mon, 26 Jan 2009 10:26:15 -0300
+
+
+php-java-bridge (5.3.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * Missing some tests: jsr223.
+  * java.ini: Switch off java.security_policy per default as some VM
+    implementations don't understand the policy==... syntax.
+    Thanks to Jan Wagner <waja@cyconet.org> to pointing this.
+  * New build location for Java.inc and included for j2ee package.
+  * Removed server/test directory from examples.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 03 Dec 2008 11:06:18 -0300
+
+php-java-bridge (5.3.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * Missing Java.inc and Mono.inc from native code package. But at this package,
+    the mono version is not built.
+    Thanks to Jan Wagner <waja@cyconet.org> to pointing this.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 26 Nov 2008 10:25:18 -0300
+
+php-java-bridge (5.3.2.1.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 13 Oct 2008 10:25:18 -0300
+
+php-java-bridge (5.3.2.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Detailed control of build and install process using implicit and explicit
+    rules.
+  * Correct interpretation of -a, -i, -p rules options, clearing all errors.
+  * Correct use of intermediate targets.
+  * Correct use of .PHONY, binary-indep, binary-arch targets.
+  * Intermediate targets does not understand -p@ option. Instead, use complete
+    target copy.
+  * Intermediate target installbasic does not include dh_install rule anymore.
+  * Improved comments at debian/rules file.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Fri, 10 Oct 2008 11:04:08 -0300
+
+
+php-java-bridge (5.2.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * Packaging improvements and corrections. 
+    Adjustments of package sizes and contents.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Tue, 06 May 2008 12:02:33 -0300
+
+php-java-bridge (5.1.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Droped support for php4.
+  * Deprecated C implementation.
+  * Droped initscript.
+  * Packaging improvements and corrections. 
+    Adjustments of package sizes and contents.
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Tue, 29 Jan 2008 12:02:33 -0200
+
+php-java-bridge (4.3.2-1) unstable; urgency=low
+
+  * New upstream development version
+  * Included LSB compatible (needs status command) initscripts for Debian systems
+  * Corrected some miscreated top-level directories bugs
+
+ -- Andre Felipe Machado <andremachado@techforce.com.br>  Thu, 20 Dec 2007 13:14:22 -0200
+
+php-java-bridge (4.3.0-1) unstable; urgency=low
+
+  * New upstream development version
+  * New high-level API: When the PHP standard library is
+    available (PHP version >= 5.2), java_autoload("libs...")
+    can be used.
+  * It is now possible to access PHP (HTTP- or FastCGI) pool 
+    instances from servlets or frameworks such as Spring or 
+    JSF using the JSR 223 API. See script/EngineFactory.java 
+    and servlet/ContextLoaderListener.java.
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Wed, 17 Oct 2007 17:14:22 -0200
+
+php-java-bridge (4.2.2-1) unstable; urgency=low
+
+  * New upstream development version.
+  * Deprecated C extension implementation since 4.1.7.
+  * Remotion of java extension documentation.
+  * Dependency on jdk 1.6.
+  * Correction for JavaBridge.war inclusion at j2ee package instead of docs package.
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Mon,  7 Aug 2007 11:27:07 -0300
+
+php-java-bridge (4.0.8a-1) unstable; urgency=low
+
+  * new upstream version
+  * installini target substituted by install file
+  * no more mono.ini installation
+  * postrm and postinst scripts corrected.
+  * some rules formatting cleanup
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Fri, 20 Apr 2007 14:38:06 -0300
+
+php-java-bridge (4.0.8-2) unstable; urgency=low
+
+  * Improvements on packaging. The php-java-bridge-j2ee now stop and 
+    restart tomcat5.
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Tue, 10 Apr 2007 14:34:33 -0300
+
+php-java-bridge (4.0.8-1) unstable; urgency=low
+
+  * New upstream version.
+  * C implementation now in sync with php J2EE implementation.
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Mon,  9 Apr 2007 09:38:09 -0300
+
+php-java-bridge (4.0.7-1) unstable; urgency=low
+
+  * New upstream version
+  * Splitted in multiple packages
+  * C implementation is still the same as 4.0.1
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Mon,  2 Apr 2007 16:34:41 -0300
+
+php-java-bridge (4.0.6-1) unstable; urgency=low
+
+  * New upstream version
+  * C implementation is still the same as 4.0.1
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Mon, 26 Mar 2007 13:18:49 -0300
+
+php-java-bridge (4.0.2-1) unstable; urgency=low
+
+  * New upstream version.
+  * C implementation is still the same as 4.0.1
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Tue, 20 Mar 2007 08:25:26 -0300
+
+php-java-bridge (4.0.1-2) unstable; urgency=low
+
+  * Corrected the /debian subdir for new release and rebuild from cvs 
+    tree on a real Debian Etch machine.
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Mon, 12 Mar 2007 15:52:15 -0300
+
+php-java-bridge (3.2.1-1) unstable; urgency=low
+
+  * Initial release 
+
+ -- Andre Felipe Machado <af-machado@uol.com.br>  Tue, 28 Nov 2006 12:10:27 -0200
+

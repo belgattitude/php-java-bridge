@@ -1,0 +1,4 @@
+Security Enhanced Linux rules for FC5, RHEL 5 and above.
+
+Type make to build and semodule -i php-java-bridge.pp to install.
+

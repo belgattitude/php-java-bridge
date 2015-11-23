@@ -1,0 +1,9 @@
+examples/*
+php-java-bridge.spec
+test.php
+security
+tests.jsr223
+tests.php5
+unsupported
+server/php/
+php_java_lib

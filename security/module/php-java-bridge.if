@@ -1,0 +1,24 @@
+## <summary>javabridge example policy</summary>
+#
+
+########################################
+## <summary>
+##	Execute a domain transition to run javabridge.
+## </summary>
+## <param name="domain">
+##	Domain allowed to transition.
+## </param>
+#
+interface(`javabridge_domtrans',`
+	gen_require(`
+		type javabridge_t, javabridge_exec_t;
+	')
+
+	domain_auto_trans($1,javabridge_exec_t,javabridge_t)
+
+	allow $1 javabridge_t:fd use;
+	allow javabridge_t $1:fd use;
+	allow javabridge_t $1:fifo_file rw_file_perms;
+	allow javabridge_t $1:process sigchld;
+	allow javabridge_t $1:process sighup;
+')

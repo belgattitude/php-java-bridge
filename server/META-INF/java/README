@@ -1,0 +1,40 @@
+The Java.inc and JavaProxy.php communicate with a 
+virtual machine by using the VM Bridge network 
+protocol.
+
+The Java.inc can be used by PHP libraries to call
+Java or .NET methods or procedures of a running 
+Java/.NET virtual machine.
+
+The JavaProxy.php can be used by Java to call PHP
+methods or procedures of a running HTTP server.
+
+
+Usage
+-----
+
+* Type java -jar JavaBridge.jar SERVLET:8080
+
+* To access Java libraries require java/Java.inc
+  and use the provided Java class as usual. Example:
+
+<?php
+
+  ini_set("allow_url_include", 1);
+  require_once("http://localhost:8080/JavaBridge/java/Java.inc");
+
+  $string = new Java("java.lang.String", "HelloWorld");
+  echo $string;
+
+?>
+
+* On a server connected to the internet use SERVLET_LOCAL:8080 or
+  use a J2EE/Servlet engine and the JavaBridge.war instead.
+
+
+Mailing List
+------------
+Please report bugs/problems to the mailing list:
+
+  php-java-bridge-users@lists.sourceforge.net
+

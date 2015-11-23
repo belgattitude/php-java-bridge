@@ -1,0 +1,84 @@
+Source: php-java-bridge
+Section: web
+Priority: optional
+Maintainer: Andre Felipe Machado <andre.machado@serpro.gov.br>
+Build-Depends:  debhelper (>= 7.4.11~bpo50+1), libncurses5-dev (>= 5.5-2 ), libselinux1-dev (>= 1.30 ), libsepol1-dev (>= 1.12.24 ), php5-dev (>= 5.1.0 ) , automake (>= 1.6.3 ) | automake1.7 | automake1.8 | automake1.9, sun-java6-jdk (>= 1 ),  locales (>= 2.3.6.ds1-4 ),  gcc (>= 3.2 ),  make (>= 1 ), liblucene-java, libitext-java, dpatch, libtomcat5.5-java, libaprutil1-dev, libapr1-dev, libtcnative-1, php-pear, libsemanage1, checkpolicy, libapache2-mod-jk, selinux-policy-dev, apache2-prefork-dev, libxalan110, dh-make, dh-make-php, php5-cli
+Standards-Version: 3.8.0
+XBS-Homepage: http://php-java-bridge.sourceforge.net
+
+
+
+Package: php-java-bridge-j2ee
+Architecture: all
+Depends:  sun-java6-jre, tomcat5.5, liblucene-java, libitext-java, libapache2-mod-jk, php5-cli, php5-cgi, libaprutil1, libapr1, libtcnative-1, libxalan110
+Conflicts: php-java-bridge
+Description: XML-based net connection protocol between PHP-Java / ECMA 335 vm
+ The PHP/Java Bridge is an optimized, XML-based network 
+ protocol which can be used to connect a native script 
+ engine with a Java or ECMA 335 virtual machine. 
+ It is more than 50 times faster than local RPC via SOAP, 
+ uses less resources on the web-server side and it is faster 
+ and more reliable than a communication via the Java Native 
+ Interface.
+ This Debian package installs the bridge J2EE server 
+ implementation.
+
+Package: php-java-bridge-docs
+Architecture: all
+Depends: 
+Description: XML-based net connection protocol between PHP-Java / ECMA 335 vm
+ The PHP/Java Bridge is an optimized, XML-based network 
+ protocol which can be used to connect a native script 
+ engine with a Java or ECMA 335 virtual machine. 
+ It is more than 50 times faster than local RPC via SOAP, 
+ uses less resources on the web-server side and it is faster 
+ and more reliable than a communication via the Java Native 
+ Interface.
+ This Debian package installs user documentation.
+
+Package: php-java-bridge-j2ee-docs
+Architecture: all
+Depends: 
+Description: XML-based net connection protocol between PHP-Java / ECMA 335 vm
+ The PHP/Java Bridge is an optimized, XML-based network 
+ protocol which can be used to connect a native script 
+ engine with a Java or ECMA 335 virtual machine. 
+ It is more than 50 times faster than local RPC via SOAP, 
+ uses less resources on the web-server side and it is faster 
+ and more reliable than a communication via the Java Native 
+ Interface.
+ This Debian package installs J2EE server user documentation.
+
+Package: php-java-bridge-devel
+Architecture: all
+Depends: sun-java6-jdk, liblucene-java, libitext-java, php-java-bridge | php-java-bridge-j2ee
+Description: XML-based net connection protocol between PHP-Java / ECMA 335 vm
+ The PHP/Java Bridge is an optimized, XML-based network 
+ protocol which can be used to connect a native script 
+ engine with a Java or ECMA 335 virtual machine. 
+ It is more than 50 times faster than local RPC via SOAP, 
+ uses less resources on the web-server side and it is faster 
+ and more reliable than a communication via the Java Native 
+ Interface.
+ This Debian package Contains the development documentation.
+ Also the development files needed to create java applications
+ with embedded PHP scripts.
+
+Package: php-java-bridge-j2ee-selinux
+Architecture: all
+Depends:  sun-java6-jre, tomcat5.5, liblucene-java, libitext-java, php-java-bridge-j2ee
+Description: XML-based net connection protocol between PHP-Java / ECMA 335 vm security
+ The PHP/Java Bridge is an optimized, XML-based network 
+ protocol which can be used to connect a native script 
+ engine with a Java or ECMA 335 virtual machine. 
+ It is more than 50 times faster than local RPC via SOAP, 
+ uses less resources on the web-server side and it is faster 
+ and more reliable than a communication via the Java Native 
+ Interface.
+ This Debian package installs the bridge J2EE server 
+ SE Linux rules contained in the package devel, 
+ examples/security/module directory.
+ This package works only for tomcat5.5 and SELinux default policy.
+ Other J2EE server or policy should compile and install from your
+ modified source.
+

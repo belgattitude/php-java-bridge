@@ -1,5 +1,6 @@
 /dist
 /bin
+/nbproject
 /.classpath
 /server/META-INF/java/JavaProxy.php
 /server/META-INF/java/Java.inc

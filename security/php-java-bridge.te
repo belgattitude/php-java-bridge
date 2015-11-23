@@ -1,0 +1,83 @@
+#################################
+# php-java-bridge.te
+# SELinux rules for the javabridge_t domain
+#
+# javabridge_exec_t is the type of the javabridge 
+# executable "RunJavaBridge", see php-java-bridge.fc
+
+daemon_domain(javabridge, `, nscd_client_domain');
+# log_domain(javabridge);
+tmp_domain(javabridge);
+
+# Domain transitions
+####################
+domain_auto_trans(httpd_t, javabridge_exec_t, javabridge_t)
+
+# -- base file read access ---------
+# We can't use the base_file_read_access macro on FC3.
+# The following is a copy of the FC4 macro:
+
+# Read /.
+allow javabridge_t root_t:dir r_dir_perms;
+allow javabridge_t root_t:notdevfile_class_set r_file_perms;
+
+# Read /usr.
+allow javabridge_t usr_t:dir r_dir_perms;
+allow javabridge_t usr_t:notdevfile_class_set r_file_perms;
+
+# Read bin and sbin directories.
+allow javabridge_t bin_t:dir r_dir_perms;
+allow javabridge_t bin_t:notdevfile_class_set r_file_perms;
+allow javabridge_t sbin_t:dir r_dir_perms;
+allow javabridge_t sbin_t:notdevfile_class_set r_file_perms;
+read_sysctl(javabridge_t)
+# --- end base file read access ---
+
+can_exec_any(javabridge_t)
+
+general_domain_access(javabridge_t)
+general_proc_read_access(javabridge_t)
+
+# we currently have no log directory
+allow javabridge_t var_log_t:dir { add_name write search };
+allow javabridge_t var_log_t:file { create append write };
+
+################################
+# Connect from httpd.
+can_unix_connect(httpd_t, javabridge_t)
+
+# Connect from httpd using tcp sockets
+allow javabridge_t self:tcp_socket { accept bind connect create getattr listen read setopt write shutdown };
+allow javabridge_t port_t:tcp_socket { name_bind name_connect recv_msg send_msg };
+allow javabridge_t netif_lo_t:netif { tcp_recv tcp_send };
+allow javabridge_t node_lo_t:node { tcp_recv tcp_send };
+allow javabridge_t node_lo_t:tcp_socket node_bind;
+
+dontaudit javabridge_t node_inaddr_any_t:tcp_socket node_bind;
+dontaudit javabridge_t sbin_t:dir search;
+################################
+
+# Read locale data
+read_locale(javabridge_t)
+
+# Access random device
+allow javabridge_t { urandom_device_t random_device_t }:chr_file r_file_perms;
+
+# Read /etc
+allow javabridge_t etc_runtime_t:{ file lnk_file } r_file_perms;
+
+# Read /var/www
+r_dir_file(javabridge_t, httpd_sys_content_t)
+
+###################################################
+# Running the back-end as a sub-component of apache
+allow javabridge_t httpd_log_t:file append;
+allow httpd_t javabridge_t:process { sigkill signal };
+
+
+# Insane settings needed for sun java 1.5.  Comment this out, if you
+# can.
+allow javabridge_t javabridge_tmp_t:file { execute };
+allow javabridge_t usr_t:file { execute };
+allow javabridge_t locale_t:file { execute };
+allow javabridge_t random_device_t:chr_file { append };

@@ -1,0 +1,1855 @@
+php-java-bridge NEWS -- history of user-visible changes.
+
+Please send bug reports, questions and suggestions to
+<php-java-bridge-users@lists.sourceforge.net>.
+
+Version 6.2.1
+
+* java_session(null, false) now returns false if a session does not exist.
+
+* Added new BIRT version 2.6
+
+* Incompatible change for those who use $_SERVER["REQUEST_URI"] as a cache key.
+  Please either use PHP_SELF or please set 
+    <init-param>
+      <param-name>php_request_uri_is_unique</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  
+
+* A (string) cast no longer converts a byte[] array to a 
+  java.lang.String. Example:
+ 
+  $s = new java("java.lang.String", "hello");
+  $b = $s->getBytes("ASCII");
+  echo (string)$b;
+  
+    
+* To support both x64 and 386 windows dll's, the layout has been changed:
+
+    WEB-INF --- cgi 
+                   |
+                    --- x86-windows --- conf.d --- mysql.ini [extension="php_mysql.dll"]
+                   |               |
+                   |                --- ext --- php_mysql.dll
+                   |                --- php-cgi.exe <-- moved here
+                   |
+                   |
+                   |
+                    --- i386-linux --- conf.d --- mysql.ini [extension="mysql.so"]
+                                  |
+                                   --- ext --- mysql.so
+                                   --- php-cgi      <-- moved here
+
+* The FastCGI configuration has been moved from the FastCGIServlet servlet config to the ContextLoaderListener context.
+  Please use <context-param parameter ... instead of <init-param servlet-parameter ...
+  
+* The PHP JSR 223 ScriptEngine API now supports the Compilable interface. Please see the php/java/tests JUnit tests.
+
+* The EngineFactory has been removed. Scripts running within a servlet context (see ContextLoaderListener) can
+  now use a ScriptContext decorator to access the FastCGI runner associated with the ContextLoaderListener. 
+  A sample decorator can be found in php.java.script.servlet.PhpCompiledHttpScriptContext
+  
+
+Version 6.1.2.1
+
+* Security fix: Even if the PHP option allow_url_include it set, it is
+  no longer possible to load arbitrary resources using the JSR 223
+  script interface. The following eval() will fail if the "remote"
+  interface is not 127.0.0.1:
+
+<%!
+private static final Reader R = EngineFactory.createPhpScriptReader("<?php function f($a) {return 'hello '.$a;}; ?>");
+%>
+<%
+Reader r = EngineFactory.createPhpScriptFileReader(getClass().getName()+"._cache_.inc", R);
+ScriptEngine e = 
+  EngineFactory.getInvocablePhpScriptEngine (this,
+                               application, request, response, 
+			       new URI("http://127.0.0.1/java/JavaProxy.php"););
+try {
+
+  // inject the above PHP code into the PHP app server and execute it
+  // will fail if the URI is not http://127.0.0.1/...
+  e.eval(r); r.close();
+
+  // call the injected code
+  Object result = ((Invocable)e).invokeFunction("f", new Object[]{"you"});
+  out.println ("result: " + result);
+
+} catch (Exception ex) {
+ out.println(ex);
+} finally { 
+  ((Closeable)e).close()
+}
+%>
+
+
+Version 6.1.2
+
+* The bridge now sets the config dir to cgi/OS-ARCH/conf.d. It makes
+  it easier to add custom PHP extensions to the Java web
+  application. Please see the phpinfo() output.
+
+  Example for the PHP mysql extension for Linux and Windows (i386/x86):
+
+    WEB-INF --- cgi --- php-cgi-x86-windows.exe
+                   |
+                    --- x86-windows --- conf.d --- mysql.ini [extension="php_mysql.dll"]
+                   |               |
+                   |                --- ext --- php_mysql.dll
+                   |
+                   |
+                    --- php-cgi-i386-linux
+                   |
+                    --- i386-linux --- conf.d --- mysql.ini [extension="mysql.so"]
+                                  |
+                                   --- ext --- mysql.so
+
+  Please see the FAQ entry "I want to ship my own PHP web
+  application. Where do I put PHP and PHP extensions?" for details.
+
+* The "servlet engine" built into JavaBridge.jar now handles PHP/Java
+  Bridge protocol requests as efficient as a real servlet engine back
+  end; 
+
+    java -jar JavaBridge.jar SERVLET_LOCAL:8080 
+
+  now uses HTTP/1.1 Transfer-Encoding: chunked. Example:
+
+telnet localhost 8080
+
+PUT /JavaBridge/servlet.phpjavabridge HTTP/1.1
+Host: localhost:8080
+Transfer-Encoding: chunked
+
+22
+<H p="1" v="java.lang.String"></H>
+b
+<F p="E" />
+0
+
+
+* It is now easy to use the bridge back-end in an existing
+  servlet. Example code:
+
+  public class MyServlet extends HttpServlet {
+    ...
+    public String hello() { return "hello from MyServlet"; }
+    ...
+    protected void doPut (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+       IContextFactory ctx = new RemoteHttpServletContextFactory(this, getServletContext(), req, req, res);
+       res.setHeader("X_JAVABRIDGE_CONTEXT", ctx.getId());
+       res.setHeader("Pragma", "no-cache");
+       res.setHeader("Cache-Control", "no-cache");
+       try { ctx.handleRequests(req.getInputStream(), res.getOutputStream()); } finally { ctx.destroy(); }
+     }
+  }
+
+  If MyServlet listens on localhost:8080/MyWebApp/MyServlet, PHP scripts can call it:
+
+  <?php
+    define("JAVA_HOSTS", "localhost:8080");
+    define("JAVA_SERVLET", "/MyWebApp/MyServlet");
+    require_once("java/Java.inc");
+    
+    echo java_context()->getServlet()->hello();
+  ?>
+
+
+Version 6.1.1
+
+* The bridge now supports all available PHP stream transports. Example:
+
+  <?php require_once("https://secure-host.com:8443/JavaBridge/java/Java.inc");
+    echo java_context()->getHttpServletRequest()->getScheme();
+    echo ", ";
+    echo java_server_name();
+  ?>        
+
+  The above is equivalent to: 
+
+  <?php
+    define("JAVA_HOSTS", "ssl://secure-host.com:8443");
+    define("JAVA_SERVLET", "/JavaBridge/servlet.phpjavabridge");
+    require_once("java/Java.inc");
+
+    echo java_context()->getHttpServletRequest()->getScheme();
+    echo ", ";
+    echo java_server_name();
+  ?>
+
+  => https, ssl://my-secure-host.com:8443
+
+  Please see the PHP documentation stream_get_transports() for
+  details.
+
+Version 6.1.0
+
+* Some Windows PHP install procedures destroy a local PHP executable
+  by setting a "PHPRC" environment variable. This environment variable
+  may have been useful in the past, but it disturbs modern PHP executables.
+  Environment entries passed to PHP are now filtered through a blacklist, 
+  see PHP_ENV_BLACKLIST in global.properties in JavaBridge.jar. 
+  The list can be changed as usual. Example global.properties file:
+  
+    PHP_ENV_BLACKLIST = KEY1 KEY2 KEYN
+    
+  Example command line:
+  
+    java -Dphp.java.bridge.php_env_blacklist="key1 key2 keyN" -jar JavaBridge.jar ...
+    
+
+Version 6.0.0
+
+* Apache or IIS PHP scripts can now use "java_virtual()" to include
+  the output of JSP scripts, Java servlets or Java frameworks into PHP
+  pages.
+
+* MS .NET support has been removed: The "MonoBridge.exe" is not
+  available anymore.
+
+* Support for GNU "Java", GNU Autoconf/Makefile has been removed: The
+  only remaining targets "JavaBridgeTemplate.war" and "JavaBridge.war"
+  can now be build by a java "ant" build script.
+
+* FreeBSD support has been removed: The "unix domain" socket channel
+  (implemented by a JNI "libnatcJavaBridge.so") cannot be used
+  anymore, therefore the bridge will be very slow on this operating
+  system kernel. FreeBSD users must use local TCP sockets and switch
+  off the Nagle algorithm or fix their kernel or add a TCP_NDELAY
+  option to the PHP streams implementation.
+
+* Dynamic class loading has been removed: The java_require() procedure
+  is not available anymore. Please use standard JEE or servlet
+  autodeployment instead.
+
+* Support for the Tomcat "CGIServlet.java" has been removed: PHP must
+  support the FastCGI SAPI. PHP >= 5.2.0 support the FastCGI SAPI by
+  default. If you have a php-cgi binary < version 5.2.0, recompile it
+  with the --enable-fastcgi option. The FastCGI servlet has been
+  rewritten to support HTTP/1.1 chunked connections and the
+  "WebSockets" protocol used by google "Chrome".
+
+* The named pipe communication channel has been removed: On Security
+  Enhanced Linux please use HTTP/1.1 chunked connections instead.
+
+* The servlet or JEE back end must support HTTP/1.1 chunked
+  connections or the communication will fail. This has been tested on
+  the following AS: Glassfish, Jetty 7, Tomcat, Oracle/BEA WebLogic, Sun
+  AS 9.
+
+* The low-level protocol has not been changed. But due to the above
+  changes an old "Java.inc" might not work with a new JavaBridge.war
+  back end anymore. Please make sure to upgrade your "Java.inc" PHP
+  library.
+
+
+Version 5.5.5
+
+* PHP scripts running within a JEE server can now use PHP paths like:
+  
+    .../MOODLE/dir/do.php/something?with=what 
+
+  This feature can be switched off by removing the <filter> and
+  <filter-mapping> from the web application web.xml.
+
+* PHP scripts running within a JEE server now use java.io.tmpdir as
+  their the session.save_path. This can be changed as usual, see
+  php.java.bridge.global.properties PHP_EXEC_ARGS. Use
+  Util.DEFAULT_PHP_ARGS as a template.
+
+* A beta test version of the PHPDebugger is now part of the PHP/Java
+  Bridge.
+
+* The build system doesn't create RunJavaBridge and RunMonoBridge
+  executables anymore. java.so, libnatcJavaBridge.so and a "java"
+  binary are still created for compatibility with GNU "gcj"
+  "Java". Please ignore or delete them if you're using Java instead of
+  GNU "gcj" "Java".
+
+Version 5.5.4.1
+
+* The "JBoss" application server abuses the log4j port 4445 for its
+  internal purposes. The bridge now switches off log4j "chainsaw" if
+  getServletContext().getServerInfo().startsWith("JBoss").
+
+* The namespace separator "_" (e.g.: new org_foo_bar_baz(...) syntax),
+  which has been used by some projects, is available again. However,
+  new projects should use the official namespace separator, which
+  defaults to "\".
+
+* If the option -Dphp.java.bridge.default_log_file= is set, the bridge
+  switches off log4j chainsaw completely.
+
+* The default value of php_include_java has been set to Off.
+
+* A configuration option has been added to the JavaBridgeTemplate.war
+  which sets php_include_java to On.
+
+* Bugfix: If php_include_java is set, global PHP variables are no
+  longer discarded; the PHP scripts are required from the top-level
+  environment.
+
+
+Version 5.5.4
+
+* Bugfix: Throwing JavaException w/o messages is possible again.
+
+* A bug has been fixed in the JSR 223 handling which could cause the
+  JSR 223 script engine to crash. See the ChangeLog for details.
+
+* If the Java environment doesn't allow java.lang.Threads, Sockets, or
+  if the back end doesn't run on localhost
+  ("127.0.0.1".equals(req.getRemoteAddr()), or if the promiscuous
+  option is set, the bridge now uses a HTTP tunnel to communicate with
+  the back end.  Example:
+
+  --
+  telnet YOURHOST.com 8080 
+PUT /JavaBridge/foo.phpjavabridge HTTP/1.1
+Host: YOURHOST.com:8080
+Transfer-Encoding: chunked
+
+22
+<H p="1" v="java.lang.String"></H>
+b
+<F p="E" />
+0
+
+   --
+
+* Due to the new communication channel, version 5.5.4 may not be
+  compatible with earlier versions. Please make sure to upgrade both,
+  the "Java.inc" PHP library and the "JavaBridge.jar" Java library.
+
+* An option "java.persistent_servlet_connections" has been added to
+  the java.ini. Due to a bug in some Tomcat versions,
+  JAVA_PERSISTENT_SERVLET_CONNECTIONS cannot be used with
+  Transfer-Encoding: chunked. Tomcat 6.0.14 sends back a valid body
+  without Content-Length and Transfer-Encoding: chunked if it wants to
+  close a persistent chunked connection via Connection: close (see
+  tomcats connectionTimeout setting). An attempt to use the new
+  communication channel with JAVA_PERSISTENT_SERVLET_CONNECTIONS 
+  raises a fatal error immediately. Either enable the Pipe- or
+  SocketContextServer or disable JAVA_PERSISTENT_SERVLET_CONNECTIONS
+  in your PHP script or in the java.ini
+
+* The promiscuous option is not required anymore. If set as a context
+  parameter, it switches off the Pipe- and SocketContextServer. 
+  Example web.xml:
+
+    ...
+    </listener>
+
+    <!-- force the bridge to use the HTTP tunnel -->
+    <context-param>
+      <param-name>promiscuous</param-name>
+      <param-value>On</param-value>
+    </context-param>
+
+    <context-param>
+      <param-name>override_hosts</param-name>
+    ...
+
+
+* The option -Dphp.java.bridge.default_log_file=FILE redirects all log
+  output to FILE. The following example sends all log output to
+  standard out: JAVA_OPTS="-Dphp.java.bridge.default_log_file="
+  bin/catalina.sh run
+
+* The JAVA_DEBUG option has been removed from Java.inc, so that
+   Java.inc fits into 64K. Use JavaBridge.inc from the src.zip or a
+   PHP source level debugger (for example the Zend Debugger) if you
+   want to debug the PHP bridge code.
+
+
+Version 5.5.3
+
+* The bridge can now handle java.lang.RuntimeException/Errors: If the
+  option JAVA_PREFER_VALUES is set, each RuntimeException/Error is
+  thrown as a PHP JavaException. Otherwise java_last_exception_get()
+  can be used to fetch the last RuntimeException/Error. Example:
+
+   define ("JAVA_PREFER_VALUES", false);
+   require ("http://localhost:8080/JavaBridge/java/Java.inc");
+
+   try {
+     @new java("java.lang.String", null);
+     if ($ex = java_last_exception_get()) {
+       echo "OOPS, ";
+       java_last_exception_clear();
+       throw $ex;
+     }
+   } catch (JavaException $e) {
+    echo "Received Exception or Error:" . $e->getMessage();
+   }
+
+* java_begin_document()/java_end_document() are now dummy calls and
+  have been removed from the documentation.
+
+* java_last_exception_get()/java_last_exception_clear() are no longer
+  deprecated.
+  
+
+Version 5.5.1
+
+* Improved unix-domain socket handling: If
+
+    java.socketname=/path/to/some/unix.socket
+
+  is set in the php ini file, the bridge starts a Java process
+  listening on that socket.
+
+* Improved local tcp socket handling: If 
+
+    define ("JAVA_SERVLET", false);
+    define ("JAVA_HOSTS", PORT); // e.g.: PORT = 9090
+
+  is set before including Java.inc, the bridge starts a Java process
+  listening on that port.
+
+* Improved JSR 223 standalone invocable script engine: When running in
+  standalone mode, the InvocablePhpScriptEngine can now connect to a
+  remote PHP application server, too. Example:
+
+  PHP script "hello.php":
+   <?php require_once("java/Java.inc");
+    function f() {return java_server_name();};
+    java_call_with_continuation(java_closure());
+   ?>
+
+  The Java code:
+    ScriptEngine e = (new ScriptEngineManager()).getEngineByName("php-invocable");
+    e.eval(new php.java.script.URLReader(new URL("http://localhost/hello.php")));
+    System.out.println(((Invocable)e).invokeMethod(e.get("php.java.bridge.PhpProcedure"), "f", new Object[]{}));
+    ((Closeable)e).close();
+ 
+
+Version 5.5
+
+* mono_closure() and java_closure no longer try to determine the type
+  automatically, pass the type as the third argument. Instead of:
+
+  $win->add_DeleteEvent (new Mono("Gtk.DeleteEventHandler", 
+         mono_closure($this, "delete")));
+
+  use:
+
+  $win->add_DeleteEvent (new Mono("Gtk.DeleteEventHandler", 
+         mono_closure($this, "delete", mono('Gtk.DeleteEventHandler$Method'))));
+
+  instead.
+
+* The current PHP continuation is now available from the engine scope,
+  key "php.java.bridge.PhpProcedure".
+
+* The bridge tries to autoload Java classes by default. For example
+
+    use java\lang\String as Str; echo new Str("hello");
+
+  will autoload the class JString. This can be switched off with
+  define("JAVA_DISABLE_AUTOLOAD", true); before including Java.inc.
+
+
+* PHP 5.3 classes can now extend Java classes easily. For example:
+
+  <?php 
+    use java\lang\String as JString;
+
+    class String extends JString {
+      function toString() { return "I am" . parent::toString(); }
+    }
+
+    $str = new String(" a php/java string");
+    echo $str->toString ();
+  ?>
+
+
+* Since PHP 5.3 TYPE::procedure() can be used instead of
+  TYPE::type()->procedure().
+
+  <?php 
+    use java\lang\System as Sys;
+
+    echo Sys::getProperties();
+    // equivalent to echo Sys::type()->getProperties()
+  ?>
+
+  However, to access a static procedure with the name "type" or a
+  sub-type of a type, you still have to use the TYPE::type(SUBTYPE)
+  syntax.
+    
+
+* Improved array handling:
+
+  $l = new java("java.util.ArrayList", array(1,2,3));
+  echo isset($l[3])?"t":"f";
+  => f
+  $l[] = 4;
+  echo isset($l[3])?"t":"f";
+  => t
+  unset($l[3]);
+  echo isset($l[3])?"t":"f";
+  => f
+  print_r(java_cast($l, "array"));
+  => array((object)1, (object)2, (object)3);
+  print_r(java_values($l));
+  => array(   (int)1,    (int)2,    (int)3);
+
+
+* The bridge no longer throws java.lang.RuntimeException or
+  java.lang.Error unless these exceptions are declared in the
+  procedure or method definition.
+
+
+Version 5.4.4.2
+
+* A fast path has been added so that scripts running within a java
+  servlet engine or J2EE server can access their Java back end. This
+  can be switched off by setting the PhpCgiServlet init-param
+  php_include_java to Off.
+
+* A fast path has been added so that scripts running within a java
+  servlet engine or J2EE server consume only one continuation. This
+  means that the bridge can now run on engines which have a limited
+  thread pool without having to check for a potential dead-lock
+  (e.g. thread pool is full of servlets waiting for another servlet to
+  start). This short path can be switched off by setting the system
+  property php.java.bridge.no_short_path=true.
+
+* java_invoke is now an official API method
+
+* java_require() documentation has been removed. It is and will be
+  supported, but new users should use tomcat/jee hot deployment
+  instead.
+
+* It is now much easier to install the bridge for all Java web
+  applications or to add it to existing Java web application. Only the
+  JavaBridge, php-servlet and php-script jar files and 9 lines of
+  standard XML configuration are needed, see our
+  FAQ.html#global-servlet for details.
+
+* RequestDispatcher.include() can now be used with the PHP
+  servlet. The servlet now checks if javax.servlet.include.* exists
+  and uses these arguments instead of the original arguments obtained
+  via reqest.getRequestURL() etc.
+
+* The php.java.script.servlet.EngineFactory API has been revised.
+
+
+Version 5.4.4.1
+
+* Remote PHP scripts can now be accessed as usual. The code:
+
+  <%@page import="java.io.*" %>
+  <%@page import="javax.script.*" %>
+  <%@page import="php.java.script.servlet.EngineFactory" %>
+  <%
+   ScriptEngine e = 
+     EngineFactory.getInvocablePhpScriptEngine (this,
+                                 application, request, response, 
+                    new java.net.URI("http://foo:80/myApp/JavaProxy.php"));
+
+   String result = (String)((Invocable)e).invokeFunction("phpversion", 
+                                                            new Object[]{});
+   ((Closeable)e).close();
+   out.println("yourApp running PHP version:" + result);
+  %>
+
+Will eval "phpversion()" on the server foo and return the result.
+
+There must not be a firewall in between and both components should be
+behind a firewall.
+
+
+Version 5.4.4
+
+
+* The handling of J2EE JSR 223 script engines (and scripts executed
+within a J2EE server) has been changed. They are no longer reclaimed
+automatically when they are idle for more than 15 seconds. Please see
+the ChangeLog file for details.
+
+* A system FastCGI server executable is now executed from the PATH.
+
+
+Version 5.4.3.3
+
+* The binary download has been split into a JavaBridgeTemplate5433.war
+  and a php-java-bridge_5.4.3.3_documentation.zip.
+
+
+Version 5.4.3.2
+
+* A shutdown hook can now be used to automatically shut down libraries
+  when the (servlet-) context is destroyed.
+
+* Invocable script engines are automatically destroyed when the 
+  (servlet-) context is destroyed.
+
+* Invocable script engines are no longer automatically destroyed at
+  the end of the request, as users may want to store them in the
+  application store for example. Use ((Closeable)engine).close() to
+  destroy a script engine explicitly.
+
+* The convenience procedures getHttpServletResponse(),
+  getHttpServletRequest(), getServlet(), getServletConfig(),
+  getServletContext(), getRealPath() have been added to the the
+  java_context().
+
+* On Solaris the directory /tmp is used instead of /dev/shm to create
+  the named pipes.
+
+* An Eclipse BIRT report example is included.
+
+* Users who want to run php from Java, can pass arguments via
+  -Dphp.java.bridge.php_exec_args=ARGS. ARGS must be a list of
+  java.net.URLEncoded arguments, separated by a space. User-provided
+  PHP_EXEC_ARGS replace the standard args, which are: "-d
+  allow_url_include=On -d display_errors=Off -d log_errors=On -d
+  java.persistent_servlet_connections=On".
+
+Version 5.4.3.1
+
+* java_unwrap($closure) can now used to retrieve the PHP object
+  associated with a java_closure(). Example:
+
+    class f{function __toString(){return "p";}function toString(){return "j"}};
+    $cl = java_closure(new f());
+    echo $cl;
+    => j
+    $cl = java_unwrap($cl)
+    echo $cl;
+    => p
+
+
+Version 5.4.2
+
+* JavaBridge.jar now supports a -Dphp.java.bridge.daemon=true option.
+  When this option is set, the bridge ignores all other options,
+  closes the in-, out- and error streams immediately and runs
+  as a daemon. Example
+
+	<html>
+	<head/>
+	<body>
+	<form method="POST" action="<?php $_SERVER['PHP_SELF']?>">
+	  <input type="submit" value="java_start" name="java_start">
+	  <input type="submit" value="java_stop" name="java_stop">
+	  <input type="submit" value="java_properties" name="java_properties">
+	</form>
+	<?php require_once("java/Java.inc");
+	
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	  $JAVA="javaw";
+	} else {
+	  $JAVA="nohup java";
+	}
+	
+	if (isset($_POST["java_start"])) {
+	  echo 
+	    system("$JAVA -Dphp.java.bridge.daemon='true' -jar java/JavaBridge.jar SERVLET_LOCAL:8080");
+	  exit (0);
+	}
+	
+	if (isset($_POST["java_stop"])) {
+	  $file = fsockopen("127.0.0.1", 8080) or die ("java not running");
+	  fwrite($file, "PUT /JavaBridge/JavaBridge.phpjavabridge HTTP/1.0\r\nHost: localhost\r\nContent-Length: 71\r\n\r\n<C v=\"java.lang.System\" p=\"C\" /><I v=\"1\" m=\"exit\" p=\"I\"><S v=\"0\" /></I>");
+	  fclose ($file);
+	  exit (0);
+	}
+	
+	try {
+	   echo java("java.lang.System")->getProperties();
+	} catch (Exception $e) {
+	  echo $e;
+	}
+	?>
+	</body>
+	</html>
+
+
+Version 5.4.1
+
+* If PHP is used within a J2EE server or servlet engine the option
+  JAVA_PERSISTENT_SERVLET_CONNECTIONS is set. This means that the
+  servlet option fcgi_children (see WEB-INF/web.xml) must be less than
+  or equal to the servlet engine's thread pool size. It defaults to
+  5. The smallest thread pool we've seen is the thread pool of the Sun
+  J2EE server version 9, with 5 entries.
+
+* If PHP is used within Apache or IIS via the java.so or
+  php_java.dll the option JAVA_PERSISTENT_SERVLET_CONNECTIONS is
+  set. This means that Apache/IIS "maxChilds" must be less than or
+  equal to the servlet engine or J2EE server's "maxThreads" value,
+  otherwise the additional PHP executables will hang. On Fedora and
+  RedHat Linux we have verified that Tomcat's maxThreads == Apache
+  maxChilds. If you're unsure, do not use the php_java.dll/java.so.
+
+* Due to a bug in PHP versions < 5.3 persistent connections cannot be
+  used on Windows. Please make sure to switch them off.
+
+* All options can now be set on the command line. Example:
+
+    php-cgi -djava.persistent_servlet_connections=On test.php
+
+
+Version 5.3.4
+
+* To be compatible with all operating systems, the bridge now uses
+  a dummy round-trip during context switches, effectively reverting
+  the change from version 5.3.3.
+
+
+Version 5.3.3
+
+* For context switches the bridge now uses write-write-read on
+  protocol level. 
+
+* The PhpServlet* JSR 223 script engines have been rewritten to make
+  it easier to call Apache or IIS PHP modules or libraries from
+  servlets. Example:
+
+  <%!
+  /* Create a PHP script with a function f() */
+  private static java.io.File script;
+  private static java.io.File getScript(String path) {
+    if(script!=null) return script;
+    return script=EngineFactory.getPhpScript(path, new StringReader(
+               "<?php function f($arg) {return 1 + java_values($arg); }; ?>"));
+  }
+  %>
+  <%
+  /* Create a standard script engine and invoke function f on http port 80 */
+  ScriptEngine e = EngineFactory.getInvocablePhpScriptEngine (this, 
+                                  application, request, response, "http", 80);
+  File script = getScript(application.getRealPath(request.getServletPath()));
+  FileReader reader = EngineFactory.createPhpScriptFileReader(script);
+  e.eval (reader); reader.close();
+  Object result=((Invocable)i).invokeFunction("f",new Object[]{new Integer(2)});
+  ((Closeable)e).close(); // flush the output generated by invokeXXX
+  out.println("result from php::f(), printed from the servlet: " + result);
+  %>
+
+
+Version 5.3.0
+
+* The bridge now uses real PHP 6 namespaces. Example:
+
+   java_autoload("lucene.jar");
+
+   use org::apache::lucene;
+   use org::apache::lucene::index;
+   use org::apache::lucene::search;
+   use org::apache::lucene::search::IndexSearcher as LuceneSearcher;
+
+   $searcher = new LuceneSearcher(...);
+   $term = new index::Term("name", "someTerm");
+   $phrase = new search::PhraseQuery();
+   
+   $phrase->add($term);
+   $hits = $searcher->search($phrase);
+
+
+Version 5.2.3
+
+* Java boolean values now display as 0/1:
+
+    echo ((bool)(string)new java("java.lang.Boolean", false)) ? "#t":"#f";
+    => #f
+    echo ((bool)(string)new java("java.lang.Boolean", true )) ? "#t":"#f";
+    => #t
+
+Version 5.2.2.4
+
+* The mono.so does not interfere with the pure Java PHP/Java Bridge
+  implementation anymore.
+
+Version 5.2.2.3
+
+* The deprecated php_java.dll and java.so may trash the pure Java
+  PHP/Java Bridge implementation.  Revert all changes made by the
+  java.so or php_java.dll and use our own settings.
+
+Version 5.2.2.2
+
+* The JSR223 scripts can now be cached. See jsp+php.jsp and jsr223.jsp
+  for details.
+
+* The standalone component now uses a very restrictive security
+  setting by default. It can be switched off in java.ini.
+
+
+Version 5.2.2
+
+* This version contains bug fixes only.
+
+
+Version 5.2.1
+
+* java_isnull() or java_is_null() can be used to test for a Java NULL value. 
+  It is equivalent to is_null (java_values ($javaObject)));
+
+
+Version 5.2.0
+
+* The Java type has been removed from java.so and php_java.dll. To
+  access Java, use
+  
+    require_once ("java/Java.inc");
+
+* java_require("foo.jar;...") and java_autoload("foo.jar;...")
+  override the libraries from the global class path.
+
+
+Version 5.1.0
+
+* This release contains only bugfixes.
+
+* The procedure which calculates the weight of the potential method
+  candidates has been rewritten. It is compatible with Sam Ruby's code
+  written for PHP 4 except that arrays with a non matching component
+  type have a much larger weight.
+
+* The bridge now uses the same code as zend_eval_string() to load
+  the PHP code into the zend engine. If your debugger or some other
+  component "xxx" crashes in xxx_execute(), check if it honors the 
+  EG(no_extensions)==1 flag.
+
+* The bridge no longer tries to load libraries from
+  php.java.bridge.base/lib. Use java.ext.dirs instead.
+
+
+Version 5.0.0
+
+This version is no longer backward compatible with earlier versions:
+
+* Undeclared exceptions thrown by Java procedures can no longer be
+  caught by PHP code. This change may cause confusion, but it is
+  consistent with other container implementations, for example EJB.
+
+* No automatic Java -> PHP value conversion. Use java_values($javaValue) 
+  to retrieve the value from a Java proxy.[1]
+
+* Java NULL values are represented as PhpNull proxies. Use java_values()
+  to retrieve the value.[1]
+
+[1] Note that in PHP versions <= 5.3
+
+  class Clazz { function __toString() {return "42"; } }
+  var_dump((int)(string)new Clazz());
+
+works correctly but 
+
+  var_dump((int)new Clazz());
+
+does not. This means that if you want to convert an object into
+a value, you must convert it into a string first.
+    
+
+Version 4.3.3
+
+This release contains bug fixes only. The following "bugs" have
+been fixed:
+
+* The asynchronous protocol can now be used everywhere. Please see
+  examples/bench/bench.php for details.
+
+* The Apache/IIS front end and the tomcat back end can be restarted
+  independently. Tomcat doesn't keep references to old classes when
+  the context is reloaded.
+
+* When gcj is used, dynamic proxies are created by the default
+  classloader. This is necessary because gcj doesn't have a class GC.
+
+* The JSR223 script engines now wait for the SimpleContextFactory to
+  finish. In previous versions the script engines were recycled at the
+  end of the PHP script, not at the end of the PHP to Java
+  communication.
+
+* The old C implementation has been removed. PHP 4 is not supported
+  anymore.
+
+
+Version 4.3.1
+
+* JSP or servlets can now access PHP as follows:
+
+  <%  out.println ("I AM A SERVLET ... "); 
+      javax.script.ScriptEngine e = 
+        php.java.script.EngineFactory.getPhpScriptEngine 
+                                       (this, application, request, response);
+      e.getContext().setWriter (out);
+      e.eval ("<?php echo '... AND I AM AN EMBEDDED PHP SCRIPT';?>");
+      e.eval ("<?php echo java_inspect (java_closure()); ?>");
+  %>
+
+  The InvocablePhpScriptEngine can be retrieved with 
+  EngineFactory.getInvocablePhpScriptEngine(...);
+
+
+Version 4.3.0
+
+* A php-java-bridge-mono RPM is now available.
+
+* Renamed JavaBridge to VMBridge.
+
+* It is now possible to access PHP (HTTP- or FastCGI) pool instances
+from servlets or frameworks such as Spring or JSF using the JSR 223
+API. See script/EngineFactory.java and servlet/ContextLoaderListener.java.
+
+* New high-level API:
+
+ java_autoload() or java_autoload("foo.jar;bar.jar;...");
+ echo new java_lang_String("hello");
+ => hello
+
+ echo java_lang_String::type();
+ => type: java.lang.String
+
+ echo java_lang_Boolean::type()->TYPE;
+ => primitive type: boolean
+
+ echo php_java_bridge_Util::type("Logger");
+ => type: php.java.bridge.Util$Logger
+
+ echo php_java_bridge_Util::type('ProcessWithErrorHandler$PhpException');
+ => type: php.java.bridge.Util$ProcessWithErrorHandler$PhpException
+
+
+Version 4.2.0
+
+* This is an experimental release.
+
+* A cache has been added to the pure PHP PHP/Java Bridge
+implementation. If enabled, scripts which call a java routine more
+than once will execute up to 7 times faster.
+
+
+Version 4.1.8
+
+* The old C extension doesn't exist anymore. 
+
+* For backward compatibility the file "java.c" loads "Java.inc",
+compiles and caches it. Although this temporarily makes the C
+implementation up to 10 times slower (due to a slow XML parser/writer
+on PHP level), it allows us to use certain optimizations on opcode
+level. Furthermore the C-based XML parser and XML writer is still
+there and will be used by the pure PHP/Java Bridge implementation in
+the future.
+
+* Since the C extension doesn't use any object-level API's anymore (at
+the moment it uses only zend_compile() and zend_execute()), it will
+compile against all future versions of the zend engine. Furthermore it
+should now be easy to compile it on operating systems which don't
+support autoconf.
+
+* The user option java.persistent_connections has been
+removed. Persistent connections are always switched on in PHP >= 5.
+
+* The pure PHP/Java Bridge implementation looks for a function
+"java_get_default_channel()". If it exists and returns a string or
+integer, the bridge will use this port number. It is used by Apache or
+IIS to communicate the port number of the Java sub component (if any)
+to PHP. Outside of Apache/IIS this can be used as follows:
+
+  # start java from a service script 
+  java -jar JavaBridge.jar INET_LOCAL:9876 
+
+  # In each PHP script define the default channel# before 
+  # loading Java.inc
+  if(!function_exists("java_get_default_channel")) {
+   function java_get_default_channel() { return 9876; }
+   require_once("java/Java.inc");
+  }
+  echo java("java.lang.System")->getProperties();
+
+
+Version 4.1.7
+
+* Forcibly switched off java.persistent connections when the C front
+end is used with a J2EE back end. The persistent connection handling
+in java.c was a hack which assumed ownership of the back end. Now that
+we support a J2EE cluster and the Apache load balancer, the C code
+must be rewritten so that it uses the same algorithm as the pure
+PHP/Java Bridge implementation: connect to the servlet to obtain the
+session and the local channel#, then switch to the (persistent-)
+channel.
+
+* Removed all deprecated code from the back end. The back end 
+now throws an exception if it is used with an old C front end.
+
+Version 4.1.6
+
+* Fixed a bug in the pure PHP/Java Bridge implementation, which did
+not handle urls like http://foo.org//bar/baz.php correctly (the apache
+load balancer emits such URL's).
+
+* Apache load balancer supported. See the FAQ entry "How to I enable
+load balancing for the PHP/Java Bridge cluster".
+
+Version 4.1.5
+
+* The simple web server built into the JavaBridge.jar can now handle
+JSR223 scripts, directories and plain (html- and text-) files. This is
+convenient for testing server-side script implementations such as PHP,
+bean shell, ecma script, etc.
+
+* The JavaBridge.war file is now marked as "distributable" and can be
+used in a cluster environment. We have tested a Tomcat 6 cluster with
+3 nodes running on different servers.
+
+
+Version 4.1.3
+
+* The bridge doesn't reset the log4j configuration if chainsaw is
+listening on port 445.  To override the log4j configuration, set
+java.log_file=@127.0.0.1:445 in the php.ini (C implementation). Or set
+servlet_log_file to @127.0.0.1:447 in the WEB-INF/web.xml.
+
+Version 4.1.1
+
+* For compatibility with the pure PHP implementation the C
+implementation now exports a java() function.
+
+* The DynamicJavaBridgeClassLoader is now optional. The bridge
+now uses the current web app class loader, wrapped by a URLClassLoader which
+checks {php.java.bridge.base}/lib/. When the java_require() procedure is called,
+the bridge enables the DynamicJavaBridgeClassLoader, which uses the current
+URLClassLoader as a fall back.
+
+* The PHP/Java Bridge can now be used in a shared environment. For example:
+  require_once("http://localhost:8080/webApp1/Java.inc");
+  java_require("myClass");
+loads myClass from webApp1, even if JavaBridge.jar and php-servlet.jar were loaded
+from the global class path.
+
+* new JavaClass("NonPublicClass") or java("NonPublicClass") now immediately throw
+an IllegalAccessException.
+
+Version 4.0.8
+
+* It is now possible to call JSP taglibs from (remote-) php
+scripts. See tests.php5/tag.php for a test case.
+
+* It is now possible to direct a PHP script to different back ends at
+run-time. When the PHP script contains a
+
+  require_once("http://myHost.com:8080/JavaBridge/java/Java.inc"),
+
+statement, both, the C and the pure PHP implementation connect to
+myHost.com on port 8080 instead of the local back end started with
+Apache or IIS.
+
+* The C implementation of java_cast now accepts values. For example
+java_cast(1, "string") returns "1". This is consistent with the pure
+PHP implementation
+
+* A bug, introduced in version 4.0.1, has been fixed. The bridge
+instance was removed too early, which caused a NullPointerExeption on
+the server side if the PHP script contains only a
+"java_get_server_name()" statement.
+
+* The HTTP tunnel (used when both, the SocketContextServer and
+PipeContextServer are switched off) works again, due to the above bug
+fix.
+
+
+Version 4.0.5
+
+* It is now possible to access the ServletContext, ServletRequest and
+Servlet from the remote context for not more than 30 seconds. See
+tests.php5/testContextAwarePhpJavaServlet.php
+
+
+Version 4.0.3
+
+* A java.lang.String object now displays as a primitive type. Example:
+
+$buf = new Java("java.lang.StringBuffer", "hello world");
+$s = $buf->toString();
+$s = $s->substring(0, 5);
+echo $s; echo " is "; echo is_string($s) ? "" : "not "; echo "a php string\n";
+
+=> hello is not a php string
+
+
+Version 4.0.2
+
+* FastCGI on Windows: FastCGI is default on all operating systems. The
+bridge now uses its own "launcher.exe" and "named pipes" to
+communicate with the FastCGI server. IBM's "launcher.exe", which was
+required until now, should not be used anymore.
+
+* The default standalone container does not start in promiscuous mode
+anymore. Select SERVLET:8080 to enable it.
+
+* Promiscuous mode: It is now possible to set promiscuous mode in the
+servlet's WEB-INF/web.xml. A web page, "settings.php", has been added
+which displays the current PHP/Java Bridge settings from the web.xml.
+
+* Java.inc loads much faster: If no accelerator technology ("php
+opcode cache") is used, the bridge loads much faster. Java.inc has
+been renamed to JavaBridge.inc and Java.inc is auto-generated from
+Java.inc.
+
+* The error message format has been changed. It now displays the
+required parameter types and the passed argument types. Example: The
+error message "System->getProperty((o:String)[c:String]) failed ..."
+means that an instance of the String class is required, not the String
+class itself.
+
+* Persistent connections: The pure PHP implementation now supports
+override redirect, named-pipe communication and persistent
+connections. On Unix the implementation uses named pipes unless the
+back end is running on a different computer and/or promiscuous mode is
+enabled. On all other operating systems the implementation uses
+persistent tcp sockets ("pfsockopen"). As a side effect the
+implementation now understands "override redirect", which means that
+java_session() can be called anywhere.
+
+Version 4.0.1
+
+* It is no longer necessary to install the PHP/Java Bridge on a
+computer. The following code connects to the server "myServer" and
+calls System.getProperties():
+
+  require_once("http://myServer.8080/JavaBridge/java/Java.inc");
+  $s = new Java("java.lang.System");
+  echo $s->getProperties();
+
+* The JavaBridge.jar is now executable, so that Java 1.6 users can
+simply double-click on it to start the bridge for all computers on the
+local network.
+
+* PHP 4 and PHP 5.0 are no longer supported (obsolete). If you want to
+use PHP 4 or PHP 5.0.x, please see the README from the
+php-java-bridge-legacy.zip download.
+
+* The special installation instructions for Oracle and IBM WebSphere
+have been removed (obsolete).
+
+* Most of the features of the PHP/Java Bridge require Java 1.6. Old
+Java versions (gcj "GNU Java", Java 1.4 and Java 1.5) need the legacy
+library "script-api.jar" which is contained in the JavaBridge.war.
+
+* The Java Server Faces bindings are not supported anymore. Use the
+script API instead.
+
+* The php script engine doesn't implement the Invocable interface
+anymore. Please use the php-invocable script engine instead.
+
+
+Version 3.2.1
+
+* The pure PHP PHP/Java Bridge is now the reference implementation.
+
+* A PHP script implementation for J2SE is available. For example it
+can be used to install PHP as a script plugin into a Java report
+engine such as BIRT; PHP can be used to evaluate formula fields, group
+selection formulas, etc.
+
+* A third optional parameter (timeout) has been added to the
+java_session() implementation of the Java extension module, so that
+the C extension module is now compatible with our pure PHP PHP/Java
+Bridge implementation.
+
+* gcc >= 3.3.3 is required to compile C PHP/Java Bridge implementation.
+
+* Since PHP>= 5.2 the Windows java extension ("java-x86-windows.dll"
+or "php_java.dll") is not necessary anymore. Please use our pure PHP
+PHP/Java Bridge implementation instead.
+
+* Fedora 6 Linux binary packages are available.
+
+* Debian Linux packages are available.
+
+
+Version 3.1.8 
+
+* The recommended way to run Java is to start it via a servlet engine
+or application server. A very simple servlet engine (less 200 lines of
+Java code) is contained in the JavaBridge.jar and can be started with
+the command: 
+
+java -jar JavaBridge.jar SERVLET:8080 3 javabridge_servlet.log
+
+
+* Incompatible change for those who run Java directly within Apache or
+IIS: The bridge now looks for @channelName\n instead of
+channelName. This means that both, the php_java.dll or java.so AND the
+JavaBridge.jar must be upgraded. If you have copied the JavaBridge.jar
+and the php_java.dll or java.so to the extension directory, make sure
+that the version numbers match; the version number of the back end can
+be found in the global.properties within the JavaBridge.jar zip file
+and the version # of the front end can be checked by temporarily
+setting java.socketname=0 and running the phpinfo() or the
+test.php. However, users who run PHP in Apache or IIS and Java in a
+servlet engine or J2EE AS are not affected.
+
+* A pure PHP implementation of the PHP/Java Bridge is now available in
+the "java" folder. This means that it is no longer necessary to
+compile and to install a non-standard PHP extension on the web or J2EE
+server.
+
+* The license has been changed to LGPL.
+
+
+Version 3.1.7:
+
+* The php-java-bridge does not use Java anymore. The bridge and all
+libraries which depend on it are compiled to native code. For backward
+compatibility the bridge uses a real VM when the PHP .ini option
+java.java=<java> is set or if the autoconf scripts do not detect a
+sufficient compiler (gcc >= 3.2.3 is required).
+
+* The Lucene4php and Itext4php libraries are now available as native code.
+
+* The install instructions and install procedure for the standalone
+component has been removed in favor of the J2EE or native
+component. -- For those who know how to install the standalone
+component: this option is still available and supported, but new users
+should use the native or J2EE component instead.
+
+* The INSTALL.WINDOWS document has been removed, please read the
+INSTALL.J2EE document instead.
+
+* The ext/java compatibility option has been removed.
+
+* A cast to string now behaves as __toString(). In previous versions
+"{$ex->__toString()}" was necessary to print the stack trace. The
+following code now works as expected:
+
+catch (JavaException $ex) {
+  echo "Exception occured: $ex";
+}
+
+
+* FastCGI SAPI on Windows: On Windows the php-cgi.exe currently does
+not support the required "-b" flag, therefore the bridge tries to
+start a persistend php-cgi process via a program called
+"launcher.exe".  It uses the following arguments:
+...\WEB-INF\cgi\launcher.exe -a "path\to\php-cgi.exe" -b 9667. If this
+fails (for example if launcher.exe does not exist), the bridge
+switches off FastCGI after 1.5 seconds, as before. The "launcher.exe"
+is not part of the PHP/Java Bridge download; IBM Websphere users can
+find such a binary in the "PHP Integration Kit for Windows":
+PHPIntKitForWindows.zip, available from alphaworks.
+
+* java_session(<name>) with a non-null <name> does no longer allocate a
+session from the J2EE container.
+
+* The system property php.java.bridge.promiscuous=true can be used to
+allow php clients running on the HTTP server to connect back to a J2EE
+node running in the same intranet network. For example when the
+HTTP/PHP web server is running on computer W and the tomcat cluster
+nodes are on computer K1, ..., Kn, the nodes can be started with:
+
+  JAVA_HOME=/opt/jdk1.5 \
+  JAVA_OPTS="-Dphp.java.bridge.promiscuous=true" \
+    /opt/node_n_/tomcat/bin/catalina.sh start
+
+The communication ports in the range [9267, ..., 9367[ must not be
+accessible from the internet, of course.
+
+
+Version 3.1.6:
+
+* When the PhpJavaServlet or PhpCGIServlet is used globally (see
+description in ABOUT.htm#global-servlet), the number of persistent
+physical connections does no longer depend on the number of web
+contexts. In a setup with k web contexts and n php clients previous
+versions used up to k*n physical connections. Since version 3.1.6 each
+php client uses exactly one persistent physical connection for all web
+contexts unless a requested web context belongs to a different
+JavaBridge implementation or server.
+
+
+Version 3.1.5:
+
+* PHP/Java exception chaining:
+
+  <?
+  require_once("rt/java_lang_String.php");
+  function call() { new java_lang_String(null); }
+  call();
+  ?>
+
+now prints a NullPointerException at:
+
+  #-10 java.lang.String.<init>(String.java:144)
+  [...]
+  #0 /usr/share/pear/rt/java_lang_String.php(15): Java::__construct(Array)
+  #1 printException.php(3): java_lang_String->__construct(NULL)
+  #2 printException.php(4): call()
+  #3 {main}
+
+* The FastCGI and Apache SAPI now create the communication pipes in a
+sub directory of /dev/shm/ or /tmp/ and clean it, whenever the server
+stops or restarts.
+
+* Each context now uses its own PHP FastCGI pool, if the context
+init-param shared_fast_cgi_pool is Off and use_fast_cgi is set to
+Autostart (default). In previous versions it was not possible to
+deploy different versions into the same application server, because
+each version used the JavaBridge FastCGI pool at 9667. Now each
+context creates its own FastCGI pool above 9667, for backward
+compatibility the pool of the "JavaBridge" context still uses the
+fixed port #9667.
+
+* Because of the above change the GlobalPhpCGIServlet now requires the
+option shared_fast_cgi_pool=On, see ABOUT.HTM#global-servlet or
+http://php-java-bridge.sf.net#global-servlet for details.
+
+* The Mono back-end now redirects its stdout and stderr to the
+specified log file.
+
+* When unix domain sockets are not available, for example if the JNI
+library libnatcJavaBridge.so cannot be loaded because a 32 bit JVM is
+running on a 64 bit machine, autoconf switches off unix domain sockets
+and uses TCP sockets instead. Security Enhanced Linux rules for TCP
+socket communication have been added to the SEL TE files.
+
+* A Security Enhanced Linux rule has been added to the TE files which
+allows searching in http_sys_content_t. This means that it is now
+possible to index files from these directories, for Lucene queries for
+example. If additional rules are necessary (searching in other
+directory types, etc.), use the commands:
+
+setenforce 0;
+# ... run the Lucene indexer ...
+audit2allow -ld; (or audit2allow -l -i /var/log/audit/audit.log); 
+setenforce 1;
+
+and add the rules at the end of the SEL TE files. The files are:
+security/module/*.te for Linux versions >= Fedora Core 5/RHEL5 or
+security/*.te for Linux versions <= Fedora Core 4/RHEL4).
+
+
+Version 3.1.4:
+
+* The static loader can now load resources which are stored outside of
+.jar files from Util.DEFAULT_EXTENSION_DIRS or from the PHP
+extension_dir/lib directory.
+
+Version 3.1.3:
+
+* The default log level for the autostart back-end (cli) has been
+changed from 2 to 1.
+
+Version 3.1.2:
+
+* Since java.lang.String.valueOf(object) does not necessarily return
+the string representation of object (for example when object is a
+dynamic proxy and programmed so that toString() returns null), the
+PHP/Java Bridge now uses its own object->String conversion.
+
+* It is now possible to create closures within other closures. This
+means that java_closure() now works when running php in interactive
+mode (with jrunscript -l php-interactive for example).
+
+* The DynamicJavaBridgeLoader can now be used in environments which
+make use of dynamic proxies, for example EJB or hibernate.
+
+* The default TCP port doesn't exist anymore. On Windows, or if the
+bridge has been compiled with -DCFG_JAVA_SOCKET_INET, and if
+java.socketname is not set, the bridge back-end automatically selects
+a free port number from the range [9267,...,9367[ (for JavaBridge.jar)
+or [9167,...,9267[ (for MonoBridge.exe). Thus it is now possible to
+autostart the bridge as a sub-component of IIS. If you don't want this
+behaviour, set java.socketname=9267 (or mono.socketname=9167) and copy
+the JavaBridge.jar or MonoBridge.exe executables into the autostart
+folder of your computer.
+
+* On MacOSX the bridge now uses the programs glibtool and glibtoolize
+instead of libtool and libtoolize (if available), so that it is no
+longer necessary to remove the non-GNU libtool program that came with
+MacOSX.
+
+* In the PHP .ini file the log4j logger can now be selected by
+prefixing the java.log_file value with an "@" sign:
+
+  java.log_file=@[HOST][:PORT]
+
+Example:
+
+  java.log_file=@127.0.0.1:4445
+
+
+Version 3.1.1:
+
+* The windows default location has been changed from c:\php5 to
+c:\php.
+
+* The servlet SAPI now supports HTTPS. The default communication port
+is 127.0.0.1:9157 (see java.hosts in the WEB-INF/.../php*.ini). For
+tomcat for example add the following entry marked with a + to the
+conf/server.xml:
+
+  <Service name="Catalina">
+  [...]
++  <Connector port="9157" address="127.0.0.1"/>
+  [...]
+  </Service>
+
+* The extension_dir/lib directory is no longer scanned by the
+DynamicJavaBridgeClassLoader. All Java .jar and .class files located
+in this directory are added to the system class path when the virtual
+machine starts. This means that this directory can now contain impure
+java libraries (=libraries which use the java native interface). But
+this also means that the dynamic loader doesn't know whether a lib in
+this directory has been changed or added. It is therefore recommended
+to store required libraries into the sub-directory <PACKAGE-NAME>. For
+example:
+
+  java_require("myPackage/myLib.jar;j2eePackage/j2ee.jar");
+
+
+* The ikvmc.exe and ICSharpCode.SharpZipLib.dll IKVM.AWT.WinForms.dll
+IKVM.GNU.Classpath.dll IKVM.Runtime.dll are now included. This means
+that it is now possible to access .NET dll's without installing
+additional software; ./configure --with-mono && make && make install is
+enough to load/call .NET or Mono .dlls from PHP -- .NET or Mono must
+be installed, of course.
+
+* It is now possible to convert Java libraries into PHP code. 
+For example the command java -jar JavaBridge.jar --convert
+/usr/share/pear lucene.jar creates PHP lucene classes from
+the Java lucene.jar. When the PHP/Java Bridge has been configured to
+run without Java (./configure w/o the "--with-java" argument), the
+created PHP lucene classes can be used directly from PHP code, Java is
+not needed anymore. Only the java.so or php_java.dll file and the
+generated Lucene PHP classes are required, for example:
+
+<?php
+require_once("lucene/org_apache_lucene_search_IndexSearcher.php")
+require_once("lucene/org_apache_lucene_search_PhraseQuery.php")
+require_once("lucene/org_apache_lucene_index_Term.php")
+
+$searcher = new org_apache_lucene_search_IndexSearcher(getcwd());
+$term = new org_apache_lucene_index_Term("name", "test.php");
+$phrase = new org_apache_lucene_search_PhraseQuery();
+$phrase->add($term);
+
+$hits = $searcher->search($phrase);
+$iter = $hits->iterator();
+
+while($iter->hasNext()) {
+  $next = $iter->next();
+  $name = $next->get("name");
+  echo "found: $name\n";
+}
+?>
+
+* A binary RPM for RHEL3 is not available anymore. If you want to
+install the bridge on RHEL3 please create a binary RPM from the source
+RPM.
+
+* Persistent connections: If "java.persistent_connections" is set to
+"On", the Apache/Tomcat5 combination delivers a PHP/Java based mix more
+or less as fast as Tomcat would deliver an equivalent JSP file.
+
+* Log4j added: If java.log_file is not set, the bridge uses log4j, if
+available. The default appender is log4j "chainsaw" (a stupid name for
+a log viewer) listening on localhost:4445. Other appenders, for
+example jdbc, can be configured by overriding ChainsawLogger.configure
+or by calling Util.setLogger(ILogger).
+
+* Improved dynamic loading: java_require(file) is now fail fast. It
+checks if local jar files do exist and are accessible. However, urls
+are loaded lazily. If the urls could not be loaded, the java_require()
+call succeeds but one will receive a ClassNotFoundException later on.
+
+For example:
+
+// java_require(file) is fail fast
+try {
+  java_require("/usr/share/java/doesNotExist.jar"); // fails
+} catch (JavaException $ex) {
+  echo "doesNotExist library not installed\n";
+  echo $ex->getCause();
+}
+
+// java_require(url) is lazy
+java_require("http://doesNotExist.com/foo.jar"); // succeeds
+...
+try {
+  $foo = new Java("foo");                        // fails
+} catch (JavaException $ex) {
+  echo "http://doesNotExist.com/foo.jar:foo.class could not be loaded\n";
+  echo $ex->getCause();
+}
+
+* A standard global repository for java libraries has been added. The
+standalone back-end adds the following standard extension directories
+to java.ext.dirs: "/usr/java/packages/lib/ext" and
+"/usr/share/java/ext" and, for backward compatibility,
+extension_dir/lib (or extension_dir\lib, on windows). All java
+libraries located in these directories are loaded
+automatically. Example:
+
+# copy log4j.jar to the java.ext.dirs:
+cp log4j.jar /usr/share/java/ext
+
+# start the log4j viewer
+java -classpath log4j.jar org.apache.log4j.chainsaw.Main &
+
+# start the JavaBridge, the bridge automatically loads log4j and
+# writes its log to the running log4j viewer.
+java -jar JavaBridge.jar &
+
+* It is now possible to lock the standalone VM so that certain users
+cannot (accidently) create arbitrary files, open connections to other
+hosts etc. The file "javabridge.policy" has been added to the
+standalone container, a default file is located in the extension
+directory and denies almost everything. The policy file can be edited
+by using the java jdk "policytool". The new option
+java.security_policy can be used to set a custom policy file. Example:
+java.security.policy="c:/php5/javabridge.policy".  The following
+javabridge.policy file example shows how to allow all users to start
+threads and call System.exit():
+
+grant {
+  permission java.util.PropertyPermission "*", "read";
+  permission java.net.SocketPermission "*", "accept, resolve";
+  permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+
+  permission java.lang.RuntimePermission "exitVM";
+  permission java.lang.RuntimePermission "modifyThreadGroup";
+  permission java.lang.RuntimePermission "modifyThread";
+};
+
+* Long-running background threads which were started from the
+request-handling JavaBridge thread now receive an InterruptedException,
+when the JavaBridge request-handling thread terminates. Long-running
+threads such as printer jobs should catch this signal and terminate
+as soon as their job is done.
+
+
+Version 3.0.8:
+
+* When the tomcat or J2EE JavaBridge.war "back-end" is used without an
+Apache or IIS front-end, the JavaBridge context now starts a FastCGI
+server automatically. This improves performance by more than 300% and
+makes the Apache or IIS front-end obsolete. But it requires that 
+php-cgi supports FastCGI. If a FastCGI PHP binary is not available,
+the first request hangs 1.5 seconds until the FastCGIServlet times
+out, the FastCGIServlet is switched off and the normal PhpCGIServlet
+takes over. The JavaBridge.war contains FastCGI PHP binaries for
+Solaris and Linux. Windows users must compile a FastCGI PHP executable
+themselves.
+
+* Security Enhanced Linux modules are supported. FC5 and RHEL5
+introduce a SELinux reference policy with support for binary modules.
+The old monolithic policy files have been moved to the security
+folder, the new policy files are in security/module and are installed
+automatically, if install.sh or RPM binaries are used.
+
+* When arrays are passed to procedures or constructors which accept a
+collection, the bridge now preserves the element order (a TreeMap is
+used as the backing data structure). However, when one of the array
+keys is not an exact number (which means that the php array is not an
+array but a dictionary), the bridge discards the TreeMap and copies
+all bindings into a HashMap data structure and the order of the
+elements is not preserved. Example:
+
+echo new java("java.util.Vector", array(1,2,3));
+=> [o(Vector):"1,2,3"]
+
+echo new java("java.util.Vector", array(1,2,"foo"=>3));
+=> [o(Vector):"3,1,2"]
+
+echo new java("java.util.HashMap", array(1,2,"foo"=>3));
+=> [o(HashMap):{"foo"=3,0=1,1=2}]
+
+* It is now possible to selectively switch off the servlet pipe
+context server (-Dphp.java.bridge.no_pipe_server=true) and the
+socket context server
+(-Dphp.java.bridge.no_socket_server=true). Useful for testing
+only.
+
+* Some JVM implementations cannot load native libraries more than
+once. When the backend is not running within the GNU java VM ("gcj"),
+the dynamic loader does no longer try to load native libraries. 
+Modify the java.libpath and the java.classpath settings instead,
+e.g.: java.libpath=/usr/lib/php/modules:/usr/local/lib
+java.classpath=/usr/lib/php/modules/JavaBridge.jar:/usr/local/lib/jni.jar
+or read the documentation of your application server for more information.
+
+* Improved automatic start: On windows it is now possible to use a
+wrapper binary, for example: java.wrapper="c:/startJava.cmd",
+additional options can be set with (example): java.java="javaw
+-Dadd.option". On unix the bridge does no longer "busy wait" for the
+backend. It uses select so that the startup time for the php-cli
+(including the startup time for the backend) is now less than 100ms,
+if a native (compiled) backend is used.
+
+* It is now possible to run php interactively. Example session which
+uses jdk1.6 "jrunscript":
+# install php-java-bridge*.rpm and php-java-bridge-devel*.rpm
+/opt/jdk1.6/bin/jrunscript -l php-interactive
+php-interactive> $buf = new java("java.lang.StringBuffer", "Hello");
+php-interactive> echo $buf;
+[o(StringBuffer):"Hello"]
+php-interactive> echo "$buf";
+Hello
+php-interactive> for($i=0; $i<10; $i++) $buf->append($i);
+php-interactive> echo $buf->toString()->length();
+15
+
+* A "stream" protocol mode has been added. All java bridge XML
+requests between java_begin_document() and java_end_document() are
+executed asynchronously. Even for local (unix-domain or pipe) channels
+this improves performance dramatically. Compared with SOAP, which
+usually sends the XML document in one packet, this mode uses less
+resources on the web-server side.
+
+* An install script can be used to install the bridge and the backend:
+su -c "sh install.sh --verbose"
+
+
+Version 3.0.7:
+
+* ./configure --with-java=/opt/compile-time/java,/opt/run-time/java:
+it is possible to compile a jre runtime path into the bridge. The
+default is empty, i.e. the PATH environment variable will be searched
+if the bridge has been set up to automatically start the backend.
+
+* When RunJavaBridge is used, it is possible to start the backend with
+a non root uid. For example:
+
+  chown apache:apache /usr/lib/php/modules/RunJavaBridge
+  chmod 6111 /usr/lib/php/modules/RunJavaBridge
+
+and java.wrapper = /usr/lib/php/modules/RunJavaBridge in the php.ini
+(default is: <extension_dir>/RunJavaBridge) will automatically start
+the backend as the apache user.
+    
+* It is now possible to compile the php java extension without java:
+./configure --disable-backend creates only the java.so or php_java.dll.
+
+* java => 1.4.2 is required.
+
+* The windows standalone download is not available anymore. The
+php_java.dll is now called "java-x86-windows.dll" and can be found in
+the JavaBridge.war download.
+
+* The Linux standalone backend has been removed from the
+php-java-bridge RPM download. The linux java.so is now called
+"java-x86-linux.so" and can be found in the JavaBridge.war download.
+
+* The Linux RPM has been split into 4 separate RPM files:
+
+  php-java-bridge*.rpm: contains the basic files; java extension for
+  PHP/Apache HTTP server and a simple backend which automatically
+  starts and stops when the HTTP server starts/stops. The bridge log
+  appears in the http server error log.
+
+  php-java-bridge-standalone*.rpm: contains the standalone service
+  script. Conflicts with the tomcat backend. The tomcat backend is more
+  than 2 times faster but less secure; it uses named pipes instead of
+  abstract local "unix domain" sockets. The standalone backend is now
+  started as the apache user.
+
+  php-java-bridge-tomcat*.rpm: contains the tomcat backend. Conflicts
+  with the standalone backend.
+
+  php-java-bridge-devel*.rpm: contains the development documentation
+  and the development files needed to create java applications with
+  embedded PHP scripts: JavaBridge.jar, script-api.jar and php-script.jar.
+
+* The JavaBridge.war now contains php 5.1.2 binaries for Solaris
+(x86), Linux (x86 and ppc64), Windows (x86).
+
+* php4 is supported again (switch to php5 or php6, if you can).
+
+
+Version 3.0.3:
+
+* Communication via named pipes: When the backend is running inside a
+  Unix servlet engine or application server, the bridge uses named pipes
+  instead of TCP sockets. This communication channel is 1.5 times faster
+  than unix domain sockets and 2 times faster than TCP sockets. TCP
+  sockets are still used on systems which do not support standard Unix
+  named pipes (Windows).
+
+* Because of the above change the bridge now works with the "Sun Java
+  System Application Server Platform Edition 8" on Unix.
+
+* TCP sockets only listen on the local (127.0.0.1) interface unless
+  the system property "php.java.bridge.promiscuous" is set to true.
+
+* The apache jsf "myfaces" implementation, which caused problems with
+  various application servers or servlet engines, has been replaced by
+  JSF 1.1.01.
+
+Version 3.0.2:
+
+* Backward compatibility with 2.0.8: The java.servlet can now have
+  three values:
+
+    On  : Selects the default servlet context, which is
+          /JavaBridge/JavaBridge.php
+
+    Off : Switches off the HTTP tunnel
+
+    User: Selects the "current" servlet context. A request:
+          http://foo.com/context1/test.php connects test.php to the
+          backend: http://<java.hosts[0]>/context1/test.phpjavabridge. 
+
+          Example:
+          [java]
+          java.hosts=127.0.0.1:8080
+          java.servlet=User
+
+          Request:
+          http://foo.com/contextA/order.php
+
+          Then order.php sends a PUT request to the backend:
+          http://127.0.0.1:8080/contextA/order.phpjavabridge
+      
+* The servlet mapping for PhpJavaServlet has been
+  removed. java.servlet=User or
+  java.servlet=/JavaBridge/PhpJavaServlet.phpjavabridge can be used instead.
+
+* When the java VM was started as a child of apache (OPTION#3) and
+  apache sent out a kill signal to all childs in its process group, the
+  guard process (which observes the VM) could be killed. After that one
+  had to kill the java child manually. Since version 3.0.2 the guard
+  detaches from the apache process group, too
+
+* The PHP5/PHP6 array access and iterator interface should be much
+  faster now. Especially the array access was incredibly inefficient
+  as it allocated a new instance of PhpMap for each access.
+
+
+Version 3.0.1:
+
+* JSR223 API: It is now possible to run php scripts from java. Scripts
+  are invoked using a CPS style, a CGI binary is started if necessary
+  (if Apache/IIS are not running).
+
+   Example:
+
+   PhpScriptEngine engine = new PhpScriptEngine();
+   engine.put("key", "testVal");
+   // Hold the script from 127.0.0.1:80 (Apache pool) hostage ...
+   engine.eval(new URLReader(new URL("http://127.0.0.1:80/HelloWorld.php")));
+   // ... call the php procedure HelloWorld.php::java_get_server_name() ...
+   System.out.println(((Invocable)engine).call("java_get_server_name", new Object[]{}));
+   // ... and release the script.
+   engine.release();
+
+  See the configure option --enable-script.
+
+* Java Server Faces: It is possible to embed php scripts into
+  frameworks. Requires php-faces.jar (see configure option
+  --enable-faces=<myFaces.jar>). The implementation works with the RI
+  and Apache myfaces implementation (included in the unsupported
+  folder). See examples/java-server-faces for details.
+
+* PHP 4 is no longer supported (the bridge still works with php4).
+
+* The bridge no longer coerces return values. If you want to 
+  cast a java string into a php string, use the cast operator, e.g:
+
+    $string = new java("java.lang.String", "{HelloWorld}");
+    $substring = $string->substring(1);
+    $substring = $substring(0, $substring->length()-1);
+
+    echo "Result: $substring"; // implicit cast
+    echo (string)$substring;   // explicit cast
+  
+* When running in a servlet engine or application server, the bridge now
+  supports a multi-user environment. Example tomcat setup which contains:
+
+    webapps/userA/...
+                  WEB-INF/lib/{JavaBridge.jar,php-servlet.jar}
+                  WEB-INF/cgi/{php.ini,php-cgi-i386-linux.sh,java.so}
+                  {sessionSharing.php,sessionSharing.jsp}
+    
+    webapps/userB/...
+                  WEB-INF/lib/{JavaBridge.jar,php-servlet.jar}
+                  WEB-INF/cgi/{php.ini,php-cgi-i386-linux.sh,java.so}
+                  {sessionSharing.php,sessionSharing.jsp}
+
+
+  Browser request for:
+
+    http://myhost.com/userA/sessionSharing.php
+    http://myhost.com/userA/sessionSharing.jsp
+
+  Creates cookie with a PATH value: path=/userA
+
+
+  Same browser request for:
+
+    http://myhost.com/userB/sessionSharing.php
+    http://myhost.com/userB/sessionSharing.jsp
+
+  Creates cookie with a PATH value: path=/userB
+
+  
+* An administrator may setup a FastCGI PHP server or Apache/IIS as a
+  frontend so that users don't have to copy their own php binaries into
+  their WEB-INF/cgi/ folder. 
+ 
+  1) Example: Apache/IIS/mod_jk connector:
+
+
+  internet
+  clients  <->  :80--->  Apache/IIS                          --->  J2EE AS
+                            |    |                          /  /    |   |
+                            |   mod_jk <-- jsp/servlet req./  /     |   |
+                            |                                /     jsp  |
+                            ---- php                        /           |
+                            ---- php  <-- P-J-B PROTOCOL --/           servlet
+                                 ...                                     ...
+
+  J2EE port not visible to internet clients. Apache/IIS document root
+  not used.
+
+    
+  2) Example: a shared document directory:
+
+
+                :80--->  Apache/IIS
+            /                |
+           / php req.        ---- php
+          /                  ---- php  <--| 
+                                  ...     |
+  internet                                |
+  clients                                 |
+          \                               |P-J-B
+           \jsp/servlet req.              |PROTOCOL
+            \                             |
+                                          |
+           |--> :8080--> J2EE AS          |
+           |                 |            |
+           |                 ---- jsp     |
+           |                 ---- servlet |
+           |                      ...     |
+           -------------------------------|
+
+  Apache/IIS and J2EE ports are accessible from the
+  internet. Apache/IIS and the J2EE AS share the same document root.
+
+  #2 is the recommended setup. Framework requests (e.g.: hello.jsf)
+  go to port 8080, initial requests to :80 can be forwarded to the
+  framework using the following php code:
+
+  <?php
+  // hello backing implementation
+  function jsfValidateEntry(...) {...}
+  ...
+  // check if we're called from the JSF framework, redirect to
+  // self.jsf otherwise.
+  function redirect() {
+    $target=dirname($_SERVER['PHP_SELF']);
+    $name=basename($_SERVER['PHP_SELF'], ".php");
+    header ("Location: http://$_SERVER[HTTP_HOST]:8080$target/$name.jsf");
+  }
+  java_context()->call(java_closure()) || redirect();
+  ?>
+  

@@ -1,0 +1,57 @@
+This folder contains examples which show how to connect to the
+PHP/Java Bridge from PYTHON and Chicken/SCHEME.
+
+
+* getProperties.py: Connects to the PHP/Java Bridge, asks for
+  System.getProperties() and displays the first entry. 
+
+  Start the server with java -jar JavaBridge.jar and invoke the
+  example with:
+ 
+    python getProperties.py
+ 
+
+* listToArray.scm: Connects to the PHP/Java Bridge, creates a
+  java.util.ArrayList and fills it with three entries. Then it receives
+  the entire array list from the server and displays it.
+
+  Start the server with java -jar JavaBridge.jar and run the example with:
+
+    csi listToArray.scm
+
+
+* getProperties.scm: Connects to the PHP/Java Bridge, asks for
+  System.getProperties(), receives the properties dictionary and
+  prints it as a HTML table using the formatArray.xsl transformer.
+
+  Start the server with java -jar JavaBridge.jar, compile the scheme file
+  into native code and invoke it:
+
+    csc -lxslt getProperties.scm && ./getProperties |tee out.html
+
+  After that you can examine the out.html with a web browser.
+
+
+* sample.php: A pure PHP example which communicates directly with the
+  server.
+
+  Start the server with java -jar JavaBridge.jar and invoke the
+  example with:
+ 
+    php sample.php
+
+
+These examples use the python and Scheme script languages. They can be
+obtained from:
+
+   http://www.python.org
+
+and
+
+   http://directory.fsf.org/chicken.html  or
+   http://www.call-with-current-continuation.org/chicken.html
+
+The Scheme code in example #3 calls the libxslt.so library to apply
+the XSLT transformation. It is part of the GNOME project and can be
+optained from http://www.gnome.org if it isn't already installed on
+your computer.

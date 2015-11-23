@@ -1,0 +1,4 @@
+etc/php5/conf.d
+var/lib/tomcat5/webapps
+usr/include/php5/java
+usr/include/php5/mono

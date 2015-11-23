@@ -1,0 +1,3 @@
+Security Enhanced Linux rules for FC4 and below.
+
+Type sh ./update_policy.sh to install.

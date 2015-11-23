@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 50_SELinuxReadmeDebian_patch.dpatch by  <andre.machado@serpro.gov.br>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad php-java-bridge~/security/module/README php-java-bridge/security/module/README
+--- php-java-bridge~/security/module/README	2009-07-01 17:27:18.000000000 -0300
++++ php-java-bridge/security/module/README	2009-07-01 17:39:24.000000000 -0300
+@@ -1,4 +1,6 @@
+-Security Enhanced Linux rules for FC5, RHEL 5 and above.
++Security Enhanced Linux rules for FC5, RHEL 5, Debian 5.0 and above.
+ 
+-Type make to build and semodule -i php-java-bridge.pp to install.
++Type make to build and semodule -i php-java-bridge.pp  and 
++semodule -i php-java-bridge-tomcat.pp to install.
+ 
++Please, contribute better rules to the project.

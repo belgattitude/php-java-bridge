@@ -1,0 +1,6 @@
+These examples are part of the Servlet/J2EE demo ("JavaBridge.war").
+
+Deploy JavaBridge.war into your servlet engine or application server
+and browse to http://localhost:<AS-PORT>/JavaBridge, for example:
+
+  http://localhost:8080/JavaBridge

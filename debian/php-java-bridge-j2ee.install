@@ -1,0 +1,3 @@
+server/META-INF/java/Java.inc usr/include/php5/java
+server/60JavaBridge.policy etc/tomcat5.5/policy.d
+

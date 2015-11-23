@@ -1,0 +1,531 @@
+What is the VM Bridge?
+----------------------
+
+  The VM Bridge is a network protocol which can be used to
+  connect a native script engine, for example PHP, with a Java or ECMA
+  335 VM.
+
+  Please read the http://php-java-bridge.sf.net for more information.
+
+
+Overview
+--------
+
+  The generic VM Bridge implementation is distributed as an
+  example web archive called "JavaBridge.war". It is a zip archive which
+  contains the libraries "JavaBridge.jar", "php-script.jar" and
+  "script-api.jar". Furthermore it contains some PHP examples which
+  can be run in any pure Java J2EE server or servlet engine.
+
+  The VM Bridge web application contains two servlets. The
+  "PhpJavaServlet" handles requests from remote PHP clients running in
+  Apache/IIS or from the command line:
+
+    Apache/IIS/console::PHP <--> PhpJavaServlet
+
+  The second servlet, PhpCGIServlet, can handle requests from internet
+  clients directly. It can start PHP as a FastCGI or CGI sub component:
+
+    internet browser <--> PhpCGIServlet <--> php-cgi <--> PhpJavaServlet
+
+
+  Furthermore the bridge supports standalone Java applications through
+  the JSR223 script API.
+
+
+Build and execution instructions:
+---------------------------------
+
+  Type java -classpath JavaBridge.war TestInstallation to extract the
+  JavaBridge.jar from the web archive. The command extracts
+  ext/JavaBridge.jar and java/Java.inc from the web archive.
+
+  Double-click on JavaBridge.jar and select SERVLET_LOCAL:8080 to
+  start a local HTTP server. Type java -jar ext/JavaBridge.jar --help
+  to see the list of available options.
+
+  Use the following code to access Java from your PHP scripts:
+
+    <?php require_once("http://localhost:8080/JavaBridge/java/Java.inc");
+    $s = new Java("java.lang.String", "hello");
+    ...
+    ?>
+
+
+------------------------------------
+  Permanently activate the module
+  -------------------------------
+
+  Installation for the web:
+  -------------------------
+
+  Install a local J2EE server or servlet engine. For example Tomcat
+  version 6. Copy the JavaBridge.war file into the autodeploy folder of
+  the J2EE server or servlet engine.
+
+  Example for Apache/Tomcat on Linux:
+
+    cp JavaBridge.war /usr/share/tomcat5/webapps/
+
+  Restart tomcat and wait until the directory webapps/JavaBridge
+  appears.
+
+  Then copy or symlink the JavaBridge folder to the document root
+  of your HTTP server. Example for Linux:
+
+    cp -r /usr/share/tomcat5/webapps/JavaBridge/ $HOME/public_html
+
+
+  Installation for standalone Java J2SE applications:
+  ---------------------------------------------------
+
+  Copy the JavaBridge.jar, php-script.jar and script-api.jar to
+  the java.ext.dirs. Example for JDK1.6 on Linux:
+
+    cp ext/*.jar /usr/java/packages/lib/ext/
+
+  Type
+
+    /usr/java/default/bin/jrunscript -l php-interactive
+
+  to start an interactive PHP session.
+
+---------------------------------------------
+  Starting the VM Bridge automatically
+  ------------------------------------------
+
+  For the web:
+  ------------
+
+  Install the J2EE server or servlet engine as a service. The
+  Apache/Tomcat servlet engine automatically installs as a service on
+  Windows and Linux.
+
+
+  For standalone J2SE applications:
+  ----------------------------------
+
+  No installation necessary; the bridge starts automatically when the
+  JSR 223 context is accessed. Example:
+
+    jrunscript -classpath JavaBridge.jar -l php-interactive 
+
+  automatically starts a "php-cgi" executable from the path. Please
+  see the INSTALL.J2SE document for details how to access persistent
+  script engines from a HTTP or FastCGI pool using the JSR 223
+  interface.
+  
+---------------------------------------------
+  AS/Servlet with PHP CGI/FastCGI
+  -------------------------------
+
+  Read the following instructions only if you don't want to use
+  Apache or IIS.
+
+  Deploy the JavaBridge.war into the Tomcat or J2EE server (please see 
+  our FAQ section on http://php-java-bridge.sf.net), then visit 
+  http://localhost:8080/JavaBridge and run the supplied JSP and PHP 
+  examples.
+
+  If the parameter name "use_fast_cgi" is set to "Autostart" in the
+  web.xml, and a fcgi server does not listen on port 9667, and a fcgi
+  binary can be found as either 
+
+    /usr/bin/php-cgi 
+
+  or 
+
+    c:/Program Files/PHP/php-cgi.exe,
+
+  then the back end automatically starts the Fast-CGI server on this
+  computer. With the command:
+
+    cd $HOME
+    export REDIRECT_STATUS="200"
+    export X_JAVABRIDGE_OVERRIDE_HOSTS="/"
+    export PHP_FCGI_CHILDREN="5"
+    export PHP_FCGI_MAX_REQUESTS="5000"
+    /usr/bin/php-cgi -d allow_url_include=On -b 127.0.0.1:9667
+
+  On Windows the command is:
+
+    set REDIRECT_STATUS "200"
+    set X_JAVABRIDGE_OVERRIDE_HOSTS "/"
+    set PHP_FCGI_CHILDREN "5"
+    set PHP_FCGI_MAX_REQUESTS "5000"
+    launcher.exe php-cgi \\.\pipe\JavaBridge@9667 -d allow_url_include=On
+
+
+  The PHP FastCGI server starts when the VM or the web context starts,
+  it stops when the VM or web context terminates.
+
+
+  If that failed, the bridge searches for a CGI binary called:
+  
+    php-cgi-<architecture>-<os>.exe or
+
+    php-cgi-<architecture>-<os>.sh or
+
+    php-cgi-<architecture>-<os>
+
+  in the directory WEB-INF/cgi/. On Unix the binary must be executable. It
+  is therefore recommended to always use a wrapper .sh script, for example:
+
+  #!/bin/sh
+  # This wrapper script reconstructs the executable permissions
+  # which some zip or .war implementations do not preserve
+  chmod +x ./php-cgi-i386-linux
+  exec ./php-cgi-i386-linux
+
+  Please see the README located in the directory WEB-INF/cgi/ for
+  details.
+
+  The <architecture> and <os> values are calculated as follows:
+
+    System.getProperty("os.arch").toLowerCase();
+    System.getProperty("os.name").toLowerCase();
+
+  Please see the output of test.php for details.
+
+
+  It is also possible to adjust the php_exec setting (see
+  WEB-INF/web.xml), for example:
+
+      <param-name>php_exec</param-name>
+      <param-value>/usr/local/bin/php-cgi</param-value>
+
+  or
+
+      <param-name>php_exec</param-name>
+      <param-value>c:/PHP/php-cgi.exe</param-value>
+
+  In case your application server denies calling the CGI binary,
+  either start apache or IIS or start a fast CGI server on port 9667
+  as a separate process, for example from a service script. 
+
+  If the directory "/dev/shm" exists, or if the Java.inc option 
+  JAVA_PIPE_DIR points to an existing directory, the bridge uses 
+  named pipes. On Windows, where standard named pipes are not available, 
+  the bridge uses TCP sockets. If your application server denies socket 
+  accept/resolve, please either run the AS on a Unix operating system or 
+  add the following lines to your AS policy file (for 
+  example ...\domains\domain1\config\server.policy):
+
+    grant {
+      permission java.net.SocketPermission  "*", "accept,resolve";
+    };
+
+------------------------------------
+  Log level
+  ---------
+
+  You can set the java.log_level to 7 values:
+
+   0: Log nothing, not even fatal errors.
+
+   1: Log fatal system errors such as "out of memory error".
+
+   2: Log java exceptions.
+
+   3: Log verbose, e.g.: "JavaBridge version x.y.z started"
+
+   4: Log debug messages, including the c/s communication protocol.
+
+   5: Log method invocations, including method selection.
+
+   6: Reserved for internal use. Log messages which may be useful
+      to debug certain parts of the bridge.
+
+  The default log level is 2.  If java.log_level is missing, the
+  back end uses the "default" log level supplied when the back end was
+  started (the second argument after java -jar JavaBridge.jar ...).
+
+  The log4j viewer "Chainsaw" can be used to automatically capture the
+  log from the bridge, regardless in which environment it is
+  running. log4j.jar must be in the Java VM's java.ext.dirs (usually
+  jre/lib/ext), Chainsaw must be running and the back end must have
+  been started without a log file argument or with the .ini option
+  java.log_file="@127.0.0.1:4445". Chainsaw can be started with e.g.:
+
+   /opt/jdk1.5/bin/java -cp /opt/jdk1.5/jre/lib/ext/log4j.jar \
+                                               org.apache.log4j.chainsaw.Main
+
+   Example which starts tomcat with a full debug log:
+
+   JAVA_HOME=/usr/java/default \
+    JAVA_OPTS="-Dphp.java.bridge.default_log_level=6" \
+    /opt/tomcat/bin/catalina.sh run
+
+------------------------------------
+  Security Enhanced Linux
+  -----------------------
+
+  SELinux is an implementation of a flexible and fine-grained
+  mandatory access control architecture implemented in the Linux kernel.
+
+  A system component running on a SELinux kernel must declare
+  exactly a) which resources of the operating system it needs in order
+  to function properly and b) what it provides to other components.
+
+  The VM Bridge distribution contains two policy files,
+  "php-java-bridge.te" and "php-java-bridge.fc". The
+  "php-java-bridge.te" declares the javabridge_t domain and the
+  resources it requires.  httpd and user domains are granted connect, 
+  read and write to the VM Bridge server socket, which is
+  "@var/run/.php-java-bridge_socket" in the Linux abstract name-space,
+  and file create/read/write in the tmp_t.  Everything else (connections
+  to other servers, file access, ...) is currently denied.
+
+  The "php-java-bridge.fc" contains the file contexts for the PHP/Java
+  Bridge and the log.
+
+  Installation instructions for RHEL 4 and Fedora Core 4:
+  -------------------------------------------------------
+
+   1. Install selinux-policy-targeted-sources-*.rpm, for example with
+      the command:
+
+        rpm -i selinux-policy-targeted-sources-1.17.30-2.19.noarch.rpm
+
+   2. Update the policy files with the VM Bridge policy:
+
+        su -c "sh security/update_policy.sh /etc/selinux/targeted/src/policy"
+
+  Installation instructions for RHEL 5, Fedora Core 5 or above:
+  -------------------------------------------------------------
+
+  1. Create the binary policy with the command:
+
+        cd security/module; make
+
+  2. Inject the rules into the kernel, either the php-java-bridge-tomcat.pp 
+     or the php-java-bridge.pp. For example:
+
+        semodule -i php-java-bridge.pp 
+
+  3. The rules apply to the javabridge_t domain. Another rule
+     specifies that when an executable is called from the httpd_t domain
+     and the executable is tagged as javabridge_exec_t, a domain transition
+     to javabridge_t occurs. It is therefore important that RunJavaBridge
+     is tagged with javabridge_exec_t and that it is called from the
+     httpd_t domain. Furthermore the java executable must be a binary:
+
+        chcon -t javabridge_exec_t /usr/lib/php/modules/RunJavaBridge
+        chcon -t bin_t /usr/lib/php/modules/java
+
+  4. The policy module can be removed with the command:
+  
+        semodule -r javabridge
+  
+  If the default policy is too restrictive and e.g. you want to use
+  the VM Bridge to connect to your J2EE server, you can
+  temporarily set the policy to "permissive", for example with the
+  command "setenforce Permissive". Connect to the server, then extract
+  the permissions from the audit log, for example with the command
+  "audit2allow -l -i /var/log/audit/audit.log", then append them at the
+  end of the "php-java-bridge.te" file and load the updated policy into
+  the kernel. Don't forget to switch back, for example with "setenforce
+  Enforcing".
+
+  Please note that SEL security is orthogonal to the standard Unix 
+  security. For example you could also put the java process into 
+  a "jail"; set up a user account with restricted rights, change the 
+  owner of RunJavaBridge and set the SUID bit:
+
+        chown apache:apache /usr/lib/php/modules/RunJavaBridge
+        chmod 6111 /usr/lib/php/modules/RunJavaBridge
+
+  The java process would run with the limited rights of apache *and* be 
+  protected by the SEL policy.
+
+------------------------------------
+  Security Issues
+  ---------------
+
+  If the JEE or servlet back end is used, the bridge opens a local TCP
+  port on 9167 (MonoBridge.exe) or 9267 (JavaBridge.jar), 9567
+  (JavaBridge.war) or 9667 (FastCGI). Please make sure that the ports
+  in the range [9167, ..., 9667] cannot be accessed from the internet.
+
+  If your application server denies socket listen/accept, add the
+  following line to your AS policy file (for example
+  ...\domains\domain1\config\server.policy or tomcat/conf/catalina.policy):
+
+  grant {permission java.net.SocketPermission  "localhost:9267-","listen,accept";};
+
+
+------------------------------------
+  Loading user classes and libraries
+  ----------------------------------
+
+  Java libraries should be installed in one of the following
+  directories: java.ext.dirs or, for the J2EE/servlet back end,
+  WEB-INF/lib. Libraries in these directories are automatically loaded
+  by a static loader whenever the JVM starts.
+
+  Java libraries can be created with:
+
+    javac -Djava.ext.dirs=. my/package/*.java
+    jar cvf myLibrary-0.1.jar my/package/*.class 
+
+
+------------------------------------
+  Sun java platform issues
+  ------------------------
+
+  The sun java platform does not support java "modules". This causes
+  certain problems when running java programs. When you compile a class
+  foo which references a class bar and ship the class foo without
+  providing bar, the sun java platform will not complain unless the user
+  accidentally calls a method which references the non-existing class. If
+  this happens, a "NoClassDefFound" error is thrown. This error may
+  not(!) indicate which class is missing and it certainly does not
+  indicate which external library is missing. The tests.php4 folder
+  contains two tests, noClassDefFound.php and noClassDefFound2.php, which
+  demonstrate this.
+
+  To avoid this problem please document *exactly* (including the
+  version number) which external libraries (.jar files) your software
+  needs. If you have written software where certain methods require an
+  optional library, please document this in the method header.
+
+  If you receive this error when using a Java library, this may mean the
+  following:
+
+    * a jar file is stored at more than one location or the same
+      location is accessed by more than one class loader. 
+      
+    * an old or different JDK than expected by the library is used,
+      for example GNU Java instead of SUN or IBM Java.
+
+    * the library is simply broken or it expects certain parameters in
+      its environment (applet parameter or system property or property file).
+
+    * the library may only work within a J2EE environment from a
+      certain vendor, for example the WebSphere Application server or
+      the Sun Java Application server.
+
+---------------------------------------------
+  FreeBSD issues
+  --------------
+ 
+  FreeBSD is not directly supported. Please use the FreeBSD
+  PHP/Java Bridge port instead. 
+
+  In order to use unix domain sockets on FreeBSD, compile java.so,
+  libnatcJavaBridge.so and start JavaBridge.jar with the argument
+  LOCAL:/path/to/your/socket/file.
+
+------------------------------------
+  UTF-8
+  -----
+  
+  Since PHP does not support unicode, the VM Bridge uses UTF-8
+  to convert characters into the host representation. All strings are
+  created with new String(..., "UTF-8") and all internal String->byte[]
+  conversions use getBytes("UTF-8").
+  
+  If you have old PHP files which are not UTF-8 encoded, you can
+  change the default encoding with java_set_file_encoding().  For
+  example:
+
+    java_set_file_encoding("ISO-8859-1");
+
+  For a list of available encodings please see the documentation of
+  the JVM's file.encoding system property.
+
+  The java_set_file_encoding() primitive only affects java.lang.String
+  creation and internal conversions, it does not alter the JVM's
+  file.encoding system property nor does it change the behaviour of
+  methods which use the file.encoding property, getBytes() for
+  example.  If you use:
+  
+    $str=new Java ("java.lang.String", "Cze????! -- ???????? -- Gr");
+    echo $str->getBytes();
+
+  the output conversion depends on the file.encoding system property
+  which in turn depends on the process' LANG environment variable. You
+  can check the file.encoding with the test.php script, see above.
+
+  To be portable please do not use conversions which depend on the
+  JVM's file.encoding. They are easy to avoid, the above example
+  should be written as:
+
+    $str=new Java ("java.lang.String", "Cze????! -- ???????? -- Gr");
+    echo (string)$str;  // in PHP5 or higher
+    echo $str->toString(); // in PHP4
+
+------------------------------------
+  Creating thread dumps in Java 6
+  -------------------------------
+
+  * Become "super user" or "admin user" and start the program jconsole
+    located in the JDK 1.6 bin directory, for example with the following
+    command:
+
+      su -c "/opt/jdk1.6/bin/jconsole"
+
+    On Windows make sure you have admin privileges before starting
+    jconsole.
+     
+  * In the "Create new connection" dialog select "local process" and
+    click on the "JavaBridge" entry. -- If the JavaBridge doesn't appear
+    there, check if the JavaBridge is running within a Java 1.6 VM and if
+    the jconsole has been started with sufficient permissions.
+
+  * Click "connect".
+
+  * Open the "Threads" tab and click on the thread you're interested in.
+
+
+------------------------------------
+  Performance tuning
+  ------------------
+
+  The VM Bridge protocol is very sensitive to network
+  latency. If the Java server and PHP client do not run on the same
+  computer, the objective is to minimize the number of network
+  round-trips; java_values() can be used to obtain a Java array, Map
+  or Collection in one round-trip.
+  
+  The call java_values($obj) evaluates $obj on the server-side and, if
+  it is a Java array, Map or Collection, retrieves its values in one
+  call.
+
+  Example:
+
+    $iter = $hits->iterator();                       // 1 round trip
+    $resultList = new Java("java.util.LinkedList");  // 1 round trip
+    $n = $hits->length()                             // 1 round trip
+
+    while($n--) {
+      $next = $iter->next();
+      $resultList->add($next->get("name"));
+    }
+    $ar = java_values($resultList);                  // 1 round trip
+
+  Assuming that a ping to the back-end reveals an average round-trip
+  time of 6ms, the above code costs 6*6ms = 36ms (ignoring CPU and
+  network bandwidth contraints).
+
+  The more intuitive approach:
+
+    $n = $hits->length();                            // $n = 30000
+    while($iter->hasNext()) {                        // $n * 6ms
+      $next = $iter->next();                         // $n * 6ms
+      $a[$i++]=$next->get("name");                   // $n * 6ms
+    }
+ 
+  costs 30000*18ms + 6 ms = 9 min. It is 15000 times slower, 
+  assuming that the client CPU can generate and send the XML document
+  within 6ms and that the server CPU can generate/send the values of the
+  resultList within 6ms, which usually isn't the case.
+
+------------------------------------
+  Mailing List
+  ------------
+
+  Please report bugs/problems to the mailing list:
+
+    php-java-bridge-users@lists.sourceforge.net
+

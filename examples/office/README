@@ -1,0 +1,25 @@
+This simple example shows how to create PDF documents from PHP
+
+Installing the itext.jar library on a web server
+-------------------------------------------------
+
+1. Start Java as follows:
+
+     java -classpath itext.jar -jar JavaBridge.jar SERVLET_LOCAL:8080 1 &
+
+   or, if you have compiled itext.jar to native code, add the following
+   lines to your php.ini file:
+
+     extension=java.so
+     [java]
+
+
+2. Test the installation, type:
+
+     php itext_pdf.php >HelloWorld.pdf
+
+3. Browse to:
+     
+     http://your.server.com/itext_pdf.php
+
+Please see the Itext documentation for further information.

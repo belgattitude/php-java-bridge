@@ -1,0 +1,5 @@
+20_SELinuxMakefileDebian_patch.dpatch
+30_SELinuxTeTomcatDebian_patch.dpatch
+50_SELinuxReadmeDebian_patch.dpatch
+
+

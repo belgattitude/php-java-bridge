@@ -1,0 +1,21 @@
+These examples show how to create GUI applications with PHP.
+
+* swt-button.php: Uses SWT to create a native GUI on windows or
+  unix. SWT is part of eclipse and can be downloaded from
+  www.eclipse.org.
+
+* swing-button.php: This example has been moved to
+  tests.php5/swing-button.php. A better example can be found in
+  server/test/SwingButton.java and server/test/SwingButton.php: Unlike
+  other toolkits the swing toolkit creates artifical background
+  threads which cause trouble, see the java bug parade for details,
+  therefore the best way to use swing is to write a swing application in
+  pure java and use php as an extension/plugin only.
+
+* gtk-button.php: This example uses mono gtk. You need the
+  PHP/Mono+Net Bridge and gtk-sharp installed on the system.
+
+* gtk-fileselector.php: An example which opens a file selector via
+  mono gtk. You need the PHP/Mono+NET Bridge and gtk-sharp installed
+  on the system.
+

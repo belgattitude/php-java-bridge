@@ -1,0 +1,134 @@
+policy_module(javabridge,5.5.1)
+
+########################################
+#
+# Declarations
+#
+
+type javabridge_t;
+type javabridge_exec_t;
+init_daemon_domain(javabridge_t,javabridge_exec_t)
+
+domain_type(javabridge_t)
+domain_entry_file(javabridge_t, javabridge_exec_t)
+
+type javabridge_tmp_t;
+files_tmp_file(javabridge_tmp_t)
+
+type javabridge_var_run_t;
+files_pid_file(javabridge_var_run_t)
+
+########################################
+#
+# javabridge local policy
+#
+gen_require(`
+	type httpd_log_t,sbin_t,inaddr_any_node_t,netif_t,lo_node_t,httpd_sys_content_t,port_t,var_log_t,devpts_t,httpd_t,java_exec_t,user_tmp_t;
+')
+
+####################
+# Domain transitions
+domain_auto_trans(httpd_t, javabridge_exec_t, javabridge_t)
+
+
+#####################
+# tmp 
+allow javabridge_t javabridge_tmp_t:dir create_dir_perms;
+allow javabridge_t javabridge_tmp_t:dir { write search rmdir read remove_name add_name };
+allow javabridge_t javabridge_tmp_t:file { read write unlink };
+allow javabridge_t javabridge_tmp_t:file create_file_perms;
+allow javabridge_t javabridge_tmp_t:file rename;
+allow javabridge_t tmpfs_t:dir search;
+files_tmp_filetrans(javabridge_t,javabridge_tmp_t,{ file dir })
+
+
+###########
+allow javabridge_t devpts_t:chr_file { read write };
+allow javabridge_t javabridge_exec_t:file execute_no_trans;
+allow javabridge_t self:process { execmem signal };
+allow javabridge_t self:unix_stream_socket { accept listen };
+
+#########
+# Connect from httpd.
+allow httpd_t javabridge_exec_t:file getattr;
+allow httpd_t javabridge_t:unix_stream_socket connectto;
+
+# Connect from httpd using tcp sockets
+allow javabridge_t self:tcp_socket { accept bind connect create getattr listen read setopt write shutdown };
+allow javabridge_t port_t:tcp_socket { name_bind name_connect recv_msg send_msg };
+
+corenet_tcp_sendrecv_generic_if(javabridge_t)
+#corenet_non_ipsec_sendrecv(javabridge_t)
+corenet_all_recvfrom_unlabeled(javabridge_t) 
+allow javabridge_t lo_node_t:node { tcp_recv tcp_send };
+allow javabridge_t lo_node_t:tcp_socket node_bind;
+
+dontaudit javabridge_t inaddr_any_node_t:tcp_socket node_bind;
+dontaudit javabridge_t sbin_t:dir search;
+#########
+
+##################################
+# /usr/bin/java
+corecmd_exec_bin(javabridge_t);
+# /usr/bin/gij
+allow javabridge_t java_exec_t:file { execute execute_no_trans read };
+
+kernel_read_network_state(javabridge_t)
+kernel_read_system_state(javabridge_t)
+kernel_read_all_sysctls(javabridge_t)
+kernel_search_vm_sysctl(javabridge_t)
+
+# compatibility with fedora 10, fedora 11
+#userdom_write_user_tmp_sockets(javabridge_t)
+files_search_tmp(javabridge_t)
+write_sock_files_pattern(javabridge_t, user_tmp_t, user_tmp_t)
+
+
+dev_read_sound(javabridge_t)
+dev_write_sound(javabridge_t)
+dev_read_urand(javabridge_t)
+dev_read_rand(javabridge_t)
+
+files_read_etc_files(javabridge_t)
+files_read_usr_files(javabridge_t)
+files_search_var_lib(javabridge_t)
+files_read_etc_runtime_files(javabridge_t)
+# Read global fonts and font config
+files_read_etc_files(javabridge_t)
+
+fs_getattr_xattr_fs(javabridge_t)
+fs_dontaudit_rw_tmpfs_files(javabridge_t)
+
+libs_use_ld_so(javabridge_t)
+libs_use_shared_libs(javabridge_t)
+
+miscfiles_read_localization(javabridge_t)
+# Read global fonts and font config
+miscfiles_read_fonts(javabridge_t)
+
+###################################################
+# Read /var/www
+allow javabridge_t httpd_sys_content_t:dir list_dir_perms;
+allow javabridge_t httpd_sys_content_t:file read_file_perms;
+allow javabridge_t httpd_sys_content_t:lnk_file {getattr read};
+
+sysnet_read_config(javabridge_t)
+
+###################################################
+# Running the back-end as a sub-component of apache
+apache_use_fds(javabridge_t)
+apache_sigchld(javabridge_t)
+allow javabridge_t httpd_t:fifo_file rw_file_perms;
+allow httpd_t javabridge_t:process { sigkill signal };
+# append to apache log
+allow javabridge_t httpd_log_t:file append;
+allow javabridge_t self:fifo_file { getattr read write };
+allow javabridge_t self:process { getsched sigkill };
+
+####################################################
+# Insane settings needed for sun java 1.5.  Comment this out, if you
+# can.
+allow javabridge_t javabridge_tmp_t:file { execute };
+allow javabridge_t usr_t:file { execute };
+allow javabridge_t locale_t:file { execute };
+allow javabridge_t random_device_t:chr_file { append };

@@ -1,0 +1,73 @@
+Overview
+--------
+
+The standalone JavaBridge.jar associates PHP scripts with Java
+applications.
+
+This document describes how to call non-JEE ("desktop") application
+Java methods. Please see the INSTALL.J2SE document for details how to
+call PHP methods from Java. Please see the INSTALL.JEE document for
+details how to embed PHP into a pure JEE application server or how to
+call Java/JEE methods from PHP.
+
+Installation
+------------
+
+Add the PHP/Java Bridge to your Java application(s):
+
+* Extract the JavaBridge.jar library from JavaBridge.war, for example
+  with the command:
+
+   java -classpath JavaBridge.war TestInstallation
+   
+* Add JavaBridge.jar to the main library of you non-JEE
+  application. This can be done by adding the following line to your
+  application's META-INF/MANIFEST.MF:
+  
+    Class-Path: JavaBridge.jar
+
+  It is also possible to simply merge all files into your non-JEE
+  application.
+
+* Add the following 3 lines to the main class of your non-JEE
+  application:
+
+     public static final String JAVABRIDGE_PORT="8087";
+     static final php.java.bridge.JavaBridgeRunner runner = 
+       php.java.bridge.JavaBridgeRunner.getInstance(JAVABRIDGE_PORT);
+     
+
+Call your Java methods from PHP
+-------------------------------
+
+* Start your Java application.
+
+* Use the following code to call methods of your running(!) Java application:
+
+    <?php require_once("http://localhost:8087/JavaBridge/java/Java.inc");
+
+    $myClass = new java("com.my.non.j2ee.application.MyClass");
+    $myClass->myMethod(...);
+    ?>
+
+
+Logging
+-------
+
+* Download and copy log4j.jar to java.ext.dirs. Example for JDK 1.6 on
+  Linux:
+
+  mkdir -p /usr/java/packages/lib/ext
+  cp log4j.jar /usr/java/packages/lib/ext
+
+* Start the log4j viewer. For example with the command:
+
+  /usr/java/default/bin/java org.apache.log4j.chainsaw.Main
+
+* Restart the standalone application. The log appears in the log4j
+  window.
+
+
+* Please report bugs/problems to the mailing list:
+
+    php-java-bridge-users@lists.sourceforge.net

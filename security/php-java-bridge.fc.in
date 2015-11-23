@@ -1,0 +1,6 @@
+#################################
+# php-java-bridge.fc
+# SELinux file contexts for the bridge
+#
+@EXTENSION_DIR@/RunJavaBridge	--	system_u:object_r:javabridge_exec_t
+@EXTENSION_DIR@/java          --        system_u:object_r:bin_t

@@ -1,0 +1,283 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+# Read http://wiki.debian.org/PkgSplit "How to split a package into several 
+# smaller packages" for details of this file.
+# variables MUST be set outside target rules
+# target rules MUST start at column 1, then followed by ":"
+# actions MUST start after a TAB, not blank spaces
+# builddir for using dh_install for .war files.
+
+# Copyright (C) 2009  Andre Felipe Machado <andremachado@techforce.com.br>
+# et al from Debian Project http://www.debian.org , Joey Hess, Craig Small.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	BUILDDIR := debian/build
+	DESTDIR := ${CURDIR}/${BUILDDIR}
+	PHP_EXT_DIR := $(shell /usr/bin/php-config --extension-dir)
+	PHP_INCLUDE_DIR := $(shell /usr/bin/php-config --include-dir)
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+
+# using dpatch for flexibility
+configure: patchsource configure-stamp
+
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+
+build: build-stamp
+
+# using dpatch for flexibility, no mv anymore
+build-stamp: configure 
+	dh_testdir
+	# Add here commands to compile the package.
+	dh_auto_build  --buildsystem=ant
+	#docbook-to-man debian/php-java-bridge.sgml > php-java-bridge.1
+	#into makefiles, each line spawns own shell, so you need to write single line batches.
+	cd security/module;	$(MAKE) -f Makefile; 	cd ../..
+	touch $@
+
+# using dpatch for flexibility
+clean-patched:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	# Add here commands to clean up after the build process.
+	dh_auto_clean   --buildsystem=ant
+	cd security/module; 	dh_auto_clean; 	cd ../..
+	dh_clean
+#	rm -rf ${BUILDDIR}
+
+install: installbasic
+
+	# Add here commands to install the package into debian/php-java-bridge.
+
+# specifiy destdir debian way
+	dh_auto_install  --buildsystem=ant DESTDIR=${DESTDIR}
+
+# avoid multiple binary packages conflicts with --keep
+installbasic:
+	dh_testdir
+	dh_testroot
+#	dh_clean --keep  #deprecated form
+	dh_prep
+	cd security/module; 	dh_prep; 	cd ../..
+
+# Build architecture-independent files here.
+# creating also docs package without examples files. See /debian/*.docs file
+binary-indep: php-java-bridge-devel php-java-bridge-j2ee php-java-bridge-j2ee-selinux binarydocs
+
+# creating j2ee package . See /debian/*j2ee.* files
+# note the -p$@ to use target name package files in /debian as parameters
+# this option defines that a given rule will act only at the specified package
+# Caution: the -i option is for rule acting on ALL architecture INdependent 
+# packages at this WHOLE file, not only at where it is written.
+
+php-java-bridge-j2ee: 
+	dh_testdir
+	dh_testroot
+	dh_installdirs  -p$@
+	dh_installchangelogs  -p$@  ChangeLog
+	dh_installdocs  -p$@
+#	dh_installexamples -p$@
+# using dh_installdirs and dh_install for this task
+# note the absence of leading "/"
+	dh_install  --fail-missing --package=$@ dist/JavaBridge.war var/lib/tomcat5.5/webapps
+#	dh_install -i -p$@
+#	dh_installmenu -i
+#	dh_installdebconf -i
+#	dh_installlogrotate -i
+#	dh_installemacsen -i
+#	dh_installpam -i
+#	dh_installmime -i
+#	dh_python -i
+#	dh_installinit -i
+#	dh_installcron -i
+#	dh_installinfo -i
+	dh_installman  -p$@
+	dh_link  -p$@
+	dh_strip  -p$@
+	dh_compress  -p$@
+	dh_fixperms  -p$@
+#	dh_perl -i
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps  -p$@
+	dh_gencontrol  -p$@
+	dh_md5sums  -p$@
+	dh_builddeb  -p$@
+
+
+
+php-java-bridge-j2ee-selinux: 
+	dh_testdir
+	dh_testroot
+	dh_installdirs  -p$@
+	dh_installchangelogs  -p$@  ChangeLog
+	dh_installdocs  -p$@
+#	dh_installexamples -p$@
+	dh_installdirs -p$@
+	dh_install   --fail-missing -p$@
+#	dh_installmenu -i
+#	dh_installdebconf -i
+#	dh_installlogrotate -i
+#	dh_installemacsen -i
+#	dh_installpam -i
+#	dh_installmime -i
+#	dh_python -i
+#	dh_installinit -i
+#	dh_installcron -i
+#	dh_installinfo -i
+	dh_installman  -p$@
+	dh_link  -p$@
+	dh_strip  -p$@
+	dh_compress  -p$@
+	dh_fixperms  -p$@
+#	dh_perl -i
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps  -p$@
+	dh_gencontrol  -p$@
+	dh_md5sums  -p$@
+	dh_builddeb  -p$@
+
+
+
+# creating devel package . See /debian/*devel.* files
+# note the -p$@ to use target name package files in /debian as parameters
+php-java-bridge-devel:
+	dh_testdir
+	dh_testroot
+	dh_installdirs  -p$@
+	dh_installchangelogs  ChangeLog
+	dh_installdocs  -p$@
+	dh_installexamples  -p$@
+	dh_install  --fail-missing -p$@ dist/*.jar $(PHP_INCLUDE_DIR)/ext/php-java-bridge
+#	dh_install -i -p$@
+#	dh_installmenu -i
+#	dh_installdebconf -i
+#	dh_installlogrotate -i
+#	dh_installemacsen -i
+#	dh_installpam -i
+#	dh_installmime -i
+#	dh_python -i
+#	dh_installinit -i
+#	dh_installcron -i
+#	dh_installinfo -i
+	dh_installman  -p$@
+	dh_link  -p$@
+	dh_strip -p$@
+	dh_compress  -p$@
+	dh_fixperms  -p$@
+#	dh_perl -i
+	dh_makeshlibs -p$@
+	dh_installdeb  -p$@
+	dh_shlibdeps  -p$@
+	dh_gencontrol  -p$@
+	dh_md5sums  -p$@
+	dh_builddeb  -p$@
+
+# creating docs package without examples files. See /debian/*.docs file
+# pitfall: packages have "-" in their name. 
+# Do not create intermediate rules with this character
+binarydocs: php-java-bridge-docs php-java-bridge-j2ee-docs
+
+php-java-bridge-docs: 
+	dh_testdir
+	dh_testroot
+	dh_installdirs  -p$@
+	dh_installchangelogs  -p$@  ChangeLog
+	dh_installdocs  -p$@
+	dh_installman  -p$@
+	dh_link  -p$@
+	dh_strip  -p$@
+	dh_compress  -p$@
+	dh_fixperms  -p$@
+	dh_makeshlibs -p$@
+	dh_installdeb  -p$@
+	dh_shlibdeps  -p$@
+	dh_gencontrol  -p$@
+	dh_md5sums  -p$@
+	dh_builddeb  -p$@
+
+php-java-bridge-j2ee-docs:
+	dh_testdir
+	dh_testroot
+	dh_installdirs  -p$@
+	dh_installchangelogs  -p$@  ChangeLog
+	dh_installdocs  -p$@
+#	dh_installexamples -i
+#	dh_install -i
+#	dh_installmenu -i
+#	dh_installdebconf -i
+#	dh_installlogrotate -i
+#	dh_installemacsen -i
+#	dh_installpam -i
+#	dh_installmime -i
+#	dh_python -i
+#	dh_installinit -i
+#	dh_installcron -i
+#	dh_installinfo -i
+	dh_installman  -p$@
+	dh_link  -p$@
+	dh_strip  -p$@
+	dh_compress  -p$@
+	dh_fixperms  -p$@
+#	dh_perl -i
+	dh_makeshlibs -p$@
+	dh_installdeb  -p$@
+	dh_shlibdeps  -p$@
+	dh_gencontrol  -p$@
+	dh_md5sums  -p$@
+	dh_builddeb  -p$@
+
+# Build architecture-dependent files here.
+# Caution: the -a option is for rule acting on ALL architecture DEPENDENT 
+# packages at this WHOLE file, not only at where it is written.
+
+# build and install are implicit, but THIS package source needs 2 cycles.
+# so the first cycle is implicity and this entry is for the second cycle.
+binary: build install binary-indep
+.PHONY: build build-stamp clean clean-patched binary-indep binarydocs binary install configure configure-stamp installdocs installbasic unpatch patchsource patch-stamp  php-java-bridge-j2ee php-java-bridge-devel php-java-bridge-docs php-java-bridge-j2ee-docs php-java-bridge-j2ee-selinux 
+
+# using dpatch for flexibility
+unpatch:
+	dpatch deapply-all
+	rm -rf patch-stamp debian/patched
+
+patchsource: patch-stamp
+
+patch-stamp:
+	dpatch apply-all
+	dpatch cat-all >patch-stamp
+
+clean: clean-patched unpatch

@@ -1,0 +1,152 @@
+php-java-bridge for Debian
+--------------------------
+
+This Debian package was compiled for installing php5 C modules, j2ee server, 
+docs and development files using separated packages.
+Also, it must use Sun Java 6 and Tomcat 5.5, as of today.
+You must use the J2EE version, because C implementation was removed from 
+distribution and source tree. 
+This file release do not include C implementation binary.
+This version is not compatible with php 4.x.
+Compilation against GCJ is possible, but some tweaks must be done. Read the 
+other document files.
+This version needs debhelper >= 7.4.11~bpo50+1 for build.
+This version uses ant build environment, and only SELinux still use make.
+This package uses an EXPERIMENTAL and TOO permissive Tomcat 5.5 security policy.
+Only suitable for security benign development environments.
+Java security is not actually enough for blocking malicious code from php.
+The production quality solution should be using Security Enhanced Linux 
+policies. 
+Read more at the "devel" package, 
+"/usr/share/doc/php-java-bridge-devel/examples/security" directory.
+This version includes minimal SE Linux rules for starting Tomcat 5.5 and 
+php-java-bridge.
+Please, contribute improved rules to the project.
+This version needs PhpDocumentor in order to build. It is not packaged for
+Debian yet. You must install php-pear, dh-make, dh-make-pear packages and then 
+execute, logged as root and if your Apache document root is at /var/www:
+
+# pear channel-update "pear.php.net"
+# pear config-set data_dir /var/www/pear
+
+Then OR you could install PhpDocumentor using pear:
+
+# pear  install --alldeps PhpDocumentor
+
+OR you could create debian packages for it and its dependencies (XML_Beautifier,
+ XML_Parser, XML_Util) logged as regular user (you may cd to individual 
+directories for each):
+
+$ dh-make-pear  --depends php-xml-beautifier, php5-cli PhpDocumentor
+$ dh-make-pear  --depends php-xml-util, php-xml-parser XML_Beautifier
+$ dh-make-pear XML_Util
+$ dh-make-pear XML_Parser
+
+Then enter at each respective pear module source directory as regular user:
+
+$ debuild -uc -us
+
+These commands will build rough debian packages for the pear modules.
+You may need to adjust dependency field at each debian/control files, and 
+maintainer field, at least. 
+Install these pear module debian packages in order to compile php-java-bridge 
+debian packages.
+
+After having all these pear dependencies satisfied, use the command as regular 
+user:
+
+$ debuild -rfakeroot -uc -us
+
+at a directory you downloaded the .dsc, .changes, .diff.gz, orig.tar.gz files
+and given you already have all devscripts tool chain Debian packages installed.
+
+
+1. Creating and Building Debian package directly from CVS
+Most steps are only needed if you will commit a new version to the repository.
+If you want only to build an already commited version, you will need only create
+ a local working area (checkout module) as anonymous cvs user and then jump to 
+the step "building the package".
+
+1.1 Creating package 
+
+1.1.1 Create your local project area (checkout module to your local CVS area).
+See http://sourceforge.net/cvs/?group_id=117793
+The commands below are suitable for cvs commiters. Use your sourceforge cvs 
+username. 
+If you are only building the package, use anonymous cvs checkout as instructed 
+in the URL. 
+
+$ mkdir ~/projects
+$ cd ~/projects
+$ export CVS_RSH=ssh
+$ cvs -d:ext:your_sourcefoge_cvs_username@php-java-bridge.cvs.sourceforge.net:/cvsroot/php-java-bridge checkout php-java-bridge
+
+Now you should have your own local area (checked out module) in 
+~/projects/php-java-bridge
+If you are only building the package, jump to the step 2.
+
+1.1.1.1 If you are trying to merge a downloaded and then expanded src.tgz into 
+the cvs tree, use the command below, adapting it to the suitable version.
+
+$ cp --recursive --update --verbose --archive \
+--preserve php-java-bridge-5.2.2/*  --target-directory=php-java-bridge
+
+1.1.2 Commit the (eventual) changes to the repository. Ideally, you will not to 
+do this, if step 1.1.1.1 is not needed.
+
+1.1.3 Create an upstream tag. The formating is VERY strict. Adapt to the 
+suitable version.
+
+$ cd ~/projects/php-java-bridge
+$ cvs -f tag 'upstream_version_6_1_2_1' '.'
+
+1.1.4 Create or edit the Debian php-java-bridge specific patches.
+
+$ cd ~/projects/php-java-bridge
+$ dpatch-edit-patch patch 10_MakefileFrag_patch
+
+Copy around from a personal template or edit the  Makefile.frag into the 
+./debian directory.
+Exit dpatch shell. 
+All your modifications were being recorded and will result in the defined patch 
+file name into the ./debian/patches directory.
+
+1.1.5 Modify the Debian changelog in the correct way. It is very important to 
+follow the strict formating, as the Debian changelog is actualy used as one of 
+the package control files.
+
+$ debchange -v 6.1.2.1-1
+
+1.1.6 Modify some other */debian files, if needed.
+
+1.1.7 Commit all changes.
+
+1.1.8 Create the Debian version tag. The formating is very strict. Adapt to the 
+suitable version.
+
+$ cd ~/projects/php-java-bridge
+$ cvs -f tag 'debian_version_6_1_2_1-1' '.'
+
+
+2. Building the package from cvs tree.
+If you are only building the package, you could use the anonymous cvs pserver 
+login and checkout as explained in previous item.
+
+$ mkdir ~/compilation_tmp
+$ cd ~/projects/php-java-bridge
+
+Hint: You need to specify the absolute path to the temporary scratchpad working 
+area instead of ~/.
+
+$ cvs-buildpackage  -rfakeroot -uc -us -R. -W/home/andremachado/compilation_tmp
+
+The generated files will result at the specified temporary scratchpad working 
+area.
+
+3. Different port on Debian systems
+The Tomcat php-java-bridge deployment could be tested at 
+http://localhost:8180/JavaBridge
+with or without SE Linux packaged rules installed.
+The port is configured 8180 in order to avoid conflict with Apache.
+
+ -- Andre Felipe Machado <andre.machado@serpro.gov.br>  Tue, 04 May 2010 16:55:22 -0300

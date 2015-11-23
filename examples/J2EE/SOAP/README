@@ -1,0 +1,17 @@
+This example uses SOAP to connect to a web service. You need a JDK >= 1.5 
+and a j2ee server which supports java web services, for example 
+"Sun Java System Application Server Platform Edition 9.0".
+
+
+Running the test
+----------------
+
+Deploy jaxws-fromwsdl.war, adjust the $J2EE_LIBRARY_DIR, $HOST and $PORT 
+in wsimport.php and run the example, for example with the command:
+
+  php addNumbers.php
+
+The example needs the following java libraries in $J2EE_LIBRARY_DIR:
+activation.jar jaxb-api.jar jaxb-impl.jar jaxb-xjc.jar jaxws-api.jar 
+jaxws-rt.jar jaxws-tools.jar jsr173_api.jar jsr181-api.jar jsr250-api.jar 
+resolver.jar saaj-api.jar saaj-impl.jar sjsxp.jar

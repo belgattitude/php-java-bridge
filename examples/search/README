@@ -1,0 +1,25 @@
+This example shows how to use the Apache/Lucene library from PHP.
+
+Installing the lucene.jar library on a web server
+-------------------------------------------------
+
+1. Start Java as follows:
+
+     java -classpath lucene.jar -jar JavaBridge.jar SERVLET_LOCAL:8080 1 &
+
+   or, if you have compiled lucene.jar to native code, add the following
+   lines to your php.ini file:
+
+     extension=java.so
+     [java]
+
+
+2. Test the installation, type:
+
+     php lucene_search.php
+
+3. Browse to:
+     
+     http://your.server.com/lucene_search.php
+
+Please see the Apache Lucene documentation for further information.

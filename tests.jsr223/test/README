@@ -1,0 +1,3 @@
+This file contains GUI tests for the JSR223 script interface.
+
+JUnit tests should go to server/php/java/test

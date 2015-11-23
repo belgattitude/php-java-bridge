@@ -1,0 +1,3 @@
+java.ini etc/php5/conf.d
+server/META-INF/java/Java.inc usr/include/php5/java
+

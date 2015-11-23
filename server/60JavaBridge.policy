@@ -1,0 +1,49 @@
+// Copyright (C) 2009  Andre Felipe Machado <andremachado@techforce.com.br>
+// and php-java-bridge project http://php-java-bridge.sourceforge.net
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+// This php-java-bridge security is too permissive and suitable for development tests only.
+// For production environment a more strict security is needed.
+// This file was tested at placement:
+// /etc/tomcat5.5/policy.d/60JavaBridge.policy
+// Please, contribute your security configuration to the php-java-bridge project.
+// As of php-java-bridge 5.4.4.2, the Java engine security is not actually enough for
+// blocking malicious code from php. The real solution should be using 
+// Security Enhanced Linux policies.
+
+grant codeBase "file:${catalina.base}${file.separator}webapps${file.separator}JavaBridge${file.separator}-" { permission java.security.AllPermission; };
+
+
+// This logging configuration was taken from the Tomcat own configuration files.
+// To enable per context logging configuration, permit read access to the appropriate file.
+// Be sure that the logging configuration is secure before enabling such access
+// eg for the JavaBridge web application:
+grant codeBase "file:${catalina.home}/bin/tomcat-juli.jar" {
+permission java.io.FilePermission "${catalina.base}${file.separator}webapps${file.separator}JavaBridge${file.separator}WEB-INF${file.separator}classes${file.separator}logging.properties", "read";
+};
+
+
+// For development only, you may even comment out the following configuration:
+
+grant {
+  permission java.io.FilePermission "${user.home}${/}-", "read,write,delete";
+  permission java.io.FilePermission "${java.io.tmpdir}${/}-", "read,write,delete";
+  permission java.io.FilePermission "${java.home}${/}-", "read";
+  permission java.util.PropertyPermission "*", "read";
+  permission java.lang.RuntimePermission "getClassLoader";
+  permission java.lang.RuntimePermission "accessClassInPackage.sun.tools.*";
+};
+

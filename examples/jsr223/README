@@ -1,0 +1,21 @@
+The examples in this folder demonstrate how the JSR 223 API can be
+used to invoke PHP methods from Java standalone applications. 
+
+Note: Other JSR 223 examples which show how to use the JSR 223 API
+within servlets or web frameworks can be found in the examples/php+jsp
+folder.
+
+
+* PhpThreads.java: Creates 5 PHP threads, concurrently writing to a
+  shared resource.
+
+  Compile the example with the command: 
+
+      javac PhpThreads.java
+  
+  Run the example with the command: 
+   
+      java -classpath JavaBridge.jar:php-script.jar:. PhpThreads
+ 
+
+NOTE: Some operating systems use "\" instead of "/" and ";" instead of ":".

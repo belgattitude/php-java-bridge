@@ -1,0 +1,17 @@
+Building the documentBean.jar
+-----------------------------
+
+It is assumed that you use the Sun J2EE application server and that
+your server is already installed in some directory, for example in
+~/SUNWappserver.  The environment variable $app_server should point to
+this directory.
+
+1. Compile the java files, for example with the command:
+
+   $app_server/jdk/bin/javac -classpath $app_server/lib/j2ee.jar:. *.java
+
+
+2. Create the documentBean.jar file, for example with the command:
+
+   $app_server/jdk/bin/jar cf ../documentBean.jar *
+

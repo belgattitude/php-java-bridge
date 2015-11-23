@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 20_SELinuxMakefileDebian_patch.dpatch by  <andre.machado@serpro.gov.br>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad php-java-bridge~/security/module/Makefile php-java-bridge/security/module/Makefile
+--- php-java-bridge~/security/module/Makefile	2009-07-01 17:34:05.000000000 -0300
++++ php-java-bridge/security/module/Makefile	2009-07-01 17:35:03.000000000 -0300
+@@ -1,8 +1,9 @@
++#!/usr/bin/make -f
+ 
+ AWK ?= gawk
+ 
+ NAME ?= $(shell $(AWK) -F= '/^SELINUXTYPE/{ print $$2 }' /etc/selinux/config)
+ SHAREDIR ?= /usr/share/selinux
+-HEADERDIR := $(SHAREDIR)/devel/include
++HEADERDIR := $(SHAREDIR)/$(NAME)/include
+ 
+ include $(HEADERDIR)/Makefile

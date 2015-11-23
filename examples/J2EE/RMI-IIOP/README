@@ -1,0 +1,54 @@
+This example uses RMI/IIOP to connect to an EJB server.  The
+enterprise bean is a stateful session bean which accepts pages which
+are added to the document during the session.  The document should be
+created when the PHP session starts and destroyed when the PHP session
+terminates.  See ../php+jsp/documentClient.php.
+
+
+Installing the documentBean.jar
+-------------------------------
+
+It is assumed that you use the Sun J2EE application server and that
+your server is already installed in some directory, for example in
+~/SUNWappserver.  The environment variable app_server should point to
+this directory.
+
+
+1. Start your application server, for example with the command:
+
+     $app_server/bin/asadmin start-domain domain1
+
+
+2. Log into your application server, for example by visiting
+
+     http://localhost:4848/asadmin
+
+   and open
+
+     Application Server -> Applications -> EJB Modules
+
+   Click on "Deploy..."  and deploy documentBean.jar (a precompiled
+   jar file can be found in the ../../unsupported folder).
+
+
+3. Start the PHP/Java Bridge, if it is not already running.
+
+
+4. Run documentClient.php, for example with the command:
+
+     php documentClient.php 3 $app_server
+
+   It should return "This document has 2 pages."
+
+
+
+Notes: 
+
+For IBM WebSphere set WAS_HOME, deploy under the JNDI name
+"RMIdocument" and run the example with:
+php documentClient.php 2 $WAS_HOME
+
+For Oracle you need to deploy a .ear file, which can be created with
+the command: "deploytool". Make sure to require the correct
+documentBeanClient.jar which includes the stub classes, otherwise
+you'll get a class cast exception in narrow.

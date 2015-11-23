@@ -1,0 +1,14 @@
+This folder contains examples which show how to embed languages into
+PHP.
+
+* scheme-demo.php: Defines a scheme function which evaluates n!. The
+  function is called for values from 0..100. It uses the scheme
+  interpreter "kawa" which is available from:
+
+    http://www.fsf.org/software/kawa 
+
+  or from
+
+    http://php-java-bridge.sourceforge.net/kawa.jar.
+
+
