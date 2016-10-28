@@ -33,31 +33,36 @@ import php.java.script.PhpScriptWriter;
 
 /**
  * A PrintWriter which uses the JavaBridge logger.
- *
  */
 public class PhpScriptLogWriter extends PhpScriptWriter {
 
     private PhpScriptLogWriter(OutputStream out) {
-	super(out);
+        super(out);
     }
+
     /**
      * Get a new log writer
+     *
      * @param logger The logger
      * @return The log writer
      */
-    public static final PhpScriptLogWriter getWriter (ILogger logger) {
-	    return new PhpScriptLogWriter (new LogOutputStream(logger));
+    public static final PhpScriptLogWriter getWriter(ILogger logger) {
+        return new PhpScriptLogWriter(new LogOutputStream(logger));
     }
+
     static class LogOutputStream extends OutputStream {
-	private ILogger logger;
-	public LogOutputStream(ILogger logger) {
-	    this.logger = logger;
-	}
-	    public void write(int b) throws IOException {
-		throw new NotImplementedException();
-	    }
-	    public void write(byte b[], int off, int len) throws IOException {
-		logger.log(ILogger.INFO, new String(b, off, len));
-	    }
+        private ILogger logger;
+
+        public LogOutputStream(ILogger logger) {
+            this.logger = logger;
+        }
+
+        public void write(int b) throws IOException {
+            throw new NotImplementedException();
+        }
+
+        public void write(byte b[], int off, int len) throws IOException {
+            logger.log(ILogger.INFO, new String(b, off, len));
+        }
     }
 }

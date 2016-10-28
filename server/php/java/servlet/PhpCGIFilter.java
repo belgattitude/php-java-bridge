@@ -40,102 +40,115 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import php.java.bridge.Util;
 
 /**
- * Handles /foo/bar.php/baz?param=value requests.  
- * <p> Since the servlet spec doesn't allow &lt;url-pattern&gt;*.php*&lt;/url-pattern&gt;, this 
+ * Handles /foo/bar.php/baz?param=value requests.
+ * <p> Since the servlet spec doesn't allow &lt;url-pattern&gt;*.php*&lt;/url-pattern&gt;, this
  * filter searches for an embedded PHP_SUFFIX and forwards to the PhpCGIServlet. </p>
- * To enable this filter add 
+ * To enable this filter add
  * <blockquote>
  * <code>
- *     &lt;filter&gt;<br>
- *       &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
- *       &lt;filter-class&gt;php.java.servlet.PhpCGIFilter&lt;/filter-class&gt;<br>
- *   &lt;/filter&gt;<br>
- *   &lt;filter-mapping&gt;<br>
- *       &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
- *       &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br>
- *   &lt;/filter-mapping&gt;<br>
+ * &lt;filter&gt;<br>
+ * &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
+ * &lt;filter-class&gt;php.java.servlet.PhpCGIFilter&lt;/filter-class&gt;<br>
+ * &lt;/filter&gt;<br>
+ * &lt;filter-mapping&gt;<br>
+ * &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
+ * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;<br>
+ * &lt;/filter-mapping&gt;<br>
  * </code>
  * </blockquote>
+ *
  * @see php.java.servlet.fastcgi.FastCGIServlet
- *  */
+ */
 public class PhpCGIFilter implements Filter {
 
-    /** The default suffix to search for. For example .php/ or .phtml/ */
+    /**
+     * The default suffix to search for. For example .php/ or .phtml/
+     */
     public static final String PHP_SUFFIX = ".php/";
-    
+
     private String DOCUMENT_ROOT;
 
 
     /**
      * Return the PHP_SUFFIX. Override this method to return your own suffix.
+     *
      * @return the php suffix, defaults to ".php/"
      */
     public String getPhpSuffix() {
-	return PHP_SUFFIX;
+        return PHP_SUFFIX;
     }
+
     /**
      * {@inheritDoc}
      */
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+                         FilterChain chain) throws IOException, ServletException {
 
-	String uri = ((HttpServletRequest)request).getRequestURI();
-	
-	final String PHP_SUFFIX = getPhpSuffix();
-	final int PHP_SUFFIX_LEN = PHP_SUFFIX.length();
-	
-	int idx = uri.indexOf(PHP_SUFFIX);
-	if (idx != -1) {
-	    final String pathInfo = uri.substring(idx+PHP_SUFFIX_LEN-1);
-	    final String pathTranslated = DOCUMENT_ROOT + pathInfo;
-	    final String dispatch = uri.substring(0, idx+PHP_SUFFIX_LEN-1);
-	    
-	    String servletPathOrig = ((HttpServletRequest)request).getServletPath();
-	    idx = servletPathOrig.indexOf(PHP_SUFFIX);
-	    if (idx == -1) { Util.warn("INTERNAL ERROR: "+servletPathOrig); chain.doFilter(request, response); return; }
-	    
-	    final String servletPath = servletPathOrig.substring(0, idx+PHP_SUFFIX_LEN-1);
-	    HttpServletRequest req = new HttpServletRequestWrapper ((HttpServletRequest)request) {
-    
+        String uri = ((HttpServletRequest) request).getRequestURI();
+
+        final String PHP_SUFFIX = getPhpSuffix();
+        final int PHP_SUFFIX_LEN = PHP_SUFFIX.length();
+
+        int idx = uri.indexOf(PHP_SUFFIX);
+        if (idx != -1) {
+            final String pathInfo = uri.substring(idx + PHP_SUFFIX_LEN - 1);
+            final String pathTranslated = DOCUMENT_ROOT + pathInfo;
+            final String dispatch = uri.substring(0, idx + PHP_SUFFIX_LEN - 1);
+
+            String servletPathOrig = ((HttpServletRequest) request).getServletPath();
+            idx = servletPathOrig.indexOf(PHP_SUFFIX);
+            if (idx == -1) {
+                Util.warn("INTERNAL ERROR: " + servletPathOrig);
+                chain.doFilter(request, response);
+                return;
+            }
+
+            final String servletPath = servletPathOrig.substring(0, idx + PHP_SUFFIX_LEN - 1);
+            HttpServletRequest req = new HttpServletRequestWrapper((HttpServletRequest) request) {
+
                 public String getPathInfo() {
                     return pathInfo;
                 }
-    
+
                 public String getPathTranslated() {
-    	        	return pathTranslated;
+                    return pathTranslated;
                 }
+
                 public String getServletPath() {
-    	        	return servletPath;
+                    return servletPath;
                 }
+
                 public String getRequestURI() {
                     return dispatch;
                 }
+
                 public StringBuffer getRequestURL() {
                     try {
-	                return new StringBuffer(new java.net.URI(getScheme(), null, getServerName(), getServerPort(), getRequestURI(), null, null).toURL().toExternalForm());
+                        return new StringBuffer(new java.net.URI(getScheme(), null, getServerName(), getServerPort(), getRequestURI(), null, null).toURL().toExternalForm());
                     } catch (MalformedURLException e) {
-	                e.printStackTrace();
+                        e.printStackTrace();
                     } catch (URISyntaxException e) {
-	                e.printStackTrace();
+                        e.printStackTrace();
                     }
                     return null;
                 }
-    	    };
-    	    request.getRequestDispatcher(dispatch).forward(req, response);
-	} else {
-	    chain.doFilter(request, response);
-	}
+            };
+            request.getRequestDispatcher(dispatch).forward(req, response);
+        } else {
+            chain.doFilter(request, response);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void init(FilterConfig config) throws ServletException {
-	DOCUMENT_ROOT = ServletUtil.getRealPath(config.getServletContext(), "");
+        DOCUMENT_ROOT = ServletUtil.getRealPath(config.getServletContext(), "");
     }
 
     /**
      * {@inheritDoc}
      */
-    public void destroy() {}
+    public void destroy() {
+    }
 }

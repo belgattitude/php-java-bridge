@@ -31,19 +31,21 @@ import javax.script.ScriptEngine;
 
 /**
  * Common methods for all PHP script engines
- * @author jostb
  *
+ * @author jostb
  */
 public interface IPhpScriptEngine extends ScriptEngine, Compilable, java.io.FileFilter {
     /**
-     * free all resources associated with the script engine. Must be called explicitly for 
+     * free all resources associated with the script engine. Must be called explicitly for
      * the {@link InvocablePhpScriptEngine} and {@link InteractivePhpScriptEngine}.
+     *
      * @throws IOException
      */
     public void close() throws IOException;
- 
+
     /**
      * alias for {@link #close()}
+     *
      * @throws IOException
      */
     public void release();

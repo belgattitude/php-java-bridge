@@ -32,50 +32,61 @@ import php.java.bridge.http.FCGIConnectionPool.Connection;
 
 /**
  * Default InputStream used by the connection pool.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public class FCGIConnectionInputStream extends InputStream {
     protected Connection connection;
     private InputStream in;
 
     protected void setConnection(Connection connection) throws FCGIConnectionException {
-	this.connection = connection;	  
-	try {
-	    this.in = connection.channel.getInputStream();
-	} catch (IOException e) {
-	    throw new FCGIConnectionException(connection, e);
-	}	  
+        this.connection = connection;
+        try {
+            this.in = connection.channel.getInputStream();
+        } catch (IOException e) {
+            throw new FCGIConnectionException(connection, e);
+        }
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public int read(byte buf[]) throws FCGIConnectionException {
-	return read(buf, 0, buf.length);
+        return read(buf, 0, buf.length);
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public int read(byte buf[], int off, int buflength) throws FCGIConnectionException {
-	try {
-	    int count = in.read(buf, off, buflength);
-	    if(count==-1) {
-		connection.setIsClosed();
-	    }
-	    return count;
-	} catch (IOException ex) {
-	    throw new FCGIConnectionException(connection, ex);
-	}
+        try {
+            int count = in.read(buf, off, buflength);
+            if (count == -1) {
+                connection.setIsClosed();
+            }
+            return count;
+        } catch (IOException ex) {
+            throw new FCGIConnectionException(connection, ex);
+        }
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public int read() throws FCGIConnectionException {
-	throw new NotImplementedException();
-    }      
-    /**{@inheritDoc}*/  
+        throw new NotImplementedException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() throws FCGIConnectionException {
-	connection.state|=1;
-	if(connection.state==connection.ostate)
-	    try {
-		connection.close();
-	    } catch (IOException e) {
-		throw new FCGIConnectionException(connection, e);
-	    }
+        connection.state |= 1;
+        if (connection.state == connection.ostate)
+            try {
+                connection.close();
+            } catch (IOException e) {
+                throw new FCGIConnectionException(connection, e);
+            }
     }
 }

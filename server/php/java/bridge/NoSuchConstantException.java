@@ -27,14 +27,15 @@ package php.java.bridge;
 /**
  * Thrown when a class does not contain a constant.
  */
-public class NoSuchConstantException extends NoSuchFieldException{
+public class NoSuchConstantException extends NoSuchFieldException {
 
     /**
      * Create a NoSuchConstantException
+     *
      * @param string The exception string
      */
     public NoSuchConstantException(String string) {
-	super("static " + string);
+        super("static " + string);
     }
 
     private static final long serialVersionUID = 1L;

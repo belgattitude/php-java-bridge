@@ -29,24 +29,26 @@ package php.java.bridge;
  * Classes which implement this interface receive a notification before their container terminates.
  * This usually happens when the  ContextLoaderListener.contextDestroyed(javax.servlet.ServletContextEvent)
  * is called or right before the VM terminates.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public interface IManaged {
-    
-    /** Initialize a library. This method may be called via java_context()->init(...) 
+
+    /**
+     * Initialize a library. This method may be called via java_context()->init(...)
      * to initialize a library. Within init() onShutdown() may be called to
      * register a shutdown hook for the library.
+     *
      * @param callable Its call() method will be called synchronized.
      * @return The result of the call() invocation.
      * @throws Exception The result of the call() invocation.
      */
     public Object init(Object callable) throws Exception;
-    
+
     /**
      * Register a shutdown hook for the library. This method may be called via java_context()->onShutdown(...)
      * to register a shutdown hook during init().
+     *
      * @param closeable Its close() method will be called before the context or the VM terminates.
      */
     public void onShutdown(Object closeable);

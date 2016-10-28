@@ -24,27 +24,31 @@ package php.java.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/** This class is needed for backward compatibility with JDK 1.4 */
+/**
+ * This class is needed for backward compatibility with JDK 1.4
+ */
 public class JavaBridgeIllegalArgumentException extends
-    java.lang.IllegalArgumentException {
+        java.lang.IllegalArgumentException {
 
-  private static final long serialVersionUID = -6180293871441493489L;
+    private static final long serialVersionUID = -6180293871441493489L;
 
-  /**
-   * For compatibility with jdk 1.4
-   * @param string The exception string
-   * @param e The chained exception
-   */
-  public JavaBridgeIllegalArgumentException(String string, Exception e) {
-      super(string);
-      initCause(e);
-  }
+    /**
+     * For compatibility with jdk 1.4
+     *
+     * @param string The exception string
+     * @param e      The chained exception
+     */
+    public JavaBridgeIllegalArgumentException(String string, Exception e) {
+        super(string);
+        initCause(e);
+    }
 
-  /**
-   * For compatibility with jdk 1.4
-   * @param string The exception string
-   */
-  public JavaBridgeIllegalArgumentException(String string) {
-      super(string);
-  }
+    /**
+     * For compatibility with jdk 1.4
+     *
+     * @param string The exception string
+     */
+    public JavaBridgeIllegalArgumentException(String string) {
+        super(string);
+    }
 }

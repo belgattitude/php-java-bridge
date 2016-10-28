@@ -66,7 +66,7 @@ import php.java.bridge.http.IContext;
  * ?&gt;<br>
  * </code>
  * </blockquote><br>
- *  The Java code:
+ * The Java code:
  * <blockquote>
  * <code>
  * ScriptEngine e = (new ScriptEngineManager()).getEngineByName("php-invocable");<br>
@@ -83,237 +83,273 @@ public class InvocablePhpScriptEngine extends AbstractPhpScriptEngine implements
     private static boolean registeredHook = false;
     private static final List engines = new LinkedList();
     private static final String PHP_EMPTY_SCRIPT = "<?php ?>";
-     
+
     /**
      * Create a new ScriptEngine with a default context.
      */
     public InvocablePhpScriptEngine() {
-	this(new PhpScriptEngineFactory());
+        this(new PhpScriptEngineFactory());
     }
 
     /**
      * Create a new ScriptEngine from a factory.
+     *
      * @param factory The factory
      * @see #getFactory()
      */
     public InvocablePhpScriptEngine(PhpScriptEngineFactory factory) {
         super(factory);
     }
+
     /**
      * Create a new ScriptEngine with bindings.
+     *
      * @param n the bindings
      */
     public InvocablePhpScriptEngine(Bindings n) {
-	this();
-	setBindings(n, ScriptContext.ENGINE_SCOPE);
+        this();
+        setBindings(n, ScriptContext.ENGINE_SCOPE);
     }
 
     /* (non-Javadoc)
      * @see javax.script.Invocable#call(java.lang.String, java.lang.Object[])
      */
     protected Object invoke(String methodName, Object[] args)
-	throws ScriptException, NoSuchMethodException {
-	if (methodName==null) { release(); return null; }
-	
-	if(scriptClosure==null) {
-	    if (Util.logLevel>4) Util.warn("Evaluating an empty script either because eval() has not been called or release() has been called.");
-	    eval(PHP_EMPTY_SCRIPT);
-	}
-	try {
-	    return invoke(scriptClosure, methodName, args);
-	} catch (php.java.bridge.Request.AbortException e) {
-	    release ();
-	    throw new ScriptException(e);
-	} catch (NoSuchMethodError e) { // conform to jsr223
-	    throw new NoSuchMethodException(String.valueOf(e.getMessage()));
-	}
+            throws ScriptException, NoSuchMethodException {
+        if (methodName == null) {
+            release();
+            return null;
+        }
+
+        if (scriptClosure == null) {
+            if (Util.logLevel > 4)
+                Util.warn("Evaluating an empty script either because eval() has not been called or release() has been called.");
+            eval(PHP_EMPTY_SCRIPT);
+        }
+        try {
+            return invoke(scriptClosure, methodName, args);
+        } catch (php.java.bridge.Request.AbortException e) {
+            release();
+            throw new ScriptException(e);
+        } catch (NoSuchMethodError e) { // conform to jsr223
+            throw new NoSuchMethodException(String.valueOf(e.getMessage()));
+        }
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object invokeFunction(String methodName, Object[] args)
-	throws ScriptException, NoSuchMethodException {
-	return invoke(methodName, args);
+            throws ScriptException, NoSuchMethodException {
+        return invoke(methodName, args);
     }
 
     private void checkPhpClosure(Object thiz) {
-	if(thiz==null) throw new IllegalStateException("PHP script did not pass its continuation to us!. Please check if the previous call to eval() reported any errors. Or else check if it called OUR continuation.");
+        if (thiz == null)
+            throw new IllegalStateException("PHP script did not pass its continuation to us!. Please check if the previous call to eval() reported any errors. Or else check if it called OUR continuation.");
     }
+
     /* (non-Javadoc)
      * @see javax.script.Invocable#call(java.lang.String, java.lang.Object, java.lang.Object[])
      */
     protected Object invoke(Object thiz, String methodName, Object[] args)
-	throws ScriptException, NoSuchMethodException {
-	checkPhpClosure(thiz);
-	PhpProcedure proc = (PhpProcedure)(Proxy.getInvocationHandler(thiz));
-	try {
-	    return proc.invoke(script, methodName, args);
-	} catch (ScriptException e) {
-	    throw e;
-	} catch (NoSuchMethodException e) {
-	    throw e;
-	} catch (RuntimeException e) {
-	    throw e; // don't wrap RuntimeException
-	} catch (NoSuchMethodError e) { // conform to jsr223
-	    throw new NoSuchMethodException(String.valueOf(e.getMessage()));
-	} catch (Error er) {
-	    throw er;
-	} catch (Throwable e) {
-	    throw new PhpScriptException("Invocation threw exception ", e);
-	}
-    }
-    /**{@inheritDoc}*/
-    public Object invokeMethod(Object thiz, String methodName, Object[] args)
-	throws ScriptException, NoSuchMethodException {
-	return invoke(thiz, methodName, args);
+            throws ScriptException, NoSuchMethodException {
+        checkPhpClosure(thiz);
+        PhpProcedure proc = (PhpProcedure) (Proxy.getInvocationHandler(thiz));
+        try {
+            return proc.invoke(script, methodName, args);
+        } catch (ScriptException e) {
+            throw e;
+        } catch (NoSuchMethodException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw e; // don't wrap RuntimeException
+        } catch (NoSuchMethodError e) { // conform to jsr223
+            throw new NoSuchMethodException(String.valueOf(e.getMessage()));
+        } catch (Error er) {
+            throw er;
+        } catch (Throwable e) {
+            throw new PhpScriptException("Invocation threw exception ", e);
+        }
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
+    public Object invokeMethod(Object thiz, String methodName, Object[] args)
+            throws ScriptException, NoSuchMethodException {
+        return invoke(thiz, methodName, args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getInterface(Class clasz) {
-	checkPhpClosure(script);
-	return getInterface(script, clasz);
+        checkPhpClosure(script);
+        return getInterface(script, clasz);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getInterface(Object thiz, Class clasz) {
-	checkPhpClosure(thiz);
-	Class[] interfaces = clasz==null?Util.ZERO_PARAM:new Class[]{clasz};
-	return PhpProcedure.createProxy(interfaces, (PhpProcedure)Proxy.getInvocationHandler(thiz));
+        checkPhpClosure(thiz);
+        Class[] interfaces = clasz == null ? Util.ZERO_PARAM : new Class[]{clasz};
+        return PhpProcedure.createProxy(interfaces, (PhpProcedure) Proxy.getInvocationHandler(thiz));
     }
+
     protected Reader getLocalReader(Reader reader, boolean embedJavaInc) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer w = new OutputStreamWriter(out);
 
-        String stdHeader = embedJavaInc ? null : ((IContext)getContext()).getRedirectURL("/JavaBridge");
+        String stdHeader = embedJavaInc ? null : ((IContext) getContext()).getRedirectURL("/JavaBridge");
         Reader localReader = new StringReader(getStandardHeader(stdHeader));
 
         char[] buf = new char[Util.BUF_SIZE];
         int c;
         try {
             /* header: <? require_once("http://localhost:<ourPort>/JavaBridge/java/Java.inc"); ?> */
-            while((c=localReader.read(buf))>0) w.write(buf, 0, c);
-            localReader.close(); localReader = null;
+            while ((c = localReader.read(buf)) > 0) w.write(buf, 0, c);
+            localReader.close();
+            localReader = null;
     
             /* the script: */
-            while((c=reader.read(buf))>0) w.write(buf, 0, c);
+            while ((c = reader.read(buf)) > 0) w.write(buf, 0, c);
     
             /* get the default, top-level, closure and call it, to stop the script from terminating */
-            localReader =  new StringReader(PHP_JAVA_CONTEXT_CALL_JAVA_CLOSURE);
-            while((c=localReader.read(buf))>0) w.write(buf, 0, c);
-            localReader.close(); localReader = null;
-            w.close(); w = null;
+            localReader = new StringReader(PHP_JAVA_CONTEXT_CALL_JAVA_CLOSURE);
+            while ((c = localReader.read(buf)) > 0) w.write(buf, 0, c);
+            localReader.close();
+            localReader = null;
+            w.close();
+            w = null;
     
             /* now evaluate our script */
             localReader = new InputStreamReader(new ByteArrayInputStream(out.toByteArray()));
             return localReader;
         } finally {
-	    if (w!=null) try {w.close();} catch (IOException e) {/*ignore*/}
+            if (w != null) try {
+                w.close();
+            } catch (IOException e) {/*ignore*/}
         }
     }
-    
+
     protected Object doEvalPhp(Reader reader, ScriptContext context) throws ScriptException {
-	if (reader instanceof URLReader) return eval((URLReader)reader, context);
-	
-        if((continuation != null) || (reader == null) ) release();
-  	if(reader==null) return null;
-  	
-  	setNewContextFactory();
-	env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
-	Reader localReader = null;
+        if (reader instanceof URLReader) return eval((URLReader) reader, context);
+
+        if ((continuation != null) || (reader == null)) release();
+        if (reader == null) return null;
+
+        setNewContextFactory();
+        env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
+        Reader localReader = null;
         try {
             localReader = getLocalReader(reader, false);
             this.script = doEval(localReader, context);
-            if (this.script!=null) {
-        	/* get the proxy, either the one from the user script or our default proxy */
-        	this.scriptClosure = script;
+            if (this.script != null) {
+            /* get the proxy, either the one from the user script or our default proxy */
+                this.scriptClosure = script;
             }
-	} catch (Exception e) {
-	    Util.printStackTrace(e);
-            if (e instanceof RuntimeException) throw (RuntimeException)e;
-            if (e instanceof ScriptException) throw (ScriptException)e;
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+            if (e instanceof RuntimeException) throw (RuntimeException) e;
+            if (e instanceof ScriptException) throw (ScriptException) e;
             throw new ScriptException(e);
-       } finally {
-            if(localReader!=null) try { localReader.close(); } catch (IOException e) {/*ignore*/}            
+        } finally {
+            if (localReader != null) try {
+                localReader.close();
+            } catch (IOException e) {/*ignore*/}
             handleRelease();
         }
-       return resultProxy;
+        return resultProxy;
     }
+
     protected Object doEvalCompiledPhp(Reader reader, ScriptContext context) throws ScriptException {
-        if((continuation != null) || (reader == null) ) release();
-  	if(reader==null) return null;
-  	
-  	setNewContextFactory();
-	env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
+        if ((continuation != null) || (reader == null)) release();
+        if (reader == null) return null;
+
+        setNewContextFactory();
+        env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
         try {
             this.script = doEval(reader, context);
-            if (this.script!=null) {
+            if (this.script != null) {
         	/* get the proxy, either the one from the user script or our default proxy */
-        	this.scriptClosure = script;
+                this.scriptClosure = script;
             }
-	} catch (Exception e) {
-	    Util.printStackTrace(e);
-            if (e instanceof RuntimeException) throw (RuntimeException)e;
-            if (e instanceof ScriptException) throw (ScriptException)e;
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+            if (e instanceof RuntimeException) throw (RuntimeException) e;
+            if (e instanceof ScriptException) throw (ScriptException) e;
             throw new ScriptException(e);
-       } finally {
+        } finally {
             handleRelease();
         }
-       return resultProxy;
+        return resultProxy;
     }
 
     protected Object eval(URLReader reader, ScriptContext context) throws ScriptException {
-        if((continuation != null) || (reader == null) ) release();
-  	if(reader==null) return null;
-  	
-  	setNewContextFactory();
-	env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
-	
+        if ((continuation != null) || (reader == null)) release();
+        if (reader == null) return null;
+
+        setNewContextFactory();
+        env.put(X_JAVABRIDGE_INCLUDE, EMPTY_INCLUDE);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer w = new OutputStreamWriter(out);
         try {
             this.script = doEval(reader, context);
-            if (this.script!=null) {
+            if (this.script != null) {
         	/* get the proxy, either the one from the user script or our default proxy */
-        	this.scriptClosure = script;
+                this.scriptClosure = script;
             }
-	} catch (Exception e) {
-	    Util.printStackTrace(e);
-            if (e instanceof RuntimeException) throw (RuntimeException)e;
-            if (e instanceof ScriptException) throw (ScriptException)e;
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+            if (e instanceof RuntimeException) throw (RuntimeException) e;
+            if (e instanceof ScriptException) throw (ScriptException) e;
             throw new ScriptException(e);
-       } finally {
-            if(w!=null)  try { w.close(); } catch (IOException e) {/*ignore*/}
+        } finally {
+            if (w != null) try {
+                w.close();
+            } catch (IOException e) {/*ignore*/}
             handleRelease();
         }
-       return resultProxy;
+        return resultProxy;
     }
 
     protected void handleRelease() {
         // make sure to properly release them upon System.exit().
-        synchronized(engines) {
-            if(!registeredHook) {
-        	registeredHook = true;
-        	try {
-        	    Runtime.getRuntime().addShutdownHook(new Util.Thread() {
-        		public void run() {
-        		    if (engines==null) return;
-        		    synchronized(engines) {
-        			for(Iterator ii = engines.iterator(); ii.hasNext(); ii.remove()) {
-        			    InvocablePhpScriptEngine e = (InvocablePhpScriptEngine) ii.next();
-        			    e.releaseInternal();
-        			}
-        		    }
-        		}});
-        	} catch (SecurityException e) {/*ignore*/}
+        synchronized (engines) {
+            if (!registeredHook) {
+                registeredHook = true;
+                try {
+                    Runtime.getRuntime().addShutdownHook(new Util.Thread() {
+                        public void run() {
+                            if (engines == null) return;
+                            synchronized (engines) {
+                                for (Iterator ii = engines.iterator(); ii.hasNext(); ii.remove()) {
+                                    InvocablePhpScriptEngine e = (InvocablePhpScriptEngine) ii.next();
+                                    e.releaseInternal();
+                                }
+                            }
+                        }
+                    });
+                } catch (SecurityException e) {/*ignore*/}
             }
             engines.add(this);
         }
     }
+
     private void releaseInternal() {
-	super.release();
+        super.release();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void release() {
-	synchronized(engines) {
-	    releaseInternal();
-	    engines.remove(this);
-	}
+        synchronized (engines) {
+            releaseInternal();
+            engines.remove(this);
+        }
     }
 }

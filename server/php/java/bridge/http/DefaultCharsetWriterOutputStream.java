@@ -32,30 +32,33 @@ import php.java.bridge.NotImplementedException;
 
 /**
  * A PrintWriter backed by an OutputStream.
- * @author jostb
  *
+ * @author jostb
  */
 abstract class DefaultCharsetWriterOutputStream extends OutputStream {
 
     protected Writer out;
- 	
+
     /**
      * Create a new PhpScriptWriter.
+     *
      * @param out The OutputStream
      */
     public DefaultCharsetWriterOutputStream(Writer out) {
-	this.out = out;
+        this.out = out;
     }
-    
+
     public void write(int b) throws IOException {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
+
     public abstract void write(byte b[], int off, int len) throws IOException;
-    
+
     public void flush() throws IOException {
-	out.flush();
+        out.flush();
     }
+
     public void close() throws IOException {
-	flush();
+        flush();
     }
- }
+}

@@ -30,75 +30,83 @@ import php.java.bridge.Util;
 
 /**
  * A FastCGI input stream
- * @author jostb
  *
+ * @author jostb
  */
 public class FCGIInputStream extends FCGIConnectionInputStream {
     private final IFCGIProcessFactory processFactory;
+
     /**
      * Create
+     *
      * @param processFactory
      */
     public FCGIInputStream(IFCGIProcessFactory processFactory) {
         this.processFactory = processFactory;
     }
+
     private StringBuffer error;
-    public StringBuffer getError () {
+
+    public StringBuffer getError() {
         return error;
     }
+
     public String checkError() {
-        return error==null?null:Util.checkError(error.toString());
+        return error == null ? null : Util.checkError(error.toString());
     }
+
     public int read(byte buf[]) throws FCGIConnectionException {
         try {
-	    return doRead(buf);
+            return doRead(buf);
         } catch (FCGIConnectionException ex) {
-	    throw ex;
+            throw ex;
         } catch (IOException e) {
             throw new FCGIConnectionException(connection, e);
         }
     }
+
     private byte header[] = new byte[FCGIUtil.FCGI_HEADER_LEN];
+
     public int doRead(byte buf[]) throws IOException {
         int n, i;
         //assert if(buf.length!=FCGI_BUF_SIZE) throw new IOException("Invalid block size");
-        for(n=0; (i=read(header, n, FCGIUtil.FCGI_HEADER_LEN-n)) > 0; )  n+=i;
-        if(FCGIUtil.FCGI_HEADER_LEN != n) 
-	    throw new IOException ("Protocol error");
+        for (n = 0; (i = read(header, n, FCGIUtil.FCGI_HEADER_LEN - n)) > 0; ) n += i;
+        if (FCGIUtil.FCGI_HEADER_LEN != n)
+            throw new IOException("Protocol error");
         int type = header[1] & 0xFF;
         int contentLength = ((header[4] & 0xFF) << 8) | (header[5] & 0xFF);
         int paddingLength = header[6] & 0xFF;
-        switch(type) {
-        case FCGIUtil.FCGI_STDERR: 
-        case FCGIUtil.FCGI_STDOUT: {
-	    for(n=0; (i=read(buf, n, contentLength-n)) > 0; ) n+=i;
-	    if(n!=contentLength) 
-		throw new IOException("Protocol error while reading FCGI data");
-	    if(type==FCGIUtil.FCGI_STDERR) { 
-		String s = new String(buf, 0, n, Util.ASCII);
-		this.processFactory.log(s); 
-		contentLength = 0;
+        switch (type) {
+            case FCGIUtil.FCGI_STDERR:
+            case FCGIUtil.FCGI_STDOUT: {
+                for (n = 0; (i = read(buf, n, contentLength - n)) > 0; ) n += i;
+                if (n != contentLength)
+                    throw new IOException("Protocol error while reading FCGI data");
+                if (type == FCGIUtil.FCGI_STDERR) {
+                    String s = new String(buf, 0, n, Util.ASCII);
+                    this.processFactory.log(s);
+                    contentLength = 0;
 
-		if(error==null) error = new StringBuffer(s);
-		else error.append(s);
-	    }
-	    if(paddingLength>0) {
-		byte b[] = new byte[paddingLength];
-		for(n=0; (i=read(b, n, b.length-n)) > 0; ) n+=i;
-		if(n!=paddingLength) 
-		    throw new IOException("Protocol error while reading FCGI padding");
-	    }
-	    return contentLength;
-        }
-        case FCGIUtil.FCGI_END_REQUEST: {
-	    for(n=0; (i=read(buf, n, contentLength-n)) > 0; ) n+=i;
-	    if(n!=contentLength) throw new IOException("Protocol error while reading EOF data");
-	    if(paddingLength>0) {
-		n = super.read(buf, 0, paddingLength);		
-		if(n!=paddingLength) throw new IOException("Protocol error while reading EOF padding");
-	    }
-	    return -1;
-        }
+                    if (error == null) error = new StringBuffer(s);
+                    else error.append(s);
+                }
+                if (paddingLength > 0) {
+                    byte b[] = new byte[paddingLength];
+                    for (n = 0; (i = read(b, n, b.length - n)) > 0; ) n += i;
+                    if (n != paddingLength)
+                        throw new IOException("Protocol error while reading FCGI padding");
+                }
+                return contentLength;
+            }
+            case FCGIUtil.FCGI_END_REQUEST: {
+                for (n = 0; (i = read(buf, n, contentLength - n)) > 0; ) n += i;
+                if (n != contentLength) throw new IOException("Protocol error while reading EOF data");
+                if (paddingLength > 0) {
+                    n = super.read(buf, 0, paddingLength);
+                    if (n != paddingLength) throw new IOException("Protocol error while reading EOF padding");
+                }
+                return -1;
+            }
         }
         throw new IOException("Received unknown type");
     }

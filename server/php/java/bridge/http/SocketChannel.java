@@ -31,15 +31,19 @@ import java.net.Socket;
 
 class SocketChannel extends FCGIConnection {
     public Socket socket;
+
     public SocketChannel(Socket socket) {
         this.socket = socket;
     }
+
     public void close() throws IOException {
         socket.close();
     }
+
     public InputStream getInputStream() throws IOException {
         return socket.getInputStream();
     }
+
     public OutputStream getOutputStream() throws IOException {
         return socket.getOutputStream();
     }

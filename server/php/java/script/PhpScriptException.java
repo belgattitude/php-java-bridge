@@ -28,21 +28,21 @@ package php.java.script;
  * This class is needed for compatibility with JDK 1.4
  */
 public class PhpScriptException extends javax.script.ScriptException {
-  private static final long serialVersionUID = 7664096304464958875L;
+    private static final long serialVersionUID = 7664096304464958875L;
 
-  /**
- * @param string
- */
-public PhpScriptException(String string) {
-      super(string);
-  }
+    /**
+     * @param string
+     */
+    public PhpScriptException(String string) {
+        super(string);
+    }
 
-  /**
- * @param string
- * @param cause
- */
-public PhpScriptException(String string, Throwable cause) {
-      this(string + ": " + cause.getMessage());
-      initCause(cause);
-  }
+    /**
+     * @param string
+     * @param cause
+     */
+    public PhpScriptException(String string, Throwable cause) {
+        this(string + ": " + cause.getMessage());
+        initCause(cause);
+    }
 }

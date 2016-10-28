@@ -29,43 +29,54 @@ import java.io.UnsupportedEncodingException;
 final class PhpParserString extends PhpString {
     ParserString st;
     private JavaBridge bridge;
-    /** Create a new php parser string
+
+    /**
+     * Create a new php parser string
+     *
      * @param bridge The JavaBridge
-     * @param st The ParserString
+     * @param st     The ParserString
      */
     public PhpParserString(JavaBridge bridge, ParserString st) {
         this.bridge = bridge;
         getBytes(st);
     }
+
     private byte[] bytes;
+
     private void getBytes(ParserString st) {
-         if(bytes==null) {
-            bytes=new byte[st.length];
-            System.arraycopy(st.string,st.off,bytes,0,bytes.length);
+        if (bytes == null) {
+            bytes = new byte[st.length];
+            System.arraycopy(st.string, st.off, bytes, 0, bytes.length);
         }
     }
+
     public byte[] getBytes() {
         return bytes;
     }
+
     private String newString(byte[] b) {
         return bridge.getString(b, 0, b.length);
     }
+
     /**
      * Get the encoded string representation
+     *
      * @return The encoded string.
      */
     public String getString() {
         return newString(getBytes());
     }
+
     /**
      * Use UTF-8 encoding, for debugging only
+     *
      * @return The string UTF-8 encoded
      */
     public String toString() {
         try {
             return new String(getBytes(), Util.UTF8);
         } catch (UnsupportedEncodingException e) {
-            return new String(getBytes());               
+            return new String(getBytes());
         }
-     }
+    }
 }

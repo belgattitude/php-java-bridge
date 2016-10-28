@@ -42,9 +42,8 @@ import php.java.bridge.http.OutputStreamFactory;
  * This class can be used to run a PHP CGI binary. Used only when
  * running local php scripts.  To allocate and invoke remote scripts
  * please use a HttpProxy and a URLReader instead.
- *  
- * @author jostb
  *
+ * @author jostb
  * @see php.java.bridge.http.HttpServer
  * @see php.java.script.URLReader
  * @see php.java.script.HttpProxy
@@ -53,61 +52,74 @@ import php.java.bridge.http.OutputStreamFactory;
 public class CGIRunner extends Continuation {
 
     protected Reader reader;
+
     protected CGIRunner(Reader reader, Map env, OutputStream out,
-            OutputStream err, HeaderParser headerParser,
-            ResultProxy resultProxy, ILogger logger) {
-	super(env, out, err, headerParser, resultProxy);
-	this.reader = reader;
+                        OutputStream err, HeaderParser headerParser,
+                        ResultProxy resultProxy, ILogger logger) {
+        super(env, out, err, headerParser, resultProxy);
+        this.reader = reader;
     }
 
     private Writer writer;
+
     protected void doRun() throws IOException, Util.Process.PhpException {
-        Util.Process proc = Util.ProcessWithErrorHandler.start(new String[] {null}, false, null, null, null, null, env, true, true, err);
+        Util.Process proc = Util.ProcessWithErrorHandler.start(new String[]{null}, false, null, null, null, null, env, true, true, err);
 
-	InputStream natIn = null;
-	try {
-	natIn = proc.getInputStream();
-	OutputStream natOut = proc.getOutputStream();
-	writer = new BufferedWriter(new OutputStreamWriter(natOut));
+        InputStream natIn = null;
+        try {
+            natIn = proc.getInputStream();
+            OutputStream natOut = proc.getOutputStream();
+            writer = new BufferedWriter(new OutputStreamWriter(natOut));
 
-	(new Thread() { // write the script asynchronously to avoid deadlock
-	    public void doRun() throws IOException {
-		char[] cbuf = new char[Util.BUF_SIZE]; 
-		int n;    
-		while((n = reader.read(cbuf))!=-1) {
-		    //System.err.println("SCRIPT:::"+new String(cbuf, 0, n));
-		    writer.write(cbuf, 0, n);
-		}
-	    }
-	    public void run() { 
-		    try {
-			    doRun(); 
-		    } catch (IOException e) {
-			    Util.printStackTrace(e);
-		    } finally {
-			    try {
-				    writer.close();
-			    } catch (IOException ex) {
-				    /*ignore*/
-			    }
-		    }
-	    }
-	}).start();
+            (new Thread() { // write the script asynchronously to avoid deadlock
+                public void doRun() throws IOException {
+                    char[] cbuf = new char[Util.BUF_SIZE];
+                    int n;
+                    while ((n = reader.read(cbuf)) != -1) {
+                        //System.err.println("SCRIPT:::"+new String(cbuf, 0, n));
+                        writer.write(cbuf, 0, n);
+                    }
+                }
 
-	byte[] buf = new byte[Util.BUF_SIZE];
-	HeaderParser.parseBody(buf, natIn, new OutputStreamFactory() { public OutputStream getOutputStream() throws IOException {return out;}}, headerParser);
-	proc.waitFor();
-	resultProxy.setResult(proc.exitValue());
-	} catch (IOException e) {
-	    Util.printStackTrace(e);
-	    throw e;
-	} catch (InterruptedException e) {
+                public void run() {
+                    try {
+                        doRun();
+                    } catch (IOException e) {
+                        Util.printStackTrace(e);
+                    } finally {
+                        try {
+                            writer.close();
+                        } catch (IOException ex) {
+                    /*ignore*/
+                        }
+                    }
+                }
+            }).start();
+
+            byte[] buf = new byte[Util.BUF_SIZE];
+            HeaderParser.parseBody(buf, natIn, new OutputStreamFactory() {
+                public OutputStream getOutputStream() throws IOException {
+                    return out;
+                }
+            }, headerParser);
+            proc.waitFor();
+            resultProxy.setResult(proc.exitValue());
+        } catch (IOException e) {
+            Util.printStackTrace(e);
+            throw e;
+        } catch (InterruptedException e) {
 		/*ignore*/
-	} finally {
-	    if(natIn!=null) try {natIn.close();} catch (IOException ex) {/*ignore*/}
-	    try {proc.destroy(); } catch (Exception e) { Util.printStackTrace(e); }
-	}
-	
-	proc.checkError();
+        } finally {
+            if (natIn != null) try {
+                natIn.close();
+            } catch (IOException ex) {/*ignore*/}
+            try {
+                proc.destroy();
+            } catch (Exception e) {
+                Util.printStackTrace(e);
+            }
+        }
+
+        proc.checkError();
     }
 }

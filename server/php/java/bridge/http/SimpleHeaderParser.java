@@ -34,8 +34,9 @@ public class SimpleHeaderParser extends HeaderParser {
      * Template discards parsed header
      */
     public void parseHeader(String header) {/*template*/}
+
     /**
      * Template discards parsed header
      */
-    public void addHeader (String key, String val) {/*template*/}
+    public void addHeader(String key, String val) {/*template*/}
 }

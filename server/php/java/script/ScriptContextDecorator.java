@@ -32,10 +32,10 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 
 /**
- * Abstract class for ScriptContexts. The abstract class itself provides default methods that pass 
+ * Abstract class for ScriptContexts. The abstract class itself provides default methods that pass
  * all requests to the contained ScriptContext. Subclasses of ScriptContextDecorator should override some of
- * these methods and may also provide additional methods and fields. 
- * 
+ * these methods and may also provide additional methods and fields.
+ *
  * @author jostb
  */
 public abstract class ScriptContextDecorator implements ScriptContext {
@@ -43,78 +43,107 @@ public abstract class ScriptContextDecorator implements ScriptContext {
     protected ScriptContext ctx;
 
     public ScriptContextDecorator(ScriptContext ctx) {
-	this.ctx = ctx;
+        this.ctx = ctx;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getAttribute(String name) throws IllegalArgumentException {
-	return ctx.getAttribute(name);
+        return ctx.getAttribute(name);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Object getAttribute(String name, int scope)
-	    throws IllegalArgumentException {
-	return ctx.getAttribute(name, scope);
+            throws IllegalArgumentException {
+        return ctx.getAttribute(name, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public int getAttributesScope(String name) {
-	return ctx.getAttributesScope(name);
+        return ctx.getAttributesScope(name);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Bindings getBindings(int scope) {
-	return ctx.getBindings(scope);
+        return ctx.getBindings(scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Writer getErrorWriter() {
-	return ctx.getErrorWriter();
+        return ctx.getErrorWriter();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Reader getReader() {
-	return ctx.getReader();
+        return ctx.getReader();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public List getScopes() {
-	return ctx.getScopes();
+        return ctx.getScopes();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Writer getWriter() {
-	return ctx.getWriter();
+        return ctx.getWriter();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Object removeAttribute(String name, int scope) {
-    	return ctx.removeAttribute(name, scope);
+        return ctx.removeAttribute(name, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setAttribute(String key, Object value, int scope)
-	    throws IllegalArgumentException {
-	ctx.setAttribute(key, value, scope);
+            throws IllegalArgumentException {
+        ctx.setAttribute(key, value, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setBindings(Bindings namespace, int scope)
-	    throws IllegalArgumentException {
-	ctx.setBindings(namespace, scope);
+            throws IllegalArgumentException {
+        ctx.setBindings(namespace, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setErrorWriter(Writer writer) {
-	ctx.setErrorWriter(writer);
+        ctx.setErrorWriter(writer);
     }
 
-    /**{@inheritDoc}*/    
+    /**
+     * {@inheritDoc}
+     */
     public void setReader(Reader reader) {
-	ctx.setReader(reader);
+        ctx.setReader(reader);
     }
 
-    /**{@inheritDoc}*/    
+    /**
+     * {@inheritDoc}
+     */
     public void setWriter(Writer writer) {
-	ctx.setWriter(writer);
+        ctx.setWriter(writer);
     }
 }

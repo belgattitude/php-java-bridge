@@ -27,8 +27,8 @@ package php.java.bridge.http;
 
 /**
  * Constants and common procedures for FastCGI
- * @author jostb
  *
+ * @author jostb
  */
 public class FCGIUtil {
 
@@ -44,39 +44,39 @@ public class FCGIUtil {
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_BEGIN_REQUEST =      1;
+    public static final int FCGI_BEGIN_REQUEST = 1;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_ABORT_REQUEST =      2;
+    public static final int FCGI_ABORT_REQUEST = 2;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_END_REQUEST   =      3;
+    public static final int FCGI_END_REQUEST = 3;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_PARAMS        =      4;
+    public static final int FCGI_PARAMS = 4;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_STDIN         =      5;
+    public static final int FCGI_STDIN = 5;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_STDOUT        =      6;
+    public static final int FCGI_STDOUT = 6;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_STDERR        =      7;
+    public static final int FCGI_STDERR = 7;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_DATA          =      8;
+    public static final int FCGI_DATA = 8;
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_GET_VALUES    =      9;
+    public static final int FCGI_GET_VALUES = 9;
     /**
      * Values for type component of FCGI_Header
      */
@@ -84,21 +84,21 @@ public class FCGIUtil {
     /**
      * Values for type component of FCGI_Header
      */
-    public static final int FCGI_UNKNOWN_TYPE      = 11;
+    public static final int FCGI_UNKNOWN_TYPE = 11;
     /**
      * Values for type component of FCGI_Header
      */
     public static final byte[] FCGI_EMPTY_RECORD = new byte[0];
-    
+
     /**
      * Mask for flags component of FCGI_BeginRequestBody
      */
-    public static final int FCGI_KEEP_CONN  = 1;
+    public static final int FCGI_KEEP_CONN = 1;
 
     /**
      * Values for role component of FCGI_BeginRequestBody
      */
-    public static final int FCGI_RESPONDER  = 1;
+    public static final int FCGI_RESPONDER = 1;
     /**
      * Values for role component of FCGI_BeginRequestBody
      */
@@ -106,16 +106,17 @@ public class FCGIUtil {
     /**
      * Values for role component of FCGI_BeginRequestBody
      */
-    public static final int FCGI_FILTER     = 3;
+    public static final int FCGI_FILTER = 3;
 
     /**
      * The Fast CGI default port
-     */ 
+     */
     public static final int FCGI_PORT = 9667;
 
     /**
      * This controls how many child processes the PHP process spawns.
      * Default is 5. The value should be less than THREAD_POOL_MAX_SIZE
+     *
      * @see php.java.bridge.Util#THREAD_POOL_MAX_SIZE
      */
     public static final String PHP_FCGI_CONNECTION_POOL_SIZE = "5"; // should be less than Util.THREAD_POOL_MAX_SIZE;
@@ -135,5 +136,5 @@ public class FCGIUtil {
     /**
      * The default channel name on Windows
      */
-    public static final String FCGI_PIPE = NPChannelFactory.PREFIX +"JavaBridge@9667";
+    public static final String FCGI_PIPE = NPChannelFactory.PREFIX + "JavaBridge@9667";
 }

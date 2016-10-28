@@ -60,8 +60,8 @@ import php.java.bridge.http.HeaderParser;
  * System.out.println(((Invocable)e).invoke("java_get_server_name", new Object[]{}));<br>
  * ((Closeable)e).close();<br>
  * </code>
- * @author jostb
  *
+ * @author jostb
  */
 public class URLReader extends Reader implements IScriptReader {
 
@@ -69,34 +69,41 @@ public class URLReader extends Reader implements IScriptReader {
     private HttpURLConnection conn;
 
     private HostnameVerifier hostNameVerifier;
-    private HostnameVerifier getHostNameVerifier () {
+
+    private HostnameVerifier getHostNameVerifier() {
         if (hostNameVerifier != null) return hostNameVerifier;
-        return hostNameVerifier = new HostnameVerifier () {
+        return hostNameVerifier = new HostnameVerifier() {
             public boolean verify(String arg0, SSLSession arg1) {
                 return true;
             }
-         };
+        };
     }
-    
+
     private SSLSocketFactory sslSocketFactory;
-    private SSLSocketFactory getSslSocketFactory () throws NoSuchAlgorithmException, KeyManagementException {
+
+    private SSLSocketFactory getSslSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
         if (sslSocketFactory != null) return sslSocketFactory;
-        
+
         X509TrustManager tm = new X509TrustManager() {
             public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException { /*ignore*/ }
+
             public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException { /*ignore*/ }
-            public X509Certificate[] getAcceptedIssuers() { return null; }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
         };
         KeyManager[] km = null;
-        X509TrustManager[] tma = new X509TrustManager[] { tm };
+        X509TrustManager[] tma = new X509TrustManager[]{tm};
         SSLContext sslContext = null;
         sslContext = SSLContext.getInstance("TLS");
         sslContext.init(km, tma, new java.security.SecureRandom());
         return sslSocketFactory = sslContext.getSocketFactory();
     }
-    
+
     /**
      * Create a special reader which can be used to read data from a URL.
+     *
      * @param url
      * @throws IOException
      * @throws UnknownHostException
@@ -105,16 +112,16 @@ public class URLReader extends Reader implements IScriptReader {
         this.url = url;
         this.conn = (HttpURLConnection) url.openConnection();
         if (this.conn instanceof HttpsURLConnection) {
-            allowSelfSignedCertificates ();
+            allowSelfSignedCertificates();
         }
-            
+
         this.conn.setDoInput(true);
         conn.setRequestMethod("GET");
     }
 
     /**
      * Create a special reader which can be used to read data from a URL.
-     *
+     * <p>
      * Example: <br>
      * <blockquote>
      * <code>
@@ -134,7 +141,7 @@ public class URLReader extends Reader implements IScriptReader {
     public URLReader(HttpURLConnection conn) {
         this.conn = conn;
     }
-        
+
     private void allowSelfSignedCertificates() {
         HttpsURLConnection xcon = (HttpsURLConnection) this.conn;
         try {
@@ -149,79 +156,87 @@ public class URLReader extends Reader implements IScriptReader {
 
     /**
      * Returns the URL to which this reader connects.
+     *
      * @return the URL.
      */
     public URL getURL() {
         return url;
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public int read(char[] cbuf, int off, int len) throws IOException {
-            throw new IllegalStateException("Use urlReader.read(Hashtable, OutputStream) or use a FileReader() instead.");
+        throw new IllegalStateException("Use urlReader.read(Hashtable, OutputStream) or use a FileReader() instead.");
     }
 
-    private void appendListValues (StringBuffer buf, List list)
-    {
-        for (Iterator ii=list.iterator(); ii.hasNext(); ) {
-            buf.append (ii.next());
-            if (ii.hasNext()) 
-                buf.append ("; ");
+    private void appendListValues(StringBuffer buf, List list) {
+        for (Iterator ii = list.iterator(); ii.hasNext(); ) {
+            buf.append(ii.next());
+            if (ii.hasNext())
+                buf.append("; ");
         }
     }
+
     /* (non-Javadoc)
      * @see php.java.script.IScriptReader#read(java.util.Map, java.io.OutputStream, php.java.bridge.Util.HeaderParser)
      */
     public void read(Map env, OutputStream out, HeaderParser headerParser) throws IOException {
         InputStream natIn = null;
-        
+
         try {
-            
+
             byte[] buf = new byte[Util.BUF_SIZE];
-            
-            for (int i=0; i < IScriptReader.HEADER.length; i++) {
-        	String key = IScriptReader.HEADER[i];
-        	String val = (String) env.get(key);
-        	if (val!=null) conn.setRequestProperty (key, val);
+
+            for (int i = 0; i < IScriptReader.HEADER.length; i++) {
+                String key = IScriptReader.HEADER[i];
+                String val = (String) env.get(key);
+                if (val != null) conn.setRequestProperty(key, val);
             }
-            
+
             String overrideHosts = (String) env.get(Util.X_JAVABRIDGE_OVERRIDE_HOSTS);
-            if(overrideHosts!=null) {
+            if (overrideHosts != null) {
                 conn.setRequestProperty(Util.X_JAVABRIDGE_OVERRIDE_HOSTS, overrideHosts);
                 // workaround for a problem in php (it confuses the OVERRIDE_HOSTS from the environment with OVERRIDE_HOSTS from the request meta-data 
                 conn.setRequestProperty(Util.X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT, overrideHosts);
             }
             natIn = conn.getInputStream();
             if (headerParser != HeaderParser.DEFAULT_HEADER_PARSER) {
-                StringBuffer sbuf = new StringBuffer ();
-                for (Iterator ii = conn.getHeaderFields().entrySet().iterator(); ii.hasNext(); )
-                {
+                StringBuffer sbuf = new StringBuffer();
+                for (Iterator ii = conn.getHeaderFields().entrySet().iterator(); ii.hasNext(); ) {
                     Map.Entry e = (Entry) ii.next();
                     List list = (List) e.getValue();
-                    if (list.size()==1) {
+                    if (list.size() == 1) {
                         headerParser.addHeader(String.valueOf(e.getKey()), String.valueOf(list.get(0)));
-                    } else { 
-                	appendListValues (sbuf, list);
+                    } else {
+                        appendListValues(sbuf, list);
                         headerParser.addHeader(String.valueOf(e.getKey()), sbuf.toString());
                         sbuf.setLength(0);
                     }
                 }
             }
             int count;
-            while ((count=natIn.read(buf)) > 0)
-                out.write (buf, 0, count);
+            while ((count = natIn.read(buf)) > 0)
+                out.write(buf, 0, count);
         } catch (IOException x) {
             Util.printStackTrace(x);
             throw x;
         } finally {
-            if(natIn!=null) try { natIn.close(); } catch (IOException e) {/*ignore*/}
+            if (natIn != null) try {
+                natIn.close();
+            } catch (IOException e) {/*ignore*/}
         }
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void close() throws IOException {
     }
-    
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return String.valueOf(url);
     }

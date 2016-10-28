@@ -25,18 +25,19 @@ package php.java.bridge;
  */
 
 final class SimplePhpString extends PhpString {
-   String s; 
-   JavaBridge bridge;
+    String s;
+    JavaBridge bridge;
 
-   SimplePhpString(JavaBridge bridge, String s) {
-       this.bridge = bridge;
-       this.s = s;
+    SimplePhpString(JavaBridge bridge, String s) {
+        this.bridge = bridge;
+        this.s = s;
     }
 
-   public String getString() {
-    return s;
-}
-public byte[] getBytes() {
-    return bridge.options.getBytes(s);
-}
+    public String getString() {
+        return s;
+    }
+
+    public byte[] getBytes() {
+        return bridge.options.getBytes(s);
+    }
 }

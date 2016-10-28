@@ -29,21 +29,23 @@ import java.io.InputStream;
 
 /**
  * Defines the parser callbacks.
- * @author jostb
  *
+ * @author jostb
  */
 public interface IDocHandler {
-    
+
     /**
      * Called for each &lt;tag arg1 ... argn&gt;
+     *
      * @param tag The tag and the args.
-     * @return true, if the parser should stop after reading the top-level end tag, false otherwise. 
-     * Implements a short path: Set this to true, if you already know that the current top-level request doesn't need a reply. 
+     * @return true, if the parser should stop after reading the top-level end tag, false otherwise.
+     * Implements a short path: Set this to true, if you already know that the current top-level request doesn't need a reply.
      */
     public boolean begin(ParserTag[] tag);
-    
+
     /**
      * Called for each &lt;/tag&gt;
+     *
      * @param strings The tag and the args.
      * @see IDocHandler#begin(ParserTag[])
      */
@@ -51,11 +53,11 @@ public interface IDocHandler {
 
     /**
      * Called for the header
-     * 
+     *
      * @param in the input stream
      * @throws IOException
      */
     public void parseHeader(InputStream in) throws IOException;
-    
+
 }
  

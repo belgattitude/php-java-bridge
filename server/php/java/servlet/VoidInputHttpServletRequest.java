@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package php.java.servlet;
 
@@ -13,27 +13,30 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * A simple HTTP servlet request which is not connected to any input stream.
- * 
+ *
  * @author jostb
  */
 public class VoidInputHttpServletRequest extends HttpServletRequestWrapper {
 
     public VoidInputHttpServletRequest(HttpServletRequest req) {
-	super(req);
+        super(req);
     }
 
     private ServletInputStream in = null;
+
     public ServletInputStream getInputStream() {
-	if (in != null) return in;
-	return in = new ServletInputStream() {
+        if (in != null) return in;
+        return in = new ServletInputStream() {
             public int read() throws IOException {
-        	return -1;
+                return -1;
             }
-	};
+        };
     }
+
     private BufferedReader reader = null;
-    public BufferedReader getReaader () {
-	if (reader != null) return reader;
-	return reader = new BufferedReader(new InputStreamReader(getInputStream()));
+
+    public BufferedReader getReaader() {
+        if (reader != null) return reader;
+        return reader = new BufferedReader(new InputStreamReader(getInputStream()));
     }
 }

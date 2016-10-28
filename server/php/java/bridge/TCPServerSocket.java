@@ -33,66 +33,73 @@ import java.net.Socket;
 // The default path should only load the Standalone and the Socket classes
 class TCPServerSocket implements ISocketFactory {
 
-    static int TCP_PORT_BASE=9267; //try to find a free port in the range 9267, ..., 9366
+    static int TCP_PORT_BASE = 9267; //try to find a free port in the range 9267, ..., 9366
     private ServerSocket sock;
     private int port;
     boolean local;
-    
-    public static ISocketFactory create(String name, int backlog) throws IOException {
-	int p;
-	boolean local = false;
 
-	if(name==null) throw new NullPointerException ("name");
-	if(name.startsWith("INET:")) name=name.substring(5);
-	else if(name.startsWith("INET_LOCAL:")) { local = true; name=name.substring(11); }
-	    
-	p=Integer.parseInt(name);
-	TCPServerSocket s = new TCPServerSocket(p, backlog, local);
-	return s;
+    public static ISocketFactory create(String name, int backlog) throws IOException {
+        int p;
+        boolean local = false;
+
+        if (name == null) throw new NullPointerException("name");
+        if (name.startsWith("INET:")) name = name.substring(5);
+        else if (name.startsWith("INET_LOCAL:")) {
+            local = true;
+            name = name.substring(11);
+        }
+
+        p = Integer.parseInt(name);
+        TCPServerSocket s = new TCPServerSocket(p, backlog, local);
+        return s;
     }
 
-    private ServerSocket newServerSocket (int port, int backlog) throws java.io.IOException {
-	try {
-	    if(local)
-		return new ServerSocket(port, backlog, InetAddress.getByName("127.0.0.1"));
-	} catch (java.net.UnknownHostException e) {/*cannot happen*/}
-	return new ServerSocket(port, backlog);
+    private ServerSocket newServerSocket(int port, int backlog) throws java.io.IOException {
+        try {
+            if (local)
+                return new ServerSocket(port, backlog, InetAddress.getByName("127.0.0.1"));
+        } catch (java.net.UnknownHostException e) {/*cannot happen*/}
+        return new ServerSocket(port, backlog);
     }
 
     private void findFreePort(int start, int backlog) {
-	for (int port = start; port < start+100; port++) {
-	    try {
-		this.sock = newServerSocket(port, backlog);
-		this.port = port;
-		return;
-	    } catch (IOException e) {continue;}
-	    
-	}
+        for (int port = start; port < start + 100; port++) {
+            try {
+                this.sock = newServerSocket(port, backlog);
+                this.port = port;
+                return;
+            } catch (IOException e) {
+                continue;
+            }
+
+        }
     }
 
     private TCPServerSocket(int port, int backlog, boolean local) throws IOException {
-	this.local = local;
-	if(port==0) {
-	    findFreePort(TCP_PORT_BASE, backlog);
-	} else {
-	    this.sock = newServerSocket(port, backlog);    
-	    this.port = port;
-	}
+        this.local = local;
+        if (port == 0) {
+            findFreePort(TCP_PORT_BASE, backlog);
+        } else {
+            this.sock = newServerSocket(port, backlog);
+            this.port = port;
+        }
     }
-	
+
     public void close() throws IOException {
-	sock.close();
+        sock.close();
     }
 
     public Socket accept() throws IOException {
-	Socket s = sock.accept();
-	s.setTcpNoDelay(true);
- 	return s;
+        Socket s = sock.accept();
+        s.setTcpNoDelay(true);
+        return s;
     }
+
     public String getSocketName() {
-    	return String.valueOf(port);
+        return String.valueOf(port);
     }
+
     public String toString() {
-    	return (local?"INET_LOCAL:":"INET:") +getSocketName();
+        return (local ? "INET_LOCAL:" : "INET:") + getSocketName();
     }
 }

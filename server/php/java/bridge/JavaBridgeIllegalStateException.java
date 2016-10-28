@@ -24,12 +24,14 @@ package php.java.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/** This class is needed for backward compatibility with JDK 1.4 */
+/**
+ * This class is needed for backward compatibility with JDK 1.4
+ */
 public class JavaBridgeIllegalStateException extends
-    java.lang.IllegalStateException {
+        java.lang.IllegalStateException {
 
-  /**
-     * 
+    /**
+     *
      */
     private static final long serialVersionUID = -2335751296956301571L;
 
@@ -38,14 +40,14 @@ public class JavaBridgeIllegalStateException extends
      * @param e
      */
     public JavaBridgeIllegalStateException(String string, Throwable e) {
-      super(string);
-      initCause(e);
+        super(string);
+        initCause(e);
     }
 
     /**
      * @param string
      */
     public JavaBridgeIllegalStateException(String string) {
-      super(string);
+        super(string);
     }
 }

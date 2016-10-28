@@ -57,103 +57,115 @@ import php.java.bridge.Util;
  * </p>
  */
 public class ContextRunner implements Runnable {
-    
+
     protected IContextFactory ctx; /* the persistent ContextFactory */
     protected Request request;
     protected InputStream in;
     protected OutputStream out;
     protected AbstractChannel channel;
     protected ILogger logger;
-    
+
     /**
      * Create a new ContextRunner from a ThreadPool
+     *
      * @param channel the communication channel
-     * @param logger the current logger
+     * @param logger  the current logger
      */
     public ContextRunner(AbstractChannel channel, ILogger logger) {
-	this.channel = channel;
-	this.logger = logger;
+        this.channel = channel;
+        this.logger = logger;
     }
+
     protected byte shortPathHeader;
-    protected int readLength() throws IOException{
-	byte buf[] = new byte[1];
-	in.read(buf);
-	shortPathHeader = (byte) (0xFF&buf[0]);
-	
-	buf = new byte[2];
-	in.read(buf);
-	return (0xFF&buf[0]) | (0xFF00&(buf[1]<<8));
+
+    protected int readLength() throws IOException {
+        byte buf[] = new byte[1];
+        in.read(buf);
+        shortPathHeader = (byte) (0xFF & buf[0]);
+
+        buf = new byte[2];
+        in.read(buf);
+        return (0xFF & buf[0]) | (0xFF00 & (buf[1] << 8));
     }
+
     protected String readString(int length) throws IOException {
-	byte buf[] = new byte[length];
-	in.read(buf);
-	return new String(buf, Util.ASCII);
+        byte buf[] = new byte[length];
+        in.read(buf);
+        return new String(buf, Util.ASCII);
     }
 
     protected String readName() throws IOException {
-	return readString(readLength());
+        return readString(readLength());
     }
+
     /**
      * Sets a new Input/OutputStream into the bridge
+     *
      * @param bridge the JavaBridge
-     * @param in the new InputStream
-     * @param out the new OutputStream
+     * @param in     the new InputStream
+     * @param out    the new OutputStream
      */
     protected void setIO(JavaBridge bridge, InputStream in, OutputStream out) {
-	bridge.request.reset();
-    	bridge.in=in;
-    	bridge.out=out;	
+        bridge.request.reset();
+        bridge.in = in;
+        bridge.out = out;
     }
 
     protected boolean init() throws IOException {
-	if(Util.logLevel>4) Util.logDebug("starting a new ContextRunner " + this);
-	out = channel.getOuptutStream();
-	in = channel.getInputStream();
+        if (Util.logLevel > 4) Util.logDebug("starting a new ContextRunner " + this);
+        out = channel.getOuptutStream();
+        in = channel.getInputStream();
 
-	int c = in.read();
-	if(c!=0177) {
-	    
-	    if(c==-1) return false; // client has closed the connection
-	    
-	    try {out.write(0); }catch(IOException e){}
-	    throw new IOException("Protocol violation");
-	}
-	out.write(0); out.flush(); // dummy write: avoid ack delay
-	String name = readName();
-    	ctx = (IContextFactory) ContextFactory.get(name);
-    	if(ctx == null) 
-    	    throw new IOException("No context available for: " + name + ". Please make sure that your script does not exceed php.java.bridge.max_wait, currently set to: "+Util.MAX_WAIT);
-    	JavaBridge bridge = ctx.getBridge();
-	if(Util.logLevel>4) Util.logDebug(ctx + " created new thread" );
-	
-	if (shortPathHeader != (byte) 0xFF) { // short path S1: no PUT request
-	    bridge.request = new Request(bridge);
-	    bridge.request.init(shortPathHeader);
-	}
-	setIO(bridge, in, out);
-	this.request = bridge.request;
-	
-	ctx.initialize();
-	return true;
+        int c = in.read();
+        if (c != 0177) {
+
+            if (c == -1) return false; // client has closed the connection
+
+            try {
+                out.write(0);
+            } catch (IOException e) {
+            }
+            throw new IOException("Protocol violation");
+        }
+        out.write(0);
+        out.flush(); // dummy write: avoid ack delay
+        String name = readName();
+        ctx = (IContextFactory) ContextFactory.get(name);
+        if (ctx == null)
+            throw new IOException("No context available for: " + name + ". Please make sure that your script does not exceed php.java.bridge.max_wait, currently set to: " + Util.MAX_WAIT);
+        JavaBridge bridge = ctx.getBridge();
+        if (Util.logLevel > 4) Util.logDebug(ctx + " created new thread");
+
+        if (shortPathHeader != (byte) 0xFF) { // short path S1: no PUT request
+            bridge.request = new Request(bridge);
+            bridge.request.init(shortPathHeader);
+        }
+        setIO(bridge, in, out);
+        this.request = bridge.request;
+
+        ctx.initialize();
+        return true;
     }
 
-    /**{@inheritDoc}*/  
+    /**
+     * {@inheritDoc}
+     */
     public void run() {
-	try {
+        try {
 
-	    if(init())
-		request.handleRequests();
-	    else
-		Util.warn("context runner init failed");
-	} catch (IOException e) {
-	    if(Util.logLevel>4) Util.printStackTrace(e);
+            if (init())
+                request.handleRequests();
+            else
+                Util.warn("context runner init failed");
+        } catch (IOException e) {
+            if (Util.logLevel > 4) Util.printStackTrace(e);
         } catch (Exception e) {
-    	    Util.printStackTrace(e);
+            Util.printStackTrace(e);
         } finally {
-	    if(ctx!=null) {
-		ctx.destroy();
-	    }
-	    channel.shutdown();
-	}
+            if (ctx != null) {
+                ctx.destroy();
+            }
+            channel.shutdown();
+        }
     }
 }

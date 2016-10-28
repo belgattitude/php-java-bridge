@@ -31,15 +31,16 @@ package php.java.bridge;
  * java_context()-&gt;call(java_closure());
  * </code>
  * <br>
+ *
+ * @author jostb
  * @see php.java.bridge.PhpProcedure#invoke(Object, String, Object[])
  * @see php.java.bridge.PhpProcedure#invoke(Object, java.lang.reflect.Method, Object[])
- * @author jostb
- *
  */
 public interface Invocable {
-	
+
     /**
      * Call the java continuation with the current continuation <code>kont</code> as its argument.
+     *
      * @param kont The continuation.
      * @return True on success, false otherwise.
      * @throws Exception

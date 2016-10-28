@@ -38,13 +38,16 @@ class NPChannel extends FCGIConnection {
     public NPChannel(RandomAccessFile raFile) {
         this.raFile = raFile;
     }
+
     public void close() throws IOException {
-	raFile.close();
+        raFile.close();
     }
+
     public InputStream getInputStream() throws IOException {
         return new RandomAccessFileInputStream(this, raFile);
     }
+
     public OutputStream getOutputStream() throws IOException {
-	return new RandomAccessFileOutputStream(this, raFile);
+        return new RandomAccessFileOutputStream(this, raFile);
     }
 }

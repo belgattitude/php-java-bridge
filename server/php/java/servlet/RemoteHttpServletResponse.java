@@ -34,61 +34,68 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
  * A servlet response which writes its output to an internal buffer. The buffer can be fetched using
- * "getBufferContents()". May be used by remote PHP scripts (those accessing PhpJavaServlet) through the "java_context()->getHttpServletResponse()" API. 
+ * "getBufferContents()". May be used by remote PHP scripts (those accessing PhpJavaServlet) through the "java_context()->getHttpServletResponse()" API.
  * Also used by the "java_virtual()" API.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public class RemoteHttpServletResponse extends HttpServletResponseWrapper implements BufferedResponse {
-    
+
     private ByteArrayOutputStream buffer;
 
     public RemoteHttpServletResponse(HttpServletResponse res) {
-	super(res);
-	this.buffer = new ByteArrayOutputStream();
+        super(res);
+        this.buffer = new ByteArrayOutputStream();
     }
+
     public byte[] getBufferContents() throws IOException {
-	committed = true;
-	flushBuffer();
-	return buffer.toByteArray();
+        committed = true;
+        flushBuffer();
+        return buffer.toByteArray();
     }
+
     public void flushBuffer() throws IOException {
-	getWriter().flush();
+        getWriter().flush();
     }
 
     public int getBufferSize() {
-	return buffer.size();
+        return buffer.size();
     }
 
     private ServletOutputStream out = null;
+
     public ServletOutputStream getOutputStream() throws IOException {
-	if (out!=null) return out;
-	return out = new ServletOutputStream() {
-	    public void write(byte[] arg0, int arg1, int arg2) throws IOException {
-		buffer.write(arg0, arg1, arg2);
-	    }
-	    public void write(int arg0) throws IOException {
-		buffer.write(arg0);
-	    }};
+        if (out != null) return out;
+        return out = new ServletOutputStream() {
+            public void write(byte[] arg0, int arg1, int arg2) throws IOException {
+                buffer.write(arg0, arg1, arg2);
+            }
+
+            public void write(int arg0) throws IOException {
+                buffer.write(arg0);
+            }
+        };
     }
+
     private PrintWriter writer = null;
+
     public PrintWriter getWriter() throws IOException {
-	if (writer != null) return writer;
+        if (writer != null) return writer;
         return writer = new PrintWriter(getOutputStream());
     }
 
-    private boolean committed; 
+    private boolean committed;
+
     public boolean isCommitted() {
-	return committed;
+        return committed;
     }
 
     public void reset() {
-	buffer.reset();
+        buffer.reset();
     }
 
     public void resetBuffer() {
-	reset();
+        reset();
     }
 
     public void setBufferSize(int arg0) {

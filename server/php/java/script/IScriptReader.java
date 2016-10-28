@@ -34,25 +34,27 @@ import php.java.bridge.http.HeaderParser;
 
 /**
  * Read data from a URL or from a servlet and write the result to the output stream and a header parser.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public interface IScriptReader {
 
-    /** These header values appear in the environment map passed to PHP */
-    public static final String[] HEADER = new String[]{Util.X_JAVABRIDGE_CONTEXT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS, 
-	Util.X_JAVABRIDGE_INCLUDE_ONLY, Util.X_JAVABRIDGE_INCLUDE, Util.X_JAVABRIDGE_REDIRECT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT};
+    /**
+     * These header values appear in the environment map passed to PHP
+     */
+    public static final String[] HEADER = new String[]{Util.X_JAVABRIDGE_CONTEXT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS,
+            Util.X_JAVABRIDGE_INCLUDE_ONLY, Util.X_JAVABRIDGE_INCLUDE, Util.X_JAVABRIDGE_REDIRECT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT};
 
     /**
      * Read from the URL and write the data to out.
-     * @param env The environment, must contain values for X_JAVABRIDGE_CONTEXT. It may contain X_JAVABRIDGE_OVERRIDE_HOSTS.
-     * @param out The OutputStream.
+     *
+     * @param env          The environment, must contain values for X_JAVABRIDGE_CONTEXT. It may contain X_JAVABRIDGE_OVERRIDE_HOSTS.
+     * @param out          The OutputStream.
      * @param headerParser The header parser
      * @throws IOException
-     * @throws ServletException 
+     * @throws ServletException
      */
     public abstract void read(Map env, OutputStream out,
-	    HeaderParser headerParser) throws IOException;
+                              HeaderParser headerParser) throws IOException;
 
 }

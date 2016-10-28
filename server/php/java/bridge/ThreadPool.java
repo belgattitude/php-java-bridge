@@ -34,7 +34,8 @@ import java.util.LinkedList;
  * ThreadPool pool = new ThreadPool("MyThreadPool", 20);<br>
  * pool.start(new YourRunnable());<br>
  * </code>
- *@author jostb
+ *
+ * @author jostb
  */
 public class ThreadPool {
     private String name;
@@ -47,44 +48,68 @@ public class ThreadPool {
      * environment.
      */
     protected class Delegate extends Thread {
-	protected boolean terminate = false;
+        protected boolean terminate = false;
 
-	public Delegate(String name) { super(name); }
-	public Delegate(ThreadGroup group, String name) { super(group, name); }
-	protected void terminate() {}
-	protected void end() {}
-	protected void createThread(String name) { startNewThread(name); }
-	
-	public void run() {
-	    try {
-		while(!terminate) { getNextRunnable().run(); end(); }
-	    } catch (InterruptedException e) {
-		    /*ignore*/
-	    }catch (Throwable t) { 
-	           Util.printStackTrace(t); createThread(getName()); 
-	    } finally { terminate(); }
-	}
+        public Delegate(String name) {
+            super(name);
+        }
+
+        public Delegate(ThreadGroup group, String name) {
+            super(group, name);
+        }
+
+        protected void terminate() {
+        }
+
+        protected void end() {
+        }
+
+        protected void createThread(String name) {
+            startNewThread(name);
+        }
+
+        public void run() {
+            try {
+                while (!terminate) {
+                    getNextRunnable().run();
+                    end();
+                }
+            } catch (InterruptedException e) {
+            /*ignore*/
+            } catch (Throwable t) {
+                Util.printStackTrace(t);
+                createThread(getName());
+            } finally {
+                terminate();
+            }
+        }
     }
+
     protected Delegate createDelegate(String name) {
         return new Delegate(name);
     }
+
     protected void startNewThread(String name) {
         Delegate d = createDelegate(name);
         threadList.add(d);
-	d.start();
+        d.start();
     }
+
     protected synchronized boolean checkReserve() {
-      return threads-idles < poolReserve;
+        return threads - idles < poolReserve;
     }
+
     /*
      * Helper: Pull a runnable off the list of runnables. If there's
      * no work, sleep the thread until we receive a notify.
      */
     private synchronized Runnable getNextRunnable() throws InterruptedException {
-	while(runnables.isEmpty()) {
-	    idles++; wait(); idles--;
-	}
-	return (Runnable)runnables.removeFirst();
+        while (runnables.isEmpty()) {
+            idles++;
+            wait();
+            idles--;
+        }
+        return (Runnable) runnables.removeFirst();
     }
 
     /**
@@ -92,39 +117,43 @@ public class ThreadPool {
      * if all threads are busy. Since the pool contains at least one
      * thread, it will pull the runnable off the list when it becomes
      * available.
+     *
      * @param r - The runnable
      */
     public synchronized void start(Runnable r) {
-	runnables.add(r);
-	if(idles==0 && threads < poolMaxSize) {
-	    threads++;
-	    startNewThread(name+"#"+String.valueOf(threads));
-	}
-	else
-	    notify();
+        runnables.add(r);
+        if (idles == 0 && threads < poolMaxSize) {
+            threads++;
+            startNewThread(name + "#" + String.valueOf(threads));
+        } else
+            notify();
     }
-    
+
     protected void init(String name, int poolMaxSize) {
-	this.name = name;
-    	this.poolMaxSize = poolMaxSize;
-    	this.poolReserve = (poolMaxSize>>>2)*3;
+        this.name = name;
+        this.poolMaxSize = poolMaxSize;
+        this.poolReserve = (poolMaxSize >>> 2) * 3;
     }
-    
-    /** Terminate all threads in the pool. */
+
+    /**
+     * Terminate all threads in the pool.
+     */
     public void destroy() {
-	    for (Iterator ii = threadList.iterator(); ii.hasNext(); ) {
-		    Delegate d = (Delegate) ii.next();
-		    d.terminate = true;
-		    d.interrupt();
-	    }
+        for (Iterator ii = threadList.iterator(); ii.hasNext(); ) {
+            Delegate d = (Delegate) ii.next();
+            d.terminate = true;
+            d.interrupt();
+        }
     }
+
     /**
      * Creates a new thread pool.
-     * @param name - The name of the pool threads.
+     *
+     * @param name        - The name of the pool threads.
      * @param poolMaxSize - The max. number of threads, must be >= 1.
      */
-    public ThreadPool (String name, int poolMaxSize) {
-	if(poolMaxSize<1) throw new IllegalArgumentException("poolMaxSize must be >0");
+    public ThreadPool(String name, int poolMaxSize) {
+        if (poolMaxSize < 1) throw new IllegalArgumentException("poolMaxSize must be >0");
         init(name, poolMaxSize);
     }
 }

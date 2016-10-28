@@ -30,25 +30,29 @@ import php.java.bridge.http.IContextFactory;
 
 /**
  * A custom context factory, creates a ContextFactory for JSR223 contexts.  sessions do not expire.
- * @author jostb
  *
+ * @author jostb
  */
 public class InteractivePhpScriptContextFactory extends PhpScriptContextFactory {
 
     /**
      * Add the PhpScriptContext
+     *
      * @param context
      * @return The ContextFactory.
      */
     public static IContextFactory addNew(IContext context) {
-	InteractivePhpScriptContextFactory ctx = new InteractivePhpScriptContextFactory();
-	ctx.setContext(context);
-	return ctx;
+        InteractivePhpScriptContextFactory ctx = new InteractivePhpScriptContextFactory();
+        ctx.setContext(context);
+        return ctx;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ISession getSession(String name, short clientIsNew, int timeout) {
-	// ignore timeout
-	return super.getSession(name, clientIsNew, 0);
+        // ignore timeout
+        return super.getSession(name, clientIsNew, 0);
     }
 }
 

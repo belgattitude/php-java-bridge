@@ -27,14 +27,15 @@ package php.java.bridge;
 /**
  * Thrown when a class does not contain a procedure.
  */
-public class NoSuchProcedureException extends NoSuchMethodException{
+public class NoSuchProcedureException extends NoSuchMethodException {
 
     /**
      * Create a NoSuchProcedureException
+     *
      * @param string The exception string
      */
     public NoSuchProcedureException(String string) {
-	super("static "+string);
+        super("static " + string);
     }
 
     private static final long serialVersionUID = 1L;

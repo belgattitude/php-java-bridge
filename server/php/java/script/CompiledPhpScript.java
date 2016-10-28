@@ -28,31 +28,42 @@ import javax.script.ScriptException;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
 /**
  * A cloneable CompiledScript
  */
 public class CompiledPhpScript extends CompiledScript implements CloneableScript {
     /**
-     * 
+     *
      */
     private final AbstractPhpScriptEngine abstractPhpScriptEngine;
+
     protected CompiledPhpScript(AbstractPhpScriptEngine abstractPhpScriptEngine) {
         super();
         this.abstractPhpScriptEngine = abstractPhpScriptEngine;
     }
-    /** {@inheritDoc} */
+
+    /**
+     * {@inheritDoc}
+     */
     public Object eval(ScriptContext context) throws ScriptException {
         try {
-    	return this.abstractPhpScriptEngine.evalCompiledPhp(AbstractPhpScriptEngine.DUMMY_READER, context);
+            return this.abstractPhpScriptEngine.evalCompiledPhp(AbstractPhpScriptEngine.DUMMY_READER, context);
         } catch (Exception e) {
-    	throw new ScriptException(e);
+            throw new ScriptException(e);
         }
     }
-    /** {@inheritDoc} */
+
+    /**
+     * {@inheritDoc}
+     */
     public ScriptEngine getEngine() {
         return this.abstractPhpScriptEngine;
     }
-    /** {@inheritDoc} */
+
+    /**
+     * {@inheritDoc}
+     */
     public Object clone() {
         return new CompiledPhpScript((AbstractPhpScriptEngine) this.abstractPhpScriptEngine.clone());
     }

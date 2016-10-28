@@ -42,25 +42,31 @@ import php.java.bridge.http.IContextFactory;
  */
 public class ServletContextFactory extends SimpleServletContextFactory {
     protected ServletContextFactory(Servlet servlet, ServletContext ctx,
-                        HttpServletRequest proxy, HttpServletRequest req,HttpServletResponse res) { 
-	super(servlet, ctx, proxy, req, res, true); 
+                                    HttpServletRequest proxy, HttpServletRequest req, HttpServletResponse res) {
+        super(servlet, ctx, proxy, req, res, true);
     }
-    /**{@inheritDoc}*/
-    public synchronized void waitFor(long timeout) throws InterruptedException {}
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void waitFor(long timeout) throws InterruptedException {
+    }
+
     /**
      * Create and add a new ContextFactory.
+     *
      * @param servlet The servlet
      * @param kontext The servlet context
-     * @param proxy The proxied request
-     * @param req The HttpServletRequest
-     * @param res The HttpServletResponse
+     * @param proxy   The proxied request
+     * @param req     The HttpServletRequest
+     * @param res     The HttpServletResponse
      * @return The created ContextFactory
      */
     public static IContextFactory addNew(ContextServer server, Servlet servlet, ServletContext kontext, HttpServletRequest proxy, HttpServletRequest req, HttpServletResponse res) {
         if (server.isAvailable(PhpJavaServlet.getHeader("X_JAVABRIDGE_CHANNEL", req)))
             return new ServletContextFactory(servlet, kontext, proxy, req, res);
-        else 
-           return RemoteHttpServletContextFactory.addNew(servlet, kontext, proxy, req, res, new ServletContextFactory(servlet, kontext, proxy, req, res));
-            
-    }	
+        else
+            return RemoteHttpServletContextFactory.addNew(servlet, kontext, proxy, req, res, new ServletContextFactory(servlet, kontext, proxy, req, res));
+
+    }
 }

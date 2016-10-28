@@ -46,7 +46,7 @@ import php.java.bridge.Util;
  * ...<br>
  * pool.destroy();<br>
  * </code>
- * <p>Instead of using delegation (decorator pattern), it is possible to pass a factory 
+ * <p>Instead of using delegation (decorator pattern), it is possible to pass a factory
  * which may create custom In- and OutputStreams. Example:<br><br>
  * <code>
  * new ConnectionPool(..., new IOFactory() {<br>
@@ -58,8 +58,8 @@ import php.java.bridge.Util;
  * }<br>
  * </code>
  * </p>
- * @author jostb
  *
+ * @author jostb
  */
 public class FCGIConnectionPool {
 
@@ -71,102 +71,114 @@ public class FCGIConnectionPool {
     private FCGIIOFactory factory;
     private int maxRequests;
     private FCGIConnectionFactory channelName;
+
     /**
      * Represents the connection kept by the pool.
-     * 
-     * @author jostb
      *
+     * @author jostb
      */
     public final class Connection {
         protected int ostate, state; // bit0: input closed, bit1: output closed
-	protected FCGIConnectionFactory channelName;
-	protected FCGIConnection channel;
-	private FCGIConnectionOutputStream outputStream;
-	private FCGIConnectionInputStream inputStream;
-	private boolean isClosed;
-	private FCGIIOFactory factory;
-	private int maxRequests;
-	private int counter;
-	
-	protected void reset() {
+        protected FCGIConnectionFactory channelName;
+        protected FCGIConnection channel;
+        private FCGIConnectionOutputStream outputStream;
+        private FCGIConnectionInputStream inputStream;
+        private boolean isClosed;
+        private FCGIIOFactory factory;
+        private int maxRequests;
+        private int counter;
+
+        protected void reset() {
             this.state = this.ostate = 0;
- 	}
-	protected void init() {
+        }
+
+        protected void init() {
             inputStream = null;
             outputStream = null;
-            counter = maxRequests; 
-	    reset();
-	}
-	protected Connection reopen() throws FCGIConnectException {
-            if(isClosed) this.channel = factory.connect(channelName);
+            counter = maxRequests;
+            reset();
+        }
+
+        protected Connection reopen() throws FCGIConnectException {
+            if (isClosed) this.channel = factory.connect(channelName);
             this.isClosed = false;
             return this;
-	}
-	protected Connection(FCGIConnectionFactory channelName, int maxRequests, FCGIIOFactory factory) {
+        }
+
+        protected Connection(FCGIConnectionFactory channelName, int maxRequests, FCGIIOFactory factory) {
             this.channelName = channelName;
             this.factory = factory;
             this.isClosed = true;
             this.maxRequests = maxRequests;
             init();
         }
-	/** Set the closed/abort flag for this connection */
-	public void setIsClosed() {
-	    isClosed=true;
-	}
-	protected void close() throws FCGIConnectException {
-	    // PHP child terminated: mark as closed, so that reopen() can allocate 
-	    // a new connection for the new PHP child
-	    if (maxRequests>0 && --counter==0) isClosed = true;
-	    
-	    if(isClosed) {
-	        destroy();
-	        init();
-	    }
-	    closeConnection(this);
+
+        /**
+         * Set the closed/abort flag for this connection
+         */
+        public void setIsClosed() {
+            isClosed = true;
         }
 
-	private void destroy() {
-	    try {
-	        channel.close();
-	    } catch (IOException e) {/*ignore*/}
-	}
-	/**
-	 * Returns the OutputStream associated with this connection.
-	 * @return The output stream.
-	 * @throws FCGIConnectionException 
-	 */
-	public OutputStream getOutputStream() throws FCGIConnectionException {
-	    if(outputStream != null) return outputStream;
-	    FCGIConnectionOutputStream outputStream = (FCGIConnectionOutputStream) factory.createOutputStream();
-	    outputStream.setConnection(this);
-	    ostate |= 2;
-	    return outputStream;
-	}
-	/**
-	 * Returns the InputStream associated with this connection.
-	 * @return The input stream.
-	 * @throws FCGIConnectionException
-	 */
-	public InputStream getInputStream() throws FCGIConnectionException {
-	    if(inputStream != null) return inputStream;
-	    FCGIConnectionInputStream inputStream = (FCGIConnectionInputStream) factory.createInputStream();
-	    inputStream.setConnection(this);
-	    ostate |= 1;
-	    return inputStream;
-	}
+        protected void close() throws FCGIConnectException {
+            // PHP child terminated: mark as closed, so that reopen() can allocate
+            // a new connection for the new PHP child
+            if (maxRequests > 0 && --counter == 0) isClosed = true;
+
+            if (isClosed) {
+                destroy();
+                init();
+            }
+            closeConnection(this);
+        }
+
+        private void destroy() {
+            try {
+                channel.close();
+            } catch (IOException e) {/*ignore*/}
+        }
+
+        /**
+         * Returns the OutputStream associated with this connection.
+         *
+         * @return The output stream.
+         * @throws FCGIConnectionException
+         */
+        public OutputStream getOutputStream() throws FCGIConnectionException {
+            if (outputStream != null) return outputStream;
+            FCGIConnectionOutputStream outputStream = (FCGIConnectionOutputStream) factory.createOutputStream();
+            outputStream.setConnection(this);
+            ostate |= 2;
+            return outputStream;
+        }
+
+        /**
+         * Returns the InputStream associated with this connection.
+         *
+         * @return The input stream.
+         * @throws FCGIConnectionException
+         */
+        public InputStream getInputStream() throws FCGIConnectionException {
+            if (inputStream != null) return inputStream;
+            FCGIConnectionInputStream inputStream = (FCGIConnectionInputStream) factory.createInputStream();
+            inputStream.setConnection(this);
+            ostate |= 1;
+            return inputStream;
+        }
     }
+
     /**
      * Create a new connection pool.
+     *
      * @param channelName The channel name
-     * 
-     * @param limit The max. number of physical connections
-     * @param maxRequests 
-     * @param factory A factory for creating In- and OutputStreams.
-     * @throws FCGIConnectException 
+     * @param limit       The max. number of physical connections
+     * @param maxRequests
+     * @param factory     A factory for creating In- and OutputStreams.
+     * @throws FCGIConnectException
      * @see FCGIIOFactory
      */
     private FCGIConnectionPool(FCGIConnectionFactory channelName, int limit, int maxRequests, FCGIIOFactory factory) throws FCGIConnectException {
-	if(Util.logLevel>3) Util.logDebug("Creating new connection pool for: " +channelName);
+        if (Util.logLevel > 3) Util.logDebug("Creating new connection pool for: " + channelName);
         this.channelName = channelName;
         this.limit = limit;
         this.factory = factory;
@@ -174,21 +186,23 @@ public class FCGIConnectionPool {
         this.timeout = -1;
         channelName.test();
     }
+
     /**
      * Create a new connection pool.
+     *
      * @param channelName The channel name
-     * 
-     * @param limit The max. number of physical connections
-     * @param maxRequests 
-     * @param factory A factory for creating In- and OutputStreams.
-     * @param timeout The pool timeout in milliseconds.
-     * @throws FCGIConnectException 
+     * @param limit       The max. number of physical connections
+     * @param maxRequests
+     * @param factory     A factory for creating In- and OutputStreams.
+     * @param timeout     The pool timeout in milliseconds.
+     * @throws FCGIConnectException
      * @see FCGIIOFactory
      */
     public FCGIConnectionPool(FCGIConnectionFactory channelName, int limit, int maxRequests, FCGIIOFactory factory, long timeout) throws FCGIConnectException {
-	this(channelName, limit, maxRequests, factory);
-	this.timeout = timeout;
+        this(channelName, limit, maxRequests, factory);
+        this.timeout = timeout;
     }
+
     /* helper for openConnection() */
     private Connection createNewConnection() {
         Connection connection = new Connection(channelName, maxRequests, factory);
@@ -196,50 +210,54 @@ public class FCGIConnectionPool {
         connections++;
         return connection;
     }
+
     /**
      * Opens a connection to the back end.
+     *
      * @return The connection
      * @throws InterruptedException
-     * @throws FCGIConnectException 
+     * @throws FCGIConnectException
      */
     public synchronized Connection openConnection() throws InterruptedException, FCGIConnectException {
         Connection connection;
-      	if(freeList.isEmpty() && connections<limit) {
-      	    connection = createNewConnection();
-      	} else {
-      	    while(freeList.isEmpty()) {
-      		if (timeout > 0) {
-      		    long t1 = System.currentTimeMillis();
-      		    wait(timeout);
-      		    long t2 = System.currentTimeMillis();
-      		    long t = t2 - t1;
-      		    if (t >= timeout) throw new FCGIConnectException(new IOException("pool timeout "+timeout+" exceeded: "+t));
-      		} else {
-      		    wait();
-      		}
-      	    }
-      	    connection = (Connection) freeList.remove(0);
-      	    connection.reset();
-      	}
-      	return connection.reopen();
+        if (freeList.isEmpty() && connections < limit) {
+            connection = createNewConnection();
+        } else {
+            while (freeList.isEmpty()) {
+                if (timeout > 0) {
+                    long t1 = System.currentTimeMillis();
+                    wait(timeout);
+                    long t2 = System.currentTimeMillis();
+                    long t = t2 - t1;
+                    if (t >= timeout)
+                        throw new FCGIConnectException(new IOException("pool timeout " + timeout + " exceeded: " + t));
+                } else {
+                    wait();
+                }
+            }
+            connection = (Connection) freeList.remove(0);
+            connection.reset();
+        }
+        return connection.reopen();
     }
+
     private synchronized void closeConnection(Connection connection) {
         freeList.add(connection);
         notify();
     }
+
     /**
-     * Destroy the connection pool. 
-     * 
+     * Destroy the connection pool.
+     * <p>
      * It releases all physical connections.
-     *
      */
     public synchronized void destroy() {
-        for(Iterator ii = connectionList.iterator(); ii.hasNext();) {
+        for (Iterator ii = connectionList.iterator(); ii.hasNext(); ) {
             Connection connection = (Connection) ii.next();
             connection.destroy();
         }
-        
-    	if(channelName!=null) 
-    	    channelName.destroy();
+
+        if (channelName != null)
+            channelName.destroy();
     }
 }

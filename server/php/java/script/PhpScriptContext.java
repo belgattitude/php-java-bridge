@@ -41,131 +41,182 @@ import php.java.bridge.http.HeaderParser;
 import php.java.bridge.http.IContext;
 
 /**
- * This class implements a simple script context for PHP. It starts a standalone 
+ * This class implements a simple script context for PHP. It starts a standalone
  * <code>JavaBridgeRunner</code> which listens for requests from php instances.<p>
- * 
+ * <p>
  * In a servlet environment please use a <code>php.java.script.http.PhpSimpleHttpScriptContext</code> instead.
+ *
+ * @author jostb
  * @see php.java.script.PhpScriptContext
  * @see php.java.bridge.JavaBridgeRunner
- * @author jostb
- *
  */
 
 public final class PhpScriptContext extends AbstractPhpScriptContext {
     public PhpScriptContext(ScriptContext ctx) {
-	super(ctx);
+        super(ctx);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object init(Object callable) throws Exception {
-	return php.java.bridge.http.Context.getManageable(callable);
+        return php.java.bridge.http.Context.getManageable(callable);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void onShutdown(Object closeable) {
-	php.java.bridge.http.Context.handleManaged(closeable);
+        php.java.bridge.http.Context.handleManaged(closeable);
     }
+
     /**
      * Throws IllegalStateException
+     *
      * @return none
      */
     public Object getHttpServletRequest() {
-	throw new IllegalStateException("PHP not running in a servlet environment");
+        throw new IllegalStateException("PHP not running in a servlet environment");
     }
-    
+
     /**
      * Throws IllegalStateException
+     *
      * @return none
      */
     public Object getServletContext() {
-	throw new IllegalStateException("PHP not running in a servlet environment");
+        throw new IllegalStateException("PHP not running in a servlet environment");
     }
-    
+
     /**
      * Throws IllegalStateException
+     *
      * @return none
      */
     public Object getHttpServletResponse() {
-	throw new IllegalStateException("PHP not running in a servlet environment");
+        throw new IllegalStateException("PHP not running in a servlet environment");
     }
+
     /**
      * Throws IllegalStateException
+     *
      * @return none
      */
     public Object getServlet() {
-	throw new IllegalStateException("PHP not running in a servlet environment");
+        throw new IllegalStateException("PHP not running in a servlet environment");
     }
+
     /**
      * Throws IllegalStateException
+     *
      * @return none
      */
     public Object getServletConfig() {
-	throw new IllegalStateException("PHP not running in a servlet environment");
+        throw new IllegalStateException("PHP not running in a servlet environment");
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public String getRealPath(String path) {
-	return php.java.bridge.http.Context.getRealPathInternal(path);
+        return php.java.bridge.http.Context.getRealPathInternal(path);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object get(String key) {
-	  return getBindings(IContext.ENGINE_SCOPE).get(key);
+        return getBindings(IContext.ENGINE_SCOPE).get(key);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void put(String key, Object val) {
-	  getBindings(IContext.ENGINE_SCOPE).put(key, val);
+        getBindings(IContext.ENGINE_SCOPE).put(key, val);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void remove(String key) {
-	  getBindings(IContext.ENGINE_SCOPE).remove(key);
+        getBindings(IContext.ENGINE_SCOPE).remove(key);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void putAll(Map map) {
-	  getBindings(IContext.ENGINE_SCOPE).putAll(map);
+        getBindings(IContext.ENGINE_SCOPE).putAll(map);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Map getAll() {
-	return Collections.unmodifiableMap(getBindings(IContext.ENGINE_SCOPE));
+        return Collections.unmodifiableMap(getBindings(IContext.ENGINE_SCOPE));
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Continuation createContinuation(Reader reader, Map env,
-            OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
-            ILogger logger, boolean isCompiled) {
-		Continuation cont;
-		
-		if (isCompiled)
-	    		cont = new FastCGIProxy(reader, env, out,  err, headerParser, result, logger); 
-		else
-    			cont = new HttpProxy(reader, env, out,  err, headerParser, result, logger);
-		
-		return cont;
+                                           OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
+                                           ILogger logger, boolean isCompiled) {
+        Continuation cont;
+
+        if (isCompiled)
+            cont = new FastCGIProxy(reader, env, out, err, headerParser, result, logger);
+        else
+            cont = new HttpProxy(reader, env, out, err, headerParser, result, logger);
+
+        return cont;
     }
+
     private static JavaBridgeRunner httpServer;
+
     private static synchronized final JavaBridgeRunner getHttpServer() {
-	if (httpServer!=null) return httpServer;
-	try {
-	    return httpServer = JavaBridgeRunner.getRequiredInstance();
+        if (httpServer != null) return httpServer;
+        try {
+            return httpServer = JavaBridgeRunner.getRequiredInstance();
         } catch (IOException e) {
             Util.printStackTrace(e);
             return null;
         }
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getSocketName() {
-	return getHttpServer().getSocket().getSocketName();
+        return getHttpServer().getSocket().getSocketName();
     }
-    /**@deprecated*/
+
+    /**
+     * @deprecated
+     */
     public String getRedirectString() {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    /**@deprecated*/
+
+    /**
+     * @deprecated
+     */
     public String getRedirectString(String webPath) {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getRedirectURL(String webPath) {
-	return "http://127.0.0.1:"+getSocketName()+webPath;
+        return "http://127.0.0.1:" + getSocketName() + webPath;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ContextServer getContextServer() {
-	return getHttpServer().getContextServer();
+        return getHttpServer().getContextServer();
     }
 }

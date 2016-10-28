@@ -39,28 +39,29 @@ import php.java.bridge.http.HeaderParser;
  * Although this class accidentally inherits from <code>CGIRunner</code> it doesn't necessarily run CGI binaries.
  * If you pass a URLReader, it calls its read method which opens a URLConnection to the remote server
  * and holds the allocated remote script instance hostage until release is called.
- * @author jostb
  *
+ * @author jostb
  */
 public class HttpProxy extends CGIRunner {
     /**
      * Create a HTTP proxy which can be used to allocate a php script from a HTTP server
-     * @param reader - The reader, for example a URLReader
-     * @param env - The environment, must contain values for X_JAVABRIDGE_CONTEXT. It may contain X_JAVABRIDGE_OVERRIDE_HOSTS.
-     * @param out - The OutputStream
-     * @param err The error stream
+     *
+     * @param reader       - The reader, for example a URLReader
+     * @param env          - The environment, must contain values for X_JAVABRIDGE_CONTEXT. It may contain X_JAVABRIDGE_OVERRIDE_HOSTS.
+     * @param out          - The OutputStream
+     * @param err          The error stream
      * @param headerParser The header parser
-     * @param resultProxy The return value proxy
+     * @param resultProxy  The return value proxy
      */
     public HttpProxy(Reader reader, Map env, OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy resultProxy, ILogger logger) {
-	super(reader, env, out, err, headerParser, resultProxy, logger);
+        super(reader, env, out, err, headerParser, resultProxy, logger);
     }
-    
+
     protected void doRun() throws IOException, PhpException {
-    	if(reader instanceof URLReader) {
-	    ((URLReader)reader).read(env, out, headerParser);
-     	} else {
-	    super.doRun();
-     	}
+        if (reader instanceof URLReader) {
+            ((URLReader) reader).read(env, out, headerParser);
+        } else {
+            super.doRun();
+        }
     }
 }

@@ -44,56 +44,61 @@ import php.java.bridge.http.IContextFactory;
  */
 public class RemoteServletContextFactory extends SimpleServletContextFactory {
     protected RemoteServletContextFactory(Servlet servlet, ServletContext ctx, HttpServletRequest proxy, HttpServletRequest req, HttpServletResponse res) {
-	super(servlet, ctx, proxy, req, res, false);
+        super(servlet, ctx, proxy, req, res, false);
     }
 
     /**
      * Set the HttpServletRequest for session sharing.
-     *  @param req The HttpServletRequest
+     *
+     * @param req The HttpServletRequest
      */
     protected void setSessionFactory(HttpServletRequest req) {
-    	this.proxy = req;
+        this.proxy = req;
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public ISession getSession(String name, short clientIsNew, int timeout) {
-	 // if name != null return a "named" php session which is not shared with jsp
-	if(name!=null) return visited.getSimpleSession(name, clientIsNew, timeout);
+        // if name != null return a "named" php session which is not shared with jsp
+        if (name != null) return visited.getSimpleSession(name, clientIsNew, timeout);
 
-	if(session!=null) return session;
-	
-    	if(proxy==null) throw new NullPointerException("This context "+getId()+" doesn't have a session proxy.");
-	return session = HttpSessionFacade.getFacade(this, kontext, proxy, res, clientIsNew, timeout);
+        if (session != null) return session;
+
+        if (proxy == null) throw new NullPointerException("This context " + getId() + " doesn't have a session proxy.");
+        return session = HttpSessionFacade.getFacade(this, kontext, proxy, res, clientIsNew, timeout);
     }
-    
+
     /**
      * Create and add a new ContextFactory.
+     *
      * @param servlet The servlet
      * @param kontext The servlet context
-     * @param proxy The request proxy
-     * @param req The HttpServletRequest
-     * @param res The HttpServletResponse
+     * @param proxy   The request proxy
+     * @param req     The HttpServletRequest
+     * @param res     The HttpServletResponse
      * @return The created ContextFactory
      */
     public static IContextFactory addNew(Servlet servlet, ServletContext kontext, HttpServletRequest proxy, HttpServletRequest req, HttpServletResponse res) {
         RemoteServletContextFactory ctx = new RemoteServletContextFactory(servlet, kontext, proxy, req, res);
-    	return ctx;
+        return ctx;
     }
-    
+
     /**
      * Return an emulated JSR223 context.
+     *
      * @return The context.
      * @see php.java.servlet.HttpContext
      */
     public IContext createContext() {
-	IContext ctx = new HttpContext(kontext, req, res);
-	ctx.setAttribute(IContext.SERVLET_CONTEXT, kontext, IContext.ENGINE_SCOPE);
-	ctx.setAttribute(IContext.SERVLET_CONFIG, servlet.getServletConfig(), IContext.ENGINE_SCOPE);
-	ctx.setAttribute(IContext.SERVLET, servlet, IContext.ENGINE_SCOPE);
+        IContext ctx = new HttpContext(kontext, req, res);
+        ctx.setAttribute(IContext.SERVLET_CONTEXT, kontext, IContext.ENGINE_SCOPE);
+        ctx.setAttribute(IContext.SERVLET_CONFIG, servlet.getServletConfig(), IContext.ENGINE_SCOPE);
+        ctx.setAttribute(IContext.SERVLET, servlet, IContext.ENGINE_SCOPE);
 
-	ctx.setAttribute(IContext.SERVLET_REQUEST, new RemoteHttpServletRequest(this, req), IContext.ENGINE_SCOPE);
-	ctx.setAttribute(IContext.SERVLET_RESPONSE, new RemoteHttpServletResponse(res), IContext.ENGINE_SCOPE);
-	
-	return ctx;
+        ctx.setAttribute(IContext.SERVLET_REQUEST, new RemoteHttpServletRequest(this, req), IContext.ENGINE_SCOPE);
+        ctx.setAttribute(IContext.SERVLET_RESPONSE, new RemoteHttpServletResponse(res), IContext.ENGINE_SCOPE);
+
+        return ctx;
     }
 }

@@ -30,31 +30,36 @@ import java.io.OutputStream;
 
 /**
  * Represents the pipe or socket channel.
- * @author jostb
  *
+ * @author jostb
  */
 public abstract class AbstractChannel {
     /**
      * Returns the channel's input stream.
+     *
      * @return The InputStream
      * @throws FileNotFoundException
      */
     public abstract InputStream getInputStream() throws IOException;
+
     /**
      * Returns the channel's output stream.
+     *
      * @return The OutputStream.
      * @throws FileNotFoundException
      */
     public abstract OutputStream getOuptutStream() throws IOException;
+
     /**
      * Shut down the channel, closes the in- and output stream and other resources.
      */
     public abstract void shutdown();
-    
+
     /**
      * Returns the name of the channel, for example the socket # or the pipe name.
-     * @see php.java.bridge.http.AbstractChannelName#getName()
+     *
      * @return the name of the channel.
+     * @see php.java.bridge.http.AbstractChannelName#getName()
      */
     public abstract String getName();
 }

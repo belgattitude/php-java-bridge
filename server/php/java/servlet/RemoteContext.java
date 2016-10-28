@@ -34,47 +34,56 @@ import php.java.bridge.http.IContext;
 /**
  * A custom context, used when remote PHP scripts access the servlet. In this case the HttpServletRequest, HttpServletResponse and ServletContext
  * objects are not available. However, the session object <em>is</em> available through the RemoteHttpSession.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public class RemoteContext extends HttpContext {
     protected RemoteContext(ServletContext kontext, HttpServletRequest req, HttpServletResponse res) {
-	super(kontext, req, res);
+        super(kontext, req, res);
     }
+
     /**
      * Return the response object
+     *
      * @return The response
      */
     public Object getHttpServletResponse() {
-	return getAttribute(IContext.SERVLET_RESPONSE);
+        return getAttribute(IContext.SERVLET_RESPONSE);
     }
+
     /**
      * Return the request object
+     *
      * @return The request
      */
     public Object getHttpServletRequest() {
-	return getAttribute(IContext.SERVLET_REQUEST);
+        return getAttribute(IContext.SERVLET_REQUEST);
     }
+
     /**
      * Return the servlet
+     *
      * @return the servlet
      */
     public Object getServlet() {
-	return getAttribute(IContext.SERVLET);
+        return getAttribute(IContext.SERVLET);
     }
+
     /**
      * Return the servlet config
+     *
      * @return the servlet config
      */
-     public Object getServletConfig() {
- 	return getAttribute(IContext.SERVLET_CONFIG);
-     }
-     /**
-      * Return the servlet context
-      * @return the servlet context
-      */
-      public Object getServletContext() {
-  	return getAttribute(IContext.SERVLET_CONTEXT);
-      }
+    public Object getServletConfig() {
+        return getAttribute(IContext.SERVLET_CONFIG);
+    }
+
+    /**
+     * Return the servlet context
+     *
+     * @return the servlet context
+     */
+    public Object getServletContext() {
+        return getAttribute(IContext.SERVLET_CONTEXT);
+    }
 }

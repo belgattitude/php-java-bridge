@@ -27,20 +27,27 @@ package php.java.servlet;
 import php.java.bridge.ILogger;
 
 /**
- * A logger class, uses log4j if possible 
- *
+ * A logger class, uses log4j if possible
  */
 public class Logger implements ILogger {
-	/**{@inheritDoc}*/
-	public void log(int level, String s) {
-	    System.err.println(s);
-	}
-	/**{@inheritDoc}*/
-	public void printStackTrace(Throwable t) {
-	    t.printStackTrace();
-	}
-	/**{@inheritDoc}*/
-	public void warn(String msg) {
-	    System.err.println(msg);
-	}
-     }
+    /**
+     * {@inheritDoc}
+     */
+    public void log(int level, String s) {
+        System.err.println(s);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void printStackTrace(Throwable t) {
+        t.printStackTrace();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void warn(String msg) {
+        System.err.println(msg);
+    }
+}

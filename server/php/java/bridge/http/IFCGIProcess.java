@@ -29,19 +29,21 @@ import java.io.OutputStream;
 
 /**
  * Common methods for all FCGIProcesses
- * @author jostb
  *
+ * @author jostb
  */
 public interface IFCGIProcess {
 
     /**
      * Start a new FCGIProcess
+     *
      * @throws IOException
      */
     public void start() throws IOException;
 
     /**
      * Wait for a FCGIProcess until it has been terminated or interrupted
+     *
      * @return the process return value
      * @throws InterruptedException
      */
@@ -49,6 +51,7 @@ public interface IFCGIProcess {
 
     /**
      * Get the process output stream
+     *
      * @return the output stream
      */
     public OutputStream getOutputStream();

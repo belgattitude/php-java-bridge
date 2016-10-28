@@ -26,45 +26,49 @@ package php.java.bridge;
 
 /**
  * The log interface for the PHP/Java Bridge log.
+ *
+ * @author jostb
  * @see php.java.bridge.FileLogger
  * @see php.java.bridge.ChainsawLogger
  * @see php.java.bridge.SimpleLog4jLogger
- * @author jostb
- *
  */
 public interface ILogger {
 
-    /** 
+    /**
      * fatal log level
      */
-    public static final int FATAL=1;
-    /** 
+    public static final int FATAL = 1;
+    /**
      * error log level
      */
-    public static final int ERROR=2;
-    /** 
+    public static final int ERROR = 2;
+    /**
      * info log level
      */
-    public static final int INFO=3;
-    /** 
+    public static final int INFO = 3;
+    /**
      * debug log level
      */
-    public static final int DEBUG=4;
+    public static final int DEBUG = 4;
+
     /**
      * Log a stack trace
+     *
      * @param t The Throwable
      */
     public void printStackTrace(Throwable t);
 
     /**
      * Log a message.
+     *
      * @param level The log level 0: FATAL, 1:ERROR, 2: INFO, 3: DEBUG
-     * @param msg The message
+     * @param msg   The message
      */
     public void log(int level, String msg);
 
     /**
      * Display a warning if logLevel >= 1
+     *
      * @param msg The warn message
      */
     public void warn(String msg);

@@ -33,31 +33,35 @@ import php.java.bridge.http.HeaderParser;
 
 
 /**
- * A decorator for compiled script engines. 
+ * A decorator for compiled script engines.
  * Only for internal use.
- * @author jostb
  *
+ * @author jostb
  */
 public class PhpCompiledScriptContext extends PhpScriptContextDecorator {
 
     /**
      * Create a new PhpCompiledScriptContext using an existing
      * PhpScriptContext
+     *
      * @param ctx the script context to be decorated
      */
     public PhpCompiledScriptContext(IPhpScriptContext ctx) {
-	super(ctx);
+        super(ctx);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Continuation createContinuation(Reader reader, Map env,
-            OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
-            ILogger logger, boolean isCompiled) {
-		Continuation cont;
-		if (isCompiled) {
-		    cont = new FastCGIProxy(reader, env, out,  err, headerParser, result, logger);
-		} else {
-		    cont = super.createContinuation(reader, env, out, err, headerParser, result, logger, isCompiled);
-		}
-    		return cont;
+                                           OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
+                                           ILogger logger, boolean isCompiled) {
+        Continuation cont;
+        if (isCompiled) {
+            cont = new FastCGIProxy(reader, env, out, err, headerParser, result, logger);
+        } else {
+            cont = super.createContinuation(reader, env, out, err, headerParser, result, logger, isCompiled);
+        }
+        return cont;
     }
 }

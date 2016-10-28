@@ -38,10 +38,10 @@ import php.java.bridge.http.ContextServer;
 import php.java.bridge.http.HeaderParser;
 
 /**
- * Abstract class for IPhpScriptContexts. The abstract class itself provides default methods that pass 
- * all requests to the contained IPhpScriptContext. Subclasses of PhpScriptContextDecoratorDecorator should 
- * override some of these methods and may also provide additional methods and fields.  
- * 
+ * Abstract class for IPhpScriptContexts. The abstract class itself provides default methods that pass
+ * all requests to the contained IPhpScriptContext. Subclasses of PhpScriptContextDecoratorDecorator should
+ * override some of these methods and may also provide additional methods and fields.
+ *
  * @author jostb
  */
 public abstract class PhpScriptContextDecorator implements IPhpScriptContext {
@@ -50,177 +50,275 @@ public abstract class PhpScriptContextDecorator implements IPhpScriptContext {
 
     /**
      * Create a new PhpScriptContextDecorator
+     *
      * @param ctx the PhpScriptContext to decorate.
      */
-    public PhpScriptContextDecorator (IPhpScriptContext ctx) {
-	this.ctx = ctx;
+    public PhpScriptContextDecorator(IPhpScriptContext ctx) {
+        this.ctx = ctx;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getAttribute(String name) throws IllegalArgumentException {
-	return ctx.getAttribute(name);
+        return ctx.getAttribute(name);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Object getAttribute(String name, int scope)
-	    throws IllegalArgumentException {
-	return ctx.getAttribute(name, scope);
+            throws IllegalArgumentException {
+        return ctx.getAttribute(name, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public int getAttributesScope(String name) {
-	return ctx.getAttributesScope(name);
+        return ctx.getAttributesScope(name);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Bindings getBindings(int scope) {
-	return ctx.getBindings(scope);
+        return ctx.getBindings(scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Writer getErrorWriter() {
-	return ctx.getErrorWriter();
+        return ctx.getErrorWriter();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Reader getReader() {
-	return ctx.getReader();
+        return ctx.getReader();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public List getScopes() {
-	return ctx.getScopes();
+        return ctx.getScopes();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Writer getWriter() {
-	return ctx.getWriter();
+        return ctx.getWriter();
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Object removeAttribute(String name, int scope)
-	    throws IllegalArgumentException {
-	return ctx.removeAttribute(name, scope);
+            throws IllegalArgumentException {
+        return ctx.removeAttribute(name, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setAttribute(String key, Object value, int scope)
-	    throws IllegalArgumentException {
-	ctx.setAttribute(key, value, scope);
+            throws IllegalArgumentException {
+        ctx.setAttribute(key, value, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setBindings(Bindings namespace, int scope)
-	    throws IllegalArgumentException {
-	ctx.setBindings(namespace, scope);
+            throws IllegalArgumentException {
+        ctx.setBindings(namespace, scope);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setErrorWriter(Writer writer) {
-	ctx.setErrorWriter(writer);
+        ctx.setErrorWriter(writer);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setReader(Reader reader) {
-	ctx.setReader(reader);
+        ctx.setReader(reader);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void setWriter(Writer writer) {
-	ctx.setWriter(writer);
+        ctx.setWriter(writer);
     }
 
-    /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public Continuation getContinuation() {
-	return ctx.getContinuation();
+        return ctx.getContinuation();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void setContinuation(Continuation kont) {
-	ctx.setContinuation(kont);
+        ctx.setContinuation(kont);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object init(Object callable) throws Exception {
-	return ctx.init(callable);
+        return ctx.init(callable);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void onShutdown(Object closeable) {
-	ctx.onShutdown(closeable);
+        ctx.onShutdown(closeable);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean call(Object kont) throws Exception {
-	return ctx.call(kont);
+        return ctx.call(kont);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object get(String key) {
-	return ctx.get(key);
+        return ctx.get(key);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Map getAll() {
-	return ctx.getAll();
+        return ctx.getAll();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getHttpServletRequest() {
-	return ctx.getHttpServletRequest();
+        return ctx.getHttpServletRequest();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getHttpServletResponse() {
-	return ctx.getHttpServletResponse();
+        return ctx.getHttpServletResponse();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getRealPath(String path) {
-	return ctx.getRealPath(path);
+        return ctx.getRealPath(path);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getServlet() {
-	return ctx.getServlet();
+        return ctx.getServlet();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getServletConfig() {
-	return ctx.getServletConfig();
+        return ctx.getServletConfig();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getServletContext() {
-	return ctx.getServletContext();
+        return ctx.getServletContext();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void put(String key, Object val) {
-	ctx.put(key, val);
+        ctx.put(key, val);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void putAll(Map map) {
-	ctx.putAll(map);
+        ctx.putAll(map);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void remove(String key) {
-	ctx.remove(key);
+        ctx.remove(key);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public Continuation createContinuation(Reader reader, Map env,
-            OutputStream out, OutputStream err, HeaderParser headerParser,
-            ResultProxy result, ILogger logger, boolean isCompiled) {
-	return ctx.createContinuation(reader, env, out, err, headerParser, result, logger, isCompiled);
+                                           OutputStream out, OutputStream err, HeaderParser headerParser,
+                                           ResultProxy result, ILogger logger, boolean isCompiled) {
+        return ctx.createContinuation(reader, env, out, err, headerParser, result, logger, isCompiled);
     }
-    /**@deprecated*/
+
+    /**
+     * @deprecated
+     */
     public String getRedirectString(String webPath) {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    /**@deprecated*/
+
+    /**
+     * @deprecated
+     */
     public String getRedirectString() {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getSocketName() {
-	return ctx.getSocketName();
+        return ctx.getSocketName();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getRedirectURL(String webPath) {
-	return ctx.getRedirectURL(webPath);
+        return ctx.getRedirectURL(webPath);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ContextServer getContextServer() {
-	return ctx.getContextServer();
+        return ctx.getContextServer();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void startContinuation() {
-	ctx.startContinuation();
+        ctx.startContinuation();
     }
 }

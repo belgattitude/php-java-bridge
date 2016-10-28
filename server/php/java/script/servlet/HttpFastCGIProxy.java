@@ -39,8 +39,8 @@ import php.java.script.Continuation;
 import php.java.script.ResultProxy;
 
 /**
-  * This class can be used to connect to a FastCGI server.
- * 
+ * This class can be used to connect to a FastCGI server.
+ *
  * @author jostb
  * @see php.java.script.FastCGIProxy
  */
@@ -49,33 +49,37 @@ public class HttpFastCGIProxy extends Continuation {
     private FCGIConnectionPool fcgiConnectionPool;
 
     public HttpFastCGIProxy(Map env, OutputStream out,
-            OutputStream err, HeaderParser headerParser,
-            ResultProxy resultProxy, FCGIConnectionPool fcgiConnectionPool) {
-	super(env, out, err, headerParser, resultProxy);
-	this.fcgiConnectionPool = fcgiConnectionPool;
+                            OutputStream err, HeaderParser headerParser,
+                            ResultProxy resultProxy, FCGIConnectionPool fcgiConnectionPool) {
+        super(env, out, err, headerParser, resultProxy);
+        this.fcgiConnectionPool = fcgiConnectionPool;
     }
 
     protected void doRun() throws IOException, Util.Process.PhpException {
-	byte[] buf = new byte[FCGIUtil.FCGI_BUF_SIZE];
-	
-	FCGIInputStream natIn = null;
-	FCGIOutputStream natOut = null;
+        byte[] buf = new byte[FCGIUtil.FCGI_BUF_SIZE];
 
-	FCGIConnectionPool.Connection connection = null;
-	
-	try {
-	    connection = fcgiConnectionPool.openConnection();
-	    natOut = (FCGIOutputStream) connection.getOutputStream();
-	    natIn = (FCGIInputStream) connection.getInputStream();
+        FCGIInputStream natIn = null;
+        FCGIOutputStream natOut = null;
 
-	    natOut.writeBegin();
-	    natOut.writeParams(env);
-	    natOut.write(FCGIUtil.FCGI_STDIN, FCGIUtil.FCGI_EMPTY_RECORD);
-	    natOut.close();
-	    HeaderParser.parseBody(buf, natIn, new OutputStreamFactory() { public OutputStream getOutputStream() throws IOException {return out;}}, headerParser);
-	    natIn.close();
-	} catch (InterruptedException e) {
-	    /*ignore*/
+        FCGIConnectionPool.Connection connection = null;
+
+        try {
+            connection = fcgiConnectionPool.openConnection();
+            natOut = (FCGIOutputStream) connection.getOutputStream();
+            natIn = (FCGIInputStream) connection.getInputStream();
+
+            natOut.writeBegin();
+            natOut.writeParams(env);
+            natOut.write(FCGIUtil.FCGI_STDIN, FCGIUtil.FCGI_EMPTY_RECORD);
+            natOut.close();
+            HeaderParser.parseBody(buf, natIn, new OutputStreamFactory() {
+                public OutputStream getOutputStream() throws IOException {
+                    return out;
+                }
+            }, headerParser);
+            natIn.close();
+        } catch (InterruptedException e) {
+        /*ignore*/
         } catch (Throwable t) {
             t.printStackTrace();
         }

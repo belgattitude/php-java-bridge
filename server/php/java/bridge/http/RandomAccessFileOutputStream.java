@@ -43,9 +43,9 @@ class RandomAccessFileOutputStream extends OutputStream {
      * @see java.io.OutputStream#close()
      */
     public void close() throws IOException {
-        if(this.channel.readIsClosed)
-	    this.raFile.close();
-        this.channel.writeIsClosed=true;	
+        if (this.channel.readIsClosed)
+            this.raFile.close();
+        this.channel.writeIsClosed = true;
     }
 
     /**
@@ -66,6 +66,6 @@ class RandomAccessFileOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(int)
      */
     public void write(int b) throws IOException {
-	throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 }

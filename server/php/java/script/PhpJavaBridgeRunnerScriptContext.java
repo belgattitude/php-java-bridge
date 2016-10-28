@@ -31,29 +31,37 @@ import php.java.bridge.http.ContextServer;
 
 
 /**
- * A decorator which enables secure (HTTPS) connections. 
+ * A decorator which enables secure (HTTPS) connections.
  * Call <code>engine.setContext(new PhpSecureScriptContext(engine.getContext()))</code> before executing the engine.
- * @author jostb
  *
+ * @author jostb
  */
 public class PhpJavaBridgeRunnerScriptContext extends PhpScriptContextDecorator {
 
     protected JavaBridgeRunner httpServer;
+
     /**
      * Create a new PhpCompiledScriptContext using an existing
      * PhpScriptContext
+     *
      * @param ctx the script context to be decorated
      */
     public PhpJavaBridgeRunnerScriptContext(ScriptContext ctx, JavaBridgeRunner httpServer) {
-	super((IPhpScriptContext)ctx);
-	this.httpServer = httpServer;
+        super((IPhpScriptContext) ctx);
+        this.httpServer = httpServer;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getSocketName() {
-	return httpServer.getSocket().getSocketName();
+        return httpServer.getSocket().getSocketName();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ContextServer getContextServer() {
-	return httpServer.getContextServer();
+        return httpServer.getContextServer();
     }
 }

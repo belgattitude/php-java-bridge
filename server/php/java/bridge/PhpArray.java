@@ -33,25 +33,27 @@ final class PhpArray extends AbstractMap { // for PHP's array()
     private static final long serialVersionUID = 3905804162838115892L;
     private TreeMap t = new TreeMap(Request.PHP_ARRAY_KEY_COMPARATOR);
     private HashMap m = null;
+
     public Object put(Object key, Object value) {
-        if(m!=null) return m.put(key, value);
+        if (m != null) return m.put(key, value);
         try {
-            return t.put((Integer)key, value);
+            return t.put((Integer) key, value);
         } catch (ClassCastException e) {
             m = new HashMap(t);
             t = null;
             return m.put(key, value);
         }
     }
+
     public Set entrySet() {
-        if(t!=null) return t.entrySet();
+        if (t != null) return t.entrySet();
         return m.entrySet();
     }
 
     public int arraySize() {
-        if(t!=null) {
-    	if(t.size()==0) return 0;
-    	return 1+((Integer)t.lastKey()).intValue();
+        if (t != null) {
+            if (t.size() == 0) return 0;
+            return 1 + ((Integer) t.lastKey()).intValue();
         }
         throw new IllegalArgumentException("The passed PHP \"array\" is not a sequence but a dictionary");
     }

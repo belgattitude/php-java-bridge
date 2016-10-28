@@ -33,53 +33,67 @@ import php.java.bridge.http.FCGIConnectionPool.Connection;
 
 /**
  * Default OutputStream used by the connection pool.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public class FCGIConnectionOutputStream extends OutputStream {
     protected Connection connection;
     private BufferedOutputStream out;
-    
+
     protected void setConnection(Connection connection) throws FCGIConnectionException {
         this.connection = connection;
         try {
-	    this.out = new BufferedOutputStream(connection.channel.getOutputStream());
+            this.out = new BufferedOutputStream(connection.channel.getOutputStream());
         } catch (IOException e) {
-	    throw new FCGIConnectionException(connection, e);
+            throw new FCGIConnectionException(connection, e);
         }
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public void write(byte buf[]) throws FCGIConnectionException {
         write(buf, 0, buf.length);
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public void write(byte buf[], int off, int buflength) throws FCGIConnectionException {
-	try {
-	    out.write(buf, off, buflength);
-	} catch (IOException ex) {
-	    throw new FCGIConnectionException(connection, ex);
-	}
+        try {
+            out.write(buf, off, buflength);
+        } catch (IOException ex) {
+            throw new FCGIConnectionException(connection, ex);
+        }
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public void write(int b) throws FCGIConnectionException {
         throw new NotImplementedException();
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public void close() throws FCGIConnectionException {
-        try { 
+        try {
             flush();
         } finally {
-            connection.state|=2;
-            if(connection.state==connection.ostate)
-		try {
-		    connection.close();
-		} catch (IOException e) {
-		    throw new FCGIConnectionException(connection, e);
-		}
+            connection.state |= 2;
+            if (connection.state == connection.ostate)
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    throw new FCGIConnectionException(connection, e);
+                }
         }
     }
-    /**{@inheritDoc}*/  
+
+    /**
+     * {@inheritDoc}
+     */
     public void flush() throws FCGIConnectionException {
         try {
             out.flush();

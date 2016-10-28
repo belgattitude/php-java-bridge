@@ -48,9 +48,9 @@ class RandomAccessFileInputStream extends InputStream {
      * @see java.io.InputStream#close()
      */
     public void close() throws IOException {
-        if(this.channel.writeIsClosed) 
-	    this.raFile.close();
-        this.channel.readIsClosed=true;
+        if (this.channel.writeIsClosed)
+            this.raFile.close();
+        this.channel.readIsClosed = true;
     }
 
     /**

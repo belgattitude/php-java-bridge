@@ -28,23 +28,27 @@ import javax.script.ScriptContext;
 
 
 /**
- * A decorator which enables secure (HTTPS) connections. 
+ * A decorator which enables secure (HTTPS) connections.
  * Call <code>engine.setContext(new PhpSecureScriptContext(engine.getContext()))</code> before executing the engine.
- * @author jostb
  *
+ * @author jostb
  */
 public class PhpSecureScriptContext extends PhpScriptContextDecorator {
 
     /**
      * Create a new PhpCompiledScriptContext using an existing
      * PhpScriptContext
+     *
      * @param ctx the script context to be decorated
      */
     public PhpSecureScriptContext(ScriptContext ctx) {
-	super((IPhpScriptContext)ctx);
+        super((IPhpScriptContext) ctx);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String getRedirectURL(String webPath) {
-	return "https://127.0.0.1:"+getSocketName()+webPath;
+        return "https://127.0.0.1:" + getSocketName() + webPath;
     }
 }

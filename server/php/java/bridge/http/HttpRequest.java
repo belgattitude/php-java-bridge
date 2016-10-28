@@ -33,147 +33,161 @@ import php.java.bridge.NotImplementedException;
 
 /**
  * A simple HTTP request implementation.
- * @author jostb
  *
+ * @author jostb
  */
 public class HttpRequest {
     private HashMap headers;
     private String method;
     private String uri;
-    
+
     private InputStream in;
 
-    private byte [] buf;
+    private byte[] buf;
     private int bufStart = 0;
     private int bufEnd = 0;
 
     private int contentLength = -1;
     private int count = 0;
-	
+
     /**
      * Create a new HTTP request
+     *
      * @param inputStream The InputStream
      */
     public HttpRequest(InputStream inputStream) {
-	in = new HttpInputStream(new BufferedInputStream(inputStream));
-	headers = new HashMap();
+        in = new HttpInputStream(new BufferedInputStream(inputStream));
+        headers = new HashMap();
     }
 
     /**
      * Returns the header value
+     *
      * @param string The header
      * @return The header value
      */
     public String getHeader(String string) {
-	return (String) headers.get(string);
+        return (String) headers.get(string);
     }
 
     /**
      * Return the request Method
+     *
      * @return GET, PUT or POST
      */
     public String getMethod() {
-	return method;
+        return method;
     }
+
     /**
-     *  Return the request URI
+     * Return the request URI
+     *
      * @return The request URI
      */
     public String getRequestURI() {
-	return uri;
+        return uri;
     }
+
     /**
      * Returns the InputStream
+     *
      * @return The InputStream
      */
     public InputStream getInputStream() {
-	return in; 
+        return in;
     }
 
-    /** 
+    /**
      * Push back some bytes so that we can read them again.
-     * @param buf The buffer
-     * @param start The start position
+     *
+     * @param buf    The buffer
+     * @param start  The start position
      * @param length The number of bytes
      */
     public void pushBack(byte[] buf, int start, int length) {
-	this.buf = buf;
-	this.bufStart = start;
-	this.bufEnd = length+start;
+        this.buf = buf;
+        this.bufStart = start;
+        this.bufEnd = length + start;
     }
 
     private class HttpInputStream extends InputStream {
 
-	private InputStream in;
-		
-		
-	public HttpInputStream (InputStream in) {
-	    this.in = in;
-	}
-		
-	/* (non-Javadoc)
-	 * @see java.io.InputStream#read()
-	 */
-	public int read() throws IOException {
-	    throw new NotImplementedException();
-	}
-		
-	public int read(byte[] b, int start, int length) throws IOException {
-	    if(contentLength > -1 && count==contentLength) return -1;
-			
-	    if(bufStart!=bufEnd) {
-		if(bufEnd - bufStart < length) length = bufEnd - bufStart;
-		System.arraycopy(buf, bufStart, b, start, length);
-		bufStart += length;
-		count += length;
-		return length;
-	    }
-	    int n = in.read(b, start, length);
-	    count += n;
-	    return n;
-	}
-	public int read(byte[] b) throws IOException {
-	    return read(b, 0, b.length);
-	}
+        private InputStream in;
+
+
+        public HttpInputStream(InputStream in) {
+            this.in = in;
+        }
+
+        /* (non-Javadoc)
+         * @see java.io.InputStream#read()
+         */
+        public int read() throws IOException {
+            throw new NotImplementedException();
+        }
+
+        public int read(byte[] b, int start, int length) throws IOException {
+            if (contentLength > -1 && count == contentLength) return -1;
+
+            if (bufStart != bufEnd) {
+                if (bufEnd - bufStart < length) length = bufEnd - bufStart;
+                System.arraycopy(buf, bufStart, b, start, length);
+                bufStart += length;
+                count += length;
+                return length;
+            }
+            int n = in.read(b, start, length);
+            count += n;
+            return n;
+        }
+
+        public int read(byte[] b) throws IOException {
+            return read(b, 0, b.length);
+        }
     }
 
     /**
      * Add a header
+     *
      * @param line A valid HTTP header, e.g. "Host: localhost"
      */
     public void addHeader(String line) {
-	try {
-	    headers.put
-		(line.substring(0, line.indexOf(":")).trim(),
-		 line.substring(line.indexOf(":") + 1).trim());
-	}
-	catch (StringIndexOutOfBoundsException e) { /* not a valid header, assume method */
-	    int i1=-1, i2=-1;
-	    i1 = line.indexOf(' ');
-	    if(i1!=-1) {
-		method = (line.substring(0, i1)).trim().toUpperCase().intern();
-		i2 = line.indexOf(' ', i1+1); 
-	    }
-	    if(i2>i1) uri = line.substring(i1+1, i2);
-	}
+        try {
+            headers.put
+                    (line.substring(0, line.indexOf(":")).trim(),
+                            line.substring(line.indexOf(":") + 1).trim());
+        } catch (StringIndexOutOfBoundsException e) { /* not a valid header, assume method */
+            int i1 = -1, i2 = -1;
+            i1 = line.indexOf(' ');
+            if (i1 != -1) {
+                method = (line.substring(0, i1)).trim().toUpperCase().intern();
+                i2 = line.indexOf(' ', i1 + 1);
+            }
+            if (i2 > i1) uri = line.substring(i1 + 1, i2);
+        }
     }
 
     /**
      * Set the content length, it causes the InputStream to stop reading at some point.
+     *
      * @param contentLength The content length.
      * @see HttpRequest#getInputStream()
      */
     public void setContentLength(int contentLength) {
-	this.count = 0;
-	this.contentLength = contentLength;
+        this.count = 0;
+        this.contentLength = contentLength;
     }
-    /** Close the request 
-     * @throws IOException */
+
+    /**
+     * Close the request
+     *
+     * @throws IOException
+     */
     public void close() throws IOException {
-	try {
-	    if(in!=null) in.close();
-	} finally {
-	    in = null;
-	}
+        try {
+            if (in != null) in.close();
+        } finally {
+            in = null;
+        }
     }
 }

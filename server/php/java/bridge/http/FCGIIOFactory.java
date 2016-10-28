@@ -30,32 +30,36 @@ import java.io.OutputStream;
 
 /**
  * FastCGI In-/OutputStream factory.
- * 
+ * <p>
  * Override this class if you want to use your own streams.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public abstract class FCGIIOFactory {
     /**
      * Create a new socket and connect
      * it to the given host/port
+     *
      * @param name The channel name.
      * @return The socket
      * @throws FCGIConnectException
      */
     public abstract FCGIConnection connect(FCGIConnectionFactory name) throws FCGIConnectException;
-    /** 
+
+    /**
      * Create a new InputStream.
-     * @return The input stream. 
-     * @throws FCGIConnectionException 
+     *
+     * @return The input stream.
+     * @throws FCGIConnectionException
      */
     public InputStream createInputStream() throws FCGIConnectionException {
-	FCGIConnectionInputStream in = new FCGIConnectionInputStream();
-	return in;
+        FCGIConnectionInputStream in = new FCGIConnectionInputStream();
+        return in;
     }
+
     /**
      * Create a new OutputStream.
+     *
      * @return The output stream.
      * @throws FCGIConnectionException
      */

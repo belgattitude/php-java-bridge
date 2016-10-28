@@ -34,31 +34,36 @@ import php.java.bridge.http.IContext;
  * Create {@link JavaBridge}, {@link IContext} and {@link ISession} instances.
  */
 public interface IJavaBridgeFactory {
-    
+
     /**
      * Return a session for the JavaBridge
-     * @param name The session name. If name is null, the name PHPSESSION will be used.
+     *
+     * @param name        The session name. If name is null, the name PHPSESSION will be used.
      * @param clientIsNew one of {@link ISession#SESSION_CREATE_NEW} {@link ISession#SESSION_GET_OR_CREATE} or {@link ISession#SESSION_GET}
-     * @param timeout timeout in seconds. If 0 the session does not expire.
+     * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
      * @see php.java.bridge.ISession
      */
     public ISession getSession(String name, short clientIsNew, int timeout);
+
     /**
      * Return the associated JSR223 context
+     *
      * @return The JSR223 context, if supported by the environment or null.
      * @see php.java.bridge.http.ContextFactory#getContext()
      */
     public IContext getContext();
 
-    /** 
+    /**
      * Return true if this factory has already created a bridge or not.
+     *
      * @return true if this factory is new, false otherwise
      */
-    public boolean isNew ();
-    
+    public boolean isNew();
+
     /**
      * Return the JavaBridge.
+     *
      * @return Returns the bridge.
      */
     public JavaBridge getBridge();
@@ -72,27 +77,29 @@ public interface IJavaBridgeFactory {
      * Destroy the factory
      */
     public void destroy();
-    
+
     /**
      * Called for the request header
-     * 
+     *
      * @param req the current request
-     * @param in the input stream
+     * @param in  the input stream
      * @throws IOException
      */
     public void parseHeader(Request req, InputStream in) throws IOException;
 
     /**
      * Flush the response buffer
-     * @throws IOException 
+     *
+     * @throws IOException
      */
-   public void flushBuffer() throws IOException;
+    public void flushBuffer() throws IOException;
 
-   /**
-    * Hook is called at the end of the life cycle. 
-    * Either from destroy(), recycle() or from destroyOrphaned().
-    * @see #destroy()
-    * @see #recycle()
-    */
-   public void invalidate();
+    /**
+     * Hook is called at the end of the life cycle.
+     * Either from destroy(), recycle() or from destroyOrphaned().
+     *
+     * @see #destroy()
+     * @see #recycle()
+     */
+    public void invalidate();
 }

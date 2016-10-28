@@ -34,36 +34,38 @@ import php.java.bridge.http.IFCGIProcess;
 
 /**
  * Represents the FastCGI process.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 class FCGIProcess extends Util.Process implements IFCGIProcess {
     String realPath;
+
     public FCGIProcess(String[] args, boolean includeJava, String cgiDir, String pearDir, String webInfDir, File homeDir, Map env, String realPath, boolean tryOtherLocations, boolean preferSystemPhp) throws IOException {
-	super(args, includeJava, cgiDir, pearDir, webInfDir, homeDir, env, tryOtherLocations, preferSystemPhp);
-	this.realPath = realPath;
+        super(args, includeJava, cgiDir, pearDir, webInfDir, homeDir, env, tryOtherLocations, preferSystemPhp);
+        this.realPath = realPath;
     }
+
     protected String[] getArgumentArray(String[] php, String[] args) {
         LinkedList buf = new LinkedList();
-        if(Util.USE_SH_WRAPPER) {
-	    buf.add("/bin/sh");
-	    buf.add(realPath+File.separator+"launcher.sh");
-	    buf.addAll(java.util.Arrays.asList(php));
-	    for(int i=1; i<args.length; i++) {
-		buf.add(args[i]);
-	    }
-	    buf.addAll(java.util.Arrays.asList(Util.ALLOW_URL_INCLUDE));
+        if (Util.USE_SH_WRAPPER) {
+            buf.add("/bin/sh");
+            buf.add(realPath + File.separator + "launcher.sh");
+            buf.addAll(java.util.Arrays.asList(php));
+            for (int i = 1; i < args.length; i++) {
+                buf.add(args[i]);
+            }
+            buf.addAll(java.util.Arrays.asList(Util.ALLOW_URL_INCLUDE));
         } else {
-	    buf.add(realPath+File.separator+"launcher.exe");
-	    buf.addAll(java.util.Arrays.asList(php));
-	    for(int i=1; i<args.length; i++) {
-		buf.add(args[i]);
-	    }
-	    buf.addAll(java.util.Arrays.asList(Util.ALLOW_URL_INCLUDE));
-	}
+            buf.add(realPath + File.separator + "launcher.exe");
+            buf.addAll(java.util.Arrays.asList(php));
+            for (int i = 1; i < args.length; i++) {
+                buf.add(args[i]);
+            }
+            buf.addAll(java.util.Arrays.asList(Util.ALLOW_URL_INCLUDE));
+        }
         return (String[]) buf.toArray(new String[buf.size()]);
     }
+
     /* (non-Javadoc)
      * @see php.java.servlet.fastcgi.IFCGIProcess#start()
      */

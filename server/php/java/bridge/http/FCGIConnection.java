@@ -29,18 +29,22 @@ import java.io.OutputStream;
 
 /**
  * This class represents the physical FastCGI connection.
+ *
  * @author jostb
  */
 public abstract class FCGIConnection {
 
     /**
      * Return the input stream
+     *
      * @return the InputStream
      * @throws IOException
      */
     public abstract InputStream getInputStream() throws IOException;
+
     /**
      * Return the output stream
+     *
      * @return the OutputStream
      * @throws IOException
      */
@@ -48,7 +52,8 @@ public abstract class FCGIConnection {
 
     /**
      * Close the connection
+     *
      * @throws IOException
      */
-    public abstract void close() throws IOException; 
+    public abstract void close() throws IOException;
 }

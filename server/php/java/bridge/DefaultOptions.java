@@ -28,15 +28,21 @@ package php.java.bridge;
 /**
  * Exposes the request options. There is one Options instance for each request, but certain options may change for each packet.
  * For example if a user calls java_set_file_encoding(enc), the new file encoding becomes available in the next packet.
- * @author jostb
  *
+ * @author jostb
  */
 
 final class DefaultOptions extends Options {
 
-    public boolean base64Data() { return true; }
+    public boolean base64Data() {
+        return true;
+    }
 
-    public boolean preferValues() { return true; }
+    public boolean preferValues() {
+        return true;
+    }
 
-    public boolean passContext() { return false; }
+    public boolean passContext() {
+        return false;
+    }
 }

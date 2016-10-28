@@ -32,72 +32,84 @@ import php.java.bridge.Util;
  * Returned by {@link javax.script.ScriptEngine#eval(java.io.Reader)} this class holds a proxy
  * for the result code returned by PHP. Invoke any of its procedures to terminate the script
  * engine to receive its result code.
+ *
  * @author jostb
  */
 public class ResultProxy extends Number {
     private static final long serialVersionUID = 9126953496638654790L;
     private int result;
     private IPhpScriptEngine engine;
+
     ResultProxy(IPhpScriptEngine engine) {
-	this.engine = engine;
+        this.engine = engine;
     }
+
     void setResult(int result) {
-	this.result = result;
+        this.result = result;
     }
+
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public int getResult() {
-	engine.release();
-	return result;
+        engine.release();
+        return result;
     }
+
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public String toString() {
-	if (Util.logLevel>3) return "DEBUG WARNING: toString() did not terminate script because logLevel > 3!";
-	return String.valueOf(getResult());
+        if (Util.logLevel > 3) return "DEBUG WARNING: toString() did not terminate script because logLevel > 3!";
+        return String.valueOf(getResult());
     }
 
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public double doubleValue() {
-	return (double)getResult();
+        return (double) getResult();
     }
 
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public float floatValue() {
-	return (float)getResult();
+        return (float) getResult();
     }
 
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public int intValue() {
-	return (int)getResult();
+        return (int) getResult();
     }
 
     /**
      * Release the script engine and return the result code
+     *
      * @return the result code from PHP
      */
     public long longValue() {
-	return (long)getResult();
+        return (long) getResult();
     }
 
     /**
      * Release the script engine
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void close() throws IOException {
-	engine.release();
+        engine.release();
     }
 }

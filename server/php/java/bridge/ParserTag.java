@@ -26,19 +26,21 @@ package php.java.bridge;
 
 /**
  * This structure carries the parsed tag and the arguments.
- * @author jostb
  *
+ * @author jostb
  */
 class ParserTag {
     /**
      * The number of strings.
      */
     public short n;
-    
+
     /**
      * The strings.
      */
     public ParserString strings[];
-    
-    protected ParserTag (int n) { strings = new ParserString[n]; }
+
+    protected ParserTag(int n) {
+        strings = new ParserString[n];
+    }
 }

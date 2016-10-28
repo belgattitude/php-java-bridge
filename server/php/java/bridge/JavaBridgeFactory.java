@@ -32,24 +32,25 @@ import php.java.bridge.http.IContext;
 
 /**
  * Create new JavaBridge instances
+ *
+ * @author jostb
  * @see php.java.bridge.Session
  * @see php.java.bridge.http.Context
  * @see php.java.servlet.HttpContext
  * @see php.java.bridge.http.ContextFactory
  * @see php.java.servlet.ServletContextFactory
  * @see php.java.script.PhpScriptContextFactory
- * @author jostb
- *
  */
 public abstract class JavaBridgeFactory implements IJavaBridgeFactory {
-    
+
     protected JavaBridge bridge = null;
 
     /**
      * Return a session for the JavaBridge
-     * @param name The session name. If name is null, the name PHPSESSION will be used.
+     *
+     * @param name        The session name. If name is null, the name PHPSESSION will be used.
      * @param clientIsNew one of {@link ISession#SESSION_CREATE_NEW} {@link ISession#SESSION_GET_OR_CREATE} or {@link ISession#SESSION_GET}
-     * @param timeout timeout in seconds. If 0 the session does not expire.
+     * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
      * @see php.java.bridge.ISession
      */
@@ -57,29 +58,35 @@ public abstract class JavaBridgeFactory implements IJavaBridgeFactory {
 
     /**
      * Return the associated JSR223 context
+     *
      * @return Always null
      * @see php.java.bridge.http.ContextFactory#getContext()
      */
     public abstract IContext getContext();
 
     protected JavaBridge checkBridge() {
-	return bridge;
+        return bridge;
     }
+
     /**
      * Return the JavaBridge.
+     *
      * @return Returns the bridge.
      */
     public JavaBridge getBridge() {
-	if(bridge != null) return bridge;
-	bridge=new JavaBridge(this);
-	if(Util.logLevel>=4) Util.logDebug("created new bridge: " + bridge);
-	return bridge;
+        if (bridge != null) return bridge;
+        bridge = new JavaBridge(this);
+        if (Util.logLevel >= 4) Util.logDebug("created new bridge: " + bridge);
+        return bridge;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean isNew() {
-	return bridge==null;
+        return bridge == null;
     }
-    
+
     /**
      * Recycle the factory for new reqests.
      */
@@ -90,19 +97,20 @@ public abstract class JavaBridgeFactory implements IJavaBridgeFactory {
      * Destroy the factory
      */
     public void destroy() {
-	this.bridge = null;
+        this.bridge = null;
     }
 
     /**
      * {@inheritDoc}
-     * @throws IOException 
+     *
+     * @throws IOException
      */
-    public void parseHeader (Request req, InputStream in) throws IOException {
-	
-	in.read();
-	
-	byte option = (byte)(0xFF&in.read());
-	if (option==(byte)0xFF) throw new IllegalStateException("not within a JEE environment");
-	req.init(option);
+    public void parseHeader(Request req, InputStream in) throws IOException {
+
+        in.read();
+
+        byte option = (byte) (0xFF & in.read());
+        if (option == (byte) 0xFF) throw new IllegalStateException("not within a JEE environment");
+        req.init(option);
     }
 }

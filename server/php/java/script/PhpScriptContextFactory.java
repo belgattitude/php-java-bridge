@@ -30,26 +30,28 @@ import php.java.bridge.http.IContextFactory;
 
 /**
  * A custom context factory, creates a ContextFactory for JSR223 contexts.
- * @author jostb
  *
+ * @author jostb
  */
 public class PhpScriptContextFactory extends php.java.bridge.http.SimpleContextFactory {
 
     /**
      * Add the PhpScriptContext
+     *
      * @param context
      * @return The ContextFactory.
      */
     public static IContextFactory addNew(IContext context) {
-	PhpScriptContextFactory ctx = new PhpScriptContextFactory();
-	ctx.setContext(context);
-	return ctx;
+        PhpScriptContextFactory ctx = new PhpScriptContextFactory();
+        ctx.setContext(context);
+        return ctx;
     }
+
     /**
      * Create a simple context factory with an empty web context
      */
     public PhpScriptContextFactory() {
-	super(ContextFactory.EMPTY_CONTEXT_NAME, true);
+        super(ContextFactory.EMPTY_CONTEXT_NAME, true);
     }
 }
 

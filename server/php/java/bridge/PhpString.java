@@ -25,24 +25,25 @@ package php.java.bridge;
  */
 
 /**
-     * A php string is a UTF-8 coded byte array.
+ * A php string is a UTF-8 coded byte array.
+ */
+abstract class PhpString {
+    /**
+     * Get the encoded string representation
      *
+     * @return The encoded string.
      */
-   abstract class PhpString {
-        /**
-         * Get the encoded string representation
-         * @return The encoded string.
-         */
-        public abstract String getString();
-        
+    public abstract String getString();
 
-        /**
-         * Get the encoded byte representation
-         * @return The encoded bytes.
-         */
-        public abstract byte[] getBytes();
 
-        public String toString() {
-            return getString();
-        }
+    /**
+     * Get the encoded byte representation
+     *
+     * @return The encoded bytes.
+     */
+    public abstract byte[] getBytes();
+
+    public String toString() {
+        return getString();
     }
+}

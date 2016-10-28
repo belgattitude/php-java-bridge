@@ -35,80 +35,98 @@ import php.java.bridge.http.WriterOutputStream;
 
 /**
  * A simple ScriptContext which can be used in servlet- or standalone environments.
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public abstract class AbstractPhpScriptContext extends ScriptContextDecorator implements IPhpScriptContext {
 
     public AbstractPhpScriptContext(ScriptContext ctx) {
-	super(ctx);
+        super(ctx);
     }
 
     protected Continuation kont;
 
-    /** {@inheritDoc} */
-   protected Writer writer;
-   public Writer getWriter() {
-	if(writer == null) writer =  super.getWriter ();
-	if(! (writer instanceof PhpScriptWriter)) setWriter(writer);
-	return writer;
-   }
+    /**
+     * {@inheritDoc}
+     */
+    protected Writer writer;
 
-   /** {@inheritDoc} */
-   protected Writer errorWriter;
-   public Writer getErrorWriter() {
-	if(errorWriter == null) errorWriter = super.getErrorWriter ();
-	if(! (errorWriter instanceof PhpScriptWriter)) setErrorWriter(errorWriter);
-	return errorWriter;	
-   }
+    public Writer getWriter() {
+        if (writer == null) writer = super.getWriter();
+        if (!(writer instanceof PhpScriptWriter)) setWriter(writer);
+        return writer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected Writer errorWriter;
+
+    public Writer getErrorWriter() {
+        if (errorWriter == null) errorWriter = super.getErrorWriter();
+        if (!(errorWriter instanceof PhpScriptWriter)) setErrorWriter(errorWriter);
+        return errorWriter;
+    }
 
 
-   /**
-    * Ignore the default java_context()-&gt;call(java_closure()) call at the end
-    * of the invocable script, if the user has provided its own.
-    */
-   private boolean continuationCalled;
-   /**{@inheritDoc}*/
-   public void startContinuation() {
-       Util.PHP_SCRIPT_ENGINE_THREAD_POOL.start(kont);
-   }
-    /**@inheritDoc*/
+    /**
+     * Ignore the default java_context()-&gt;call(java_closure()) call at the end
+     * of the invocable script, if the user has provided its own.
+     */
+    private boolean continuationCalled;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void startContinuation() {
+        Util.PHP_SCRIPT_ENGINE_THREAD_POOL.start(kont);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public void setContinuation(Continuation kont) {
-	    this.kont = kont;
-	    continuationCalled = false;
+        this.kont = kont;
+        continuationCalled = false;
     }
-    /**@inheritDoc*/
-    public Continuation getContinuation() {
-	    return kont;
-    }
-    /**@inheritDoc*/
-    public boolean call(Object kont) throws Exception {
-	    if(!continuationCalled) {
-		    this.setAttribute(IContext.PHP_PROCEDURE, kont, IContext.ENGINE_SCOPE);
-		    // prefer the user's java_context()->call(java_closure())
-		    continuationCalled = true;
 
-		    this.kont.call(kont);
-	    }
-	    return true;
+    /**
+     * @inheritDoc
+     */
+    public Continuation getContinuation() {
+        return kont;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public boolean call(Object kont) throws Exception {
+        if (!continuationCalled) {
+            this.setAttribute(IContext.PHP_PROCEDURE, kont, IContext.ENGINE_SCOPE);
+            // prefer the user's java_context()->call(java_closure())
+            continuationCalled = true;
+
+            this.kont.call(kont);
+        }
+        return true;
     }
 
     /**
      * Sets the <code>Writer</code> for scripts to use when displaying output.
-     *TODO: test
+     * TODO: test
+     *
      * @param writer The new <code>Writer</code>.
      */
     public void setWriter(Writer writer) {
-	    super.setWriter(this.writer=new PhpScriptWriter(new WriterOutputStream(writer)));
+        super.setWriter(this.writer = new PhpScriptWriter(new WriterOutputStream(writer)));
     }
-    
+
     /**
      * Sets the <code>Writer</code> used to display error output.
      *
      * @param writer The <code>Writer</code>.
      */
     public void setErrorWriter(Writer writer) {
-	    super.setErrorWriter(this.errorWriter=new PhpScriptWriter(new WriterOutputStream(writer)));
+        super.setErrorWriter(this.errorWriter = new PhpScriptWriter(new WriterOutputStream(writer)));
     }
 }

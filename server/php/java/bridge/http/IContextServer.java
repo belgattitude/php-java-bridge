@@ -29,24 +29,25 @@ import php.java.bridge.ILogger;
 
 /**
  * The interface that all ContextServers must implement.
- * 
+ *
  * @author jostb
  */
 public interface IContextServer {
-     /**
+    /**
      * Destroy the server
-     *
      */
     public void destroy();
 
     /**
      * Check if the ContextServer is ready, i.e. it has created a server socket.
+     *
      * @return true if there's a server socket listening, false otherwise.
      */
     public boolean isAvailable();
-    
+
     /**
      * Start the runner.
+     *
      * @param channel The channel name
      * @return true on success, false otherwise
      */

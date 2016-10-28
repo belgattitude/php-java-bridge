@@ -9,6 +9,7 @@ import java.io.OutputStream;
 public abstract class OutputStreamFactory {
     /**
      * Return an output stream
+     *
      * @return an output stream
      */
     public abstract OutputStream getOutputStream() throws IOException;

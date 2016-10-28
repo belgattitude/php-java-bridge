@@ -44,134 +44,173 @@ final class HttpSessionFacade implements ISession {
 
     private HttpSession session;
     private int timeout;
-    private HttpSession sessionCache=null;
+    private HttpSession sessionCache = null;
     private boolean isNew;
     private IContextFactory ctxFactory;
-    
+
     HttpSession getCachedSession() {
-	if(sessionCache!=null) return sessionCache;
-	sessionCache = session;
-	sessionCache.setMaxInactiveInterval(timeout);
-	return sessionCache;
+        if (sessionCache != null) return sessionCache;
+        sessionCache = session;
+        sessionCache.setMaxInactiveInterval(timeout);
+        return sessionCache;
     }
-    private HttpSessionFacade (IContextFactory ctxFactory, ServletContext ctx, HttpServletRequest req, HttpServletResponse res, short clientIsNew, int timeout) {
-	this.ctxFactory = ctxFactory;
-	switch (clientIsNew) {
-		case ISession.SESSION_CREATE_NEW: 	this.session = req.getSession(true); 	break;
-		case ISession.SESSION_GET_OR_CREATE: 	this.session = req.getSession(); 	break;
-		case ISession.SESSION_GET: 		this.session = req.getSession(false); 	break;
-		default: 				throw new IllegalStateException("clientIsNew:"+clientIsNew);
-	}
-	this.timeout = timeout;
-	this.isNew = session.isNew();
+
+    private HttpSessionFacade(IContextFactory ctxFactory, ServletContext ctx, HttpServletRequest req, HttpServletResponse res, short clientIsNew, int timeout) {
+        this.ctxFactory = ctxFactory;
+        switch (clientIsNew) {
+            case ISession.SESSION_CREATE_NEW:
+                this.session = req.getSession(true);
+                break;
+            case ISession.SESSION_GET_OR_CREATE:
+                this.session = req.getSession();
+                break;
+            case ISession.SESSION_GET:
+                this.session = req.getSession(false);
+                break;
+            default:
+                throw new IllegalStateException("clientIsNew:" + clientIsNew);
+        }
+        this.timeout = timeout;
+        this.isNew = session.isNew();
     }
-    
+
     /**
      * Returns the HttpServletRequest
+     *
      * @return The HttpServletRequest.
      * Use {@link HttpContext#getHttpServletRequest()}
      */
     public HttpServletRequest getHttpServletRequest() {
-    	return (HttpServletRequest) ((HttpContext)ctxFactory.getContext()).getHttpServletRequest();
+        return (HttpServletRequest) ((HttpContext) ctxFactory.getContext()).getHttpServletRequest();
     }
-    
+
     /**
      * Returns the ServletContext
+     *
      * @return The ServletContext.
-     *  Use {@link HttpContext#getServletContext()}
+     * Use {@link HttpContext#getServletContext()}
      */
     public ServletContext getServletContext() {
-        return (ServletContext) ((HttpContext)ctxFactory.getContext()).getServletContext();
+        return (ServletContext) ((HttpContext) ctxFactory.getContext()).getServletContext();
     }
-    
+
     /**
      * Returns the ServletResponse
+     *
      * @return The ServletResponse.
-     *  Use {@link HttpContext#getHttpServletResponse()}
+     * Use {@link HttpContext#getHttpServletResponse()}
      */
     public HttpServletResponse getHttpServletResponse() {
-        return (HttpServletResponse) ((HttpContext)ctxFactory.getContext()).getHttpServletResponse();
+        return (HttpServletResponse) ((HttpContext) ctxFactory.getContext()).getHttpServletResponse();
     }
-    /**@inheritDoc*/
+
+    /**
+     * @inheritDoc
+     */
     public Object get(Object ob) {
-	return getCachedSession().getAttribute(String.valueOf(ob));
+        return getCachedSession().getAttribute(String.valueOf(ob));
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public void put(Object ob1, Object ob2) {
-	getCachedSession().setAttribute(String.valueOf(ob1), ob2);
+        getCachedSession().setAttribute(String.valueOf(ob1), ob2);
     }
 
-    /**@inheritDoc*/
-   public Object remove(Object ob) {
-	String key = String.valueOf(ob);
-	Object o = getCachedSession().getAttribute(key);
-	if(o!=null)
-	    getCachedSession().removeAttribute(key);
-	return o;
+    /**
+     * @inheritDoc
+     */
+    public Object remove(Object ob) {
+        String key = String.valueOf(ob);
+        Object o = getCachedSession().getAttribute(key);
+        if (o != null)
+            getCachedSession().removeAttribute(key);
+        return o;
     }
 
-   /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public void setTimeout(int timeout) {
-	getCachedSession().setMaxInactiveInterval(timeout);
+        getCachedSession().setMaxInactiveInterval(timeout);
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public int getTimeout() {
-	return getCachedSession().getMaxInactiveInterval();
+        return getCachedSession().getMaxInactiveInterval();
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public int getSessionCount() {
-	return -1;
+        return -1;
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public boolean isNew() {
-	return isNew;
+        return isNew;
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public void destroy() {
-	getCachedSession().invalidate();
+        getCachedSession().invalidate();
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public void putAll(Map vars) {
-	for(Iterator ii = vars.keySet().iterator(); ii.hasNext();) {
-	    Object key = ii.next();
-	    Object val = vars.get(key);
-	    put(key, val);
-	}
+        for (Iterator ii = vars.keySet().iterator(); ii.hasNext(); ) {
+            Object key = ii.next();
+            Object val = vars.get(key);
+            put(key, val);
+        }
     }
 
-    /**@inheritDoc*/
+    /**
+     * @inheritDoc
+     */
     public Map getAll() {
-	HttpSession session = getCachedSession();
-	HashMap map = new HashMap();
-	for(Enumeration ee = session.getAttributeNames(); ee.hasMoreElements();) {
-	    Object key = ee.nextElement();
-	    Object val = get(key);
-	    map.put(key, val);
-	}
-	return map;
+        HttpSession session = getCachedSession();
+        HashMap map = new HashMap();
+        for (Enumeration ee = session.getAttributeNames(); ee.hasMoreElements(); ) {
+            Object key = ee.nextElement();
+            Object val = get(key);
+            map.put(key, val);
+        }
+        return map;
     }
-    /**@inheritDoc*/
+
+    /**
+     * @inheritDoc
+     */
     public long getCreationTime() {
-      return getCachedSession().getCreationTime();
+        return getCachedSession().getCreationTime();
     }
-    /**@inheritDoc*/
+
+    /**
+     * @inheritDoc
+     */
     public long getLastAccessedTime() {
-      return getCachedSession().getLastAccessedTime();
+        return getCachedSession().getLastAccessedTime();
     }
+
     public static ISession getFacade(
-	    IContextFactory factory,
+            IContextFactory factory,
             ServletContext kontext, HttpServletRequest req,
             HttpServletResponse res, short clientIsNew, int timeout) {
-	
-	if ((clientIsNew != ISession.SESSION_GET) || ((clientIsNew == ISession.SESSION_GET) && req.getSession(false) != null))
-	    return new HttpSessionFacade(factory, kontext, req, res, clientIsNew, timeout);
-	else
-	    return null;
+
+        if ((clientIsNew != ISession.SESSION_GET) || ((clientIsNew == ISession.SESSION_GET) && req.getSession(false) != null))
+            return new HttpSessionFacade(factory, kontext, req, res, clientIsNew, timeout);
+        else
+            return null;
     }
 }

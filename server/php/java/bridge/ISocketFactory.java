@@ -29,26 +29,29 @@ import java.net.Socket;
 
 /**
  * Create socket instances.
- * @author jostb
  *
+ * @author jostb
  */
 public interface ISocketFactory {
-    
+
     /**
      * Close all instances.
+     *
      * @throws IOException
      */
     public void close() throws IOException;
-    
+
     /**
      * Create a new socket instance.
+     *
      * @return The new communication socket.
      * @throws IOException
      */
     public Socket accept() throws IOException;
-    
+
     /**
-     * Return the socket# as a string. 
+     * Return the socket# as a string.
+     *
      * @return The socket number as a string.
      */
     public String getSocketName();

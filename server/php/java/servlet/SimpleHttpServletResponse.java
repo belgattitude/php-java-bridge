@@ -29,17 +29,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 final class SimpleHttpServletResponse extends HttpServletResponseWrapper implements BufferedResponse {
-    
+
     private static final byte[] EMPTY_CONTENTS = new byte[0];
+
     public SimpleHttpServletResponse(HttpServletResponse res) {
-	super(res);
+        super(res);
     }
+
     /**
      * Return the output buffer contents
+     *
      * @return The content of the output buffer
      * @see RemoteHttpServletResponse#getBufferContents()
      */
     public byte[] getBufferContents() {
-	    return EMPTY_CONTENTS;
+        return EMPTY_CONTENTS;
     }
 }

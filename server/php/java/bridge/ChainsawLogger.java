@@ -31,35 +31,44 @@ import java.net.Socket;
 
 /**
  * A logger class which connects to chainsaw -- chainsaw is a log4j viewer. Requires that log4j.jar is in the classpath.
- * 
+ * <p>
  * Start chainsaw, for example by clicking on Applications -&gt;
  * Programming -&gt; Chainsaw or via:<blockquote><code>java -classpath
  * /usr/share/java/log4j.jar org.apache.log4j.chainsaw.Main</code></blockquote>
- * and then start the PHP/Java Bridge:<br> 
+ * and then start the PHP/Java Bridge:<br>
  * <blockquote><code>java -classpath /usr/share/java/log4j.jar:/usr/share/java/JavaBridge.jar php.java.bridge.JavaBridge</code></blockquote>
  * or set the PHP .ini option <blockquote><code>java.log_file=@127.0.0.1:4445</code></blockquote>.
  */
 public class ChainsawLogger extends SimpleLog4jLogger implements ILogger {
-    /** The default chainsaw port */    
-    public static final int DEFAULT_PORT=4445;
-    /** The default chainsaw port */    
-    public static final String DEFAULT_PORT_NAME=String.valueOf(DEFAULT_PORT);
-    /** The default cainsaw host */    
-    public static final String DEFAULT_HOST="127.0.0.1";
+    /**
+     * The default chainsaw port
+     */
+    public static final int DEFAULT_PORT = 4445;
+    /**
+     * The default chainsaw port
+     */
+    public static final String DEFAULT_PORT_NAME = String.valueOf(DEFAULT_PORT);
+    /**
+     * The default cainsaw host
+     */
+    public static final String DEFAULT_HOST = "127.0.0.1";
 
-    /** Eg: java -Dchainsaw.port=14445 ... */
+    /**
+     * Eg: java -Dchainsaw.port=14445 ...
+     */
     private int configuredPort;
-    
-    /** override this method, if you want to connect to a different
+
+    /**
+     * override this method, if you want to connect to a different
      * host or port
-     * 
-     * @param defaultHost The default host
+     *
+     * @param defaultHost    The default host
      * @param configuredPort The default port
      * @throws Exception If chainsaw isn't running.
      */
-    public void configure (String defaultHost, int configuredPort) throws Exception {
+    public void configure(String defaultHost, int configuredPort) throws Exception {
         this.configuredPort = configuredPort;
-	Socket s = new Socket(defaultHost, configuredPort);
+        Socket s = new Socket(defaultHost, configuredPort);
         s.close();
         Class clazz = Class.forName("org.apache.log4j.net.SocketAppender");
         Constructor constructor = clazz.getConstructor(new Class[]{String.class, int.class});
@@ -71,31 +80,39 @@ public class ChainsawLogger extends SimpleLog4jLogger implements ILogger {
         method = clazz.getMethod("configure", new Class[]{appender});
         method.invoke(clazz, new Object[]{socketAppender});
     }
-    protected void init() throws Exception{
-	configure(DEFAULT_HOST, Integer.parseInt(System.getProperty("chainsaw.port", DEFAULT_PORT_NAME)));
-	logger = new LoggerProxy();      
+
+    protected void init() throws Exception {
+        configure(DEFAULT_HOST, Integer.parseInt(System.getProperty("chainsaw.port", DEFAULT_PORT_NAME)));
+        logger = new LoggerProxy();
     }
+
     /**
      * Create a new chainsaw logger.
-     * @see php.java.bridge.Util#setDefaultLogger(ILogger)
+     *
      * @throws UnknownHostException If the host does not exist.
+     * @see php.java.bridge.Util#setDefaultLogger(ILogger)
      */
     protected ChainsawLogger() {
         super();
     }
+
     /**
      * Create a new chainsaw logger.
+     *
      * @return The chainsaw logger
-     * @see php.java.bridge.Util#setDefaultLogger(ILogger)
      * @throws Exception If chainsaw isn't running.
+     * @see php.java.bridge.Util#setDefaultLogger(ILogger)
      */
     public static ChainsawLogger createChainsawLogger() throws Exception {
-       ChainsawLogger logger = new ChainsawLogger();
-       logger.init();
-       return logger;
+        ChainsawLogger logger = new ChainsawLogger();
+        logger.init();
+        return logger;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
-	return "Chainsaw logger, host: " + DEFAULT_HOST + ", port: " + configuredPort; 
+        return "Chainsaw logger, host: " + DEFAULT_HOST + ", port: " + configuredPort;
     }
 }

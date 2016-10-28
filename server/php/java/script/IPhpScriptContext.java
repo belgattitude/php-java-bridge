@@ -39,44 +39,48 @@ import php.java.bridge.http.IContext;
 
 /**
  * Common methods for all PHP ScriptContexts
- * 
- * @author jostb
  *
+ * @author jostb
  */
 public interface IPhpScriptContext extends IManaged, Invocable, IContext, ScriptContext {
-       
+
     /**
      * Set the php continuation
+     *
      * @param kont The continuation.
      */
     public void setContinuation(Continuation kont);
+
     /**
      * Get the php continuation
+     *
      * @return The HttpProxy
      */
     public Continuation getContinuation();
 
     /**
      * Create a continuation
-     * @param reader the script reader
-     * @param env the environment passed to php
-     * @param out the fcgi output stream
-     * @param err the fcgi error stream
+     *
+     * @param reader       the script reader
+     * @param env          the environment passed to php
+     * @param out          the fcgi output stream
+     * @param err          the fcgi error stream
      * @param headerParser fcgi header parser
-     * @param result the result proxy
-     * @param logger the logger
-     * @param isCompiled create a continuation for a compiled or non-compiled script engine
+     * @param result       the result proxy
+     * @param logger       the logger
+     * @param isCompiled   create a continuation for a compiled or non-compiled script engine
      * @return the Continuation
      */
     public Continuation createContinuation(Reader reader, Map env, OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result, ILogger logger, boolean isCompiled);
-    
+
     /**
      * Start the current continuation using a context-specific thread pool
      */
     public void startContinuation();
-    
+
     /**
      * Get the context server associated with this context, usually a HttpServer (JavaBridgeRunner) or a ContextServer from a ContextLoaderListener
+     *
      * @return the ContextServer
      */
     public ContextServer getContextServer();

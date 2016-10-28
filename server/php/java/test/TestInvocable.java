@@ -11,28 +11,29 @@ import junit.framework.TestCase;
 public class TestInvocable extends TestCase {
 
     public TestInvocable(String name) {
-	super(name);
+        super(name);
     }
 
     protected void setUp() throws Exception {
-	super.setUp();
+        super.setUp();
     }
 
     protected void tearDown() throws Exception {
-	super.tearDown();
+        super.tearDown();
     }
-    public void test () throws Exception {
 
-	ScriptEngineManager manager = new ScriptEngineManager();
-	ScriptEngine e = manager.getEngineByName("php-invocable");
+    public void test() throws Exception {
 
-	e.eval("<?php class f {function a($p) {return java_values($p)+1;}}\n" +
-			"java_context()->setAttribute('f', java_closure(new f()), 100); ?>");
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine e = manager.getEngineByName("php-invocable");
 
-	Invocable i = (Invocable)e;
-	Object f = e.getContext().getAttribute("f", 100);
-	assertTrue(2==(Integer)i.invokeMethod(f, "a", new Object[] {new Integer(1)}));
+        e.eval("<?php class f {function a($p) {return java_values($p)+1;}}\n" +
+                "java_context()->setAttribute('f', java_closure(new f()), 100); ?>");
 
-	e.eval((Reader)null);
+        Invocable i = (Invocable) e;
+        Object f = e.getContext().getAttribute("f", 100);
+        assertTrue(2 == (Integer) i.invokeMethod(f, "a", new Object[]{new Integer(1)}));
+
+        e.eval((Reader) null);
     }
 }

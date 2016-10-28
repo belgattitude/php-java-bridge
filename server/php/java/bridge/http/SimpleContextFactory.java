@@ -35,19 +35,19 @@ import php.java.bridge.Util;
 
 /**
  * Base of a set of visitors which can extend the standard ContextFactory.
- * 
- * Instances of this class are thrown away at the end of the request. 
+ * <p>
+ * Instances of this class are thrown away at the end of the request.
  *
  * @see php.java.servlet.ServletContextFactory
  * @see php.java.script.PhpScriptContextFactory
  */
 public class SimpleContextFactory implements IContextFactoryVisitor {
-    
+
     /**
      * The session object
      */
     protected ISession session;
-    
+
     /**
      * The visited ContextFactory
      */
@@ -57,117 +57,167 @@ public class SimpleContextFactory implements IContextFactoryVisitor {
      * The jsr223 context or the emulated jsr223 context.
      */
     protected IContext context;
-    
+
     private boolean isContextRunnerRunning = false;
     private boolean isValid = true;
     private boolean isManaged;
-    
+
     protected SimpleContextFactory(String webContext, boolean isManaged) {
-	this.isManaged = isManaged;
-  	ContextFactory visited = new ContextFactory(webContext, isManaged);
-  	visited.accept(this);
-    	this.visited = visited;
+        this.isManaged = isManaged;
+        ContextFactory visited = new ContextFactory(webContext, isManaged);
+        visited.accept(this);
+        this.visited = visited;
     }
-    
-    /**{@inheritDoc}*/
-   public void recycle(String id) {
+
+    /**
+     * {@inheritDoc}
+     */
+    public void recycle(String id) {
         visited.recycle(id);
     }
 
-   /**{@inheritDoc}*/
+    /**
+     * {@inheritDoc}
+     */
     public void destroy() {
         visited.destroy();
         session = null;
     }
-    
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void invalidate() {
-	    isValid = false;
-	    notifyAll(); // notify waitForContextRunner() and waitFor()
+        isValid = false;
+        notifyAll(); // notify waitForContextRunner() and waitFor()
     }
-    /**{@inheritDoc}*/
-    public synchronized void initialize () {
-	isContextRunnerRunning = true;
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void initialize() {
+        isContextRunnerRunning = true;
         getContext().setAttribute(IContext.JAVA_BRIDGE, getBridge(), IContext.ENGINE_SCOPE);
     }
+
     /**
      * Wait for the context factory to finish, then release
-     * @throws InterruptedException 
+     *
+     * @throws InterruptedException
      */
     public synchronized void releaseManaged() throws InterruptedException {
-	if(Util.logLevel>4) Util.logDebug("contextfactory: servlet is waiting for ContextRunner " +System.identityHashCode(this));
-	if (isContextRunnerRunning) {
-	    while(isValid) wait();
-	    if(Util.logLevel>4) Util.logDebug("contextfactory: servlet done waiting for ContextRunner " +System.identityHashCode(this));
-	} else {
-	    if(Util.logLevel>4) Util.logDebug("contextfactory: servlet done w/o ContextRunner " +System.identityHashCode(this));
-	    if (isManaged)
-		destroy();
-	    else
-		release();
-	}
+        if (Util.logLevel > 4)
+            Util.logDebug("contextfactory: servlet is waiting for ContextRunner " + System.identityHashCode(this));
+        if (isContextRunnerRunning) {
+            while (isValid) wait();
+            if (Util.logLevel > 4)
+                Util.logDebug("contextfactory: servlet done waiting for ContextRunner " + System.identityHashCode(this));
+        } else {
+            if (Util.logLevel > 4)
+                Util.logDebug("contextfactory: servlet done w/o ContextRunner " + System.identityHashCode(this));
+            if (isManaged)
+                destroy();
+            else
+                release();
+        }
     }
+
     /**
-     * Wait for the context factory to finish. 
+     * Wait for the context factory to finish.
+     *
      * @param timeout The timeout
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public synchronized void waitFor(long timeout) throws InterruptedException {
-	if(Util.logLevel>4) Util.logDebug("contextfactory: servlet waitFor() ContextFactory " +System.identityHashCode(this) + " for " +timeout+" ms");
-	if (isValid) wait(timeout);
-	if(Util.logLevel>4) Util.logDebug("contextfactory: servlet waitFor() ContextRunner " +System.identityHashCode(this));
-	if (isContextRunnerRunning && isValid) wait();
-	if(Util.logLevel>4) Util.logDebug("contextfactory: servlet done waitFor() ContextRunner " +System.identityHashCode(this));
-    }    
-    /**{@inheritDoc}*/
-    public String getId() { 
+        if (Util.logLevel > 4)
+            Util.logDebug("contextfactory: servlet waitFor() ContextFactory " + System.identityHashCode(this) + " for " + timeout + " ms");
+        if (isValid) wait(timeout);
+        if (Util.logLevel > 4)
+            Util.logDebug("contextfactory: servlet waitFor() ContextRunner " + System.identityHashCode(this));
+        if (isContextRunnerRunning && isValid) wait();
+        if (Util.logLevel > 4)
+            Util.logDebug("contextfactory: servlet done waitFor() ContextRunner " + System.identityHashCode(this));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getId() {
         return visited.getId();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
-	return "ContextFactory: " + visited + ", SimpleContextFactory: " +getClass();
+        return "ContextFactory: " + visited + ", SimpleContextFactory: " + getClass();
     }
+
     /**
      * Create a new context. The default implementation
      * creates a dummy context which emulates the JSR223 context.
+     *
      * @return The context.
      */
     protected IContext createContext() {
-      return new Context();
+        return new Context();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public IContext getContext() {
-	if(context==null) setContext(createContext());
+        if (context == null) setContext(createContext());
         return context;
     }
 
-    /**{@inheritDoc}*/
-    public boolean isNew () {
-	return visited.isNew();
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isNew() {
+        return visited.isNew();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public JavaBridge getBridge() {
         return visited.getBridge();
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void visit(IContextFactory visited) {
-        this.visited=visited;
+        this.visited = visited;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ISession getSession(String name, short clientIsNew, int timeout) {
-	return getSimpleSession(name, clientIsNew, timeout);
+        return getSimpleSession(name, clientIsNew, timeout);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public ISession getSimpleSession(String name, short clientIsNew, int timeout) {
-	if (name!=null) return visited.getSimpleSession(name, clientIsNew, timeout);
-	if(session != null) return session;
-	return session = visited.getSimpleSession(name, clientIsNew, timeout);
+        if (name != null) return visited.getSimpleSession(name, clientIsNew, timeout);
+        if (session != null) return session;
+        return session = visited.getSimpleSession(name, clientIsNew, timeout);
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void setContext(IContext context) {
         this.context = context;
     }
-    /**{@inheritDoc}*/
+
+    /**
+     * {@inheritDoc}
+     */
     public void release() {
         visited.release();
     }
@@ -176,21 +226,21 @@ public class SimpleContextFactory implements IContextFactoryVisitor {
      * Called by recycle at the end of the script
      */
     public void recycle() {
-	visited.recycle();
+        visited.recycle();
     }
 
     /**
      * {@inheritDoc}
      */
     public void flushBuffer() throws IOException {
-	visited.flushBuffer();
+        visited.flushBuffer();
     }
 
     /**
      * {@inheritDoc}
      */
-   public void parseHeader(Request req, InputStream in)
+    public void parseHeader(Request req, InputStream in)
             throws IOException {
-	visited.parseHeader(req, in);
+        visited.parseHeader(req, in);
     }
 }

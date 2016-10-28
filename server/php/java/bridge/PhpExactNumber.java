@@ -27,7 +27,7 @@ package php.java.bridge;
 final class PhpExactNumber extends Number {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3257566187666749240L;
     private long l;
@@ -43,8 +43,8 @@ final class PhpExactNumber extends Number {
      * @see java.lang.Number#intValue()
      */
     public int intValue() {
-    		
-        return (int)l;
+
+        return (int) l;
     }
 
     /* (non-Javadoc)
@@ -67,9 +67,9 @@ final class PhpExactNumber extends Number {
     public double doubleValue() {
         return l;
     }
-    	
+
     public String toString() {
         return String.valueOf(l);
     }
-	
+
 }
