@@ -37,14 +37,15 @@ See the resulting files in the `/dist` folder :
 
 - Files required to run the bridge
 
-    - `php-servlet.jar`:
-    - `php-script.jar`:
+    - `php-servlet.jar`: @todo
+    - `php-script.jar`: @todo
     - `JavaBridge.jar`: the standalone server used in [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools)
 
 - Obsolete files
 
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/AbstractScriptEngine.html)*
+
 
 ## Future
 
