@@ -23,6 +23,29 @@ the [official project page](https://sourceforge.net/p/php-java-bridge/code/).
 - Migration from CSV to Git
 - Cleanup of obsolete version (start at 6.2.1)
 
+## Build 
+
+Clone the project and run the `ant` command.
+
+```console
+$ git clone https://github.com/belgattitude/php-java-bridge.git
+$ cd php-java-bridge
+$ ant
+```
+
+See the resulting files in the `/dist` folder :
+
+- Files required to run the bridge
+
+    - `php-servlet.jar`:
+    - `php-script.jar`:
+    - `JavaBridge.jar`: the standalone server used in [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools)
+
+- Obsolete files
+
+    - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
+    - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/AbstractScriptEngine.html)*
+
 ## Future
 
 - Modernize documentation
