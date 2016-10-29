@@ -8,6 +8,7 @@
         <property name="libDir" value="${basedir}/unsupported"/>
         <property name="cgiDir" value="${javaBaseDir}/WEB-INF/cgi"/>
         <property name="sampleWebDir" value="${basedir}/examples/php+jsp"/>
+        <property name="php_exec" value="php5.6"/>
 
         <path id="compilePath">
             <fileset dir="${libDir}">
@@ -104,7 +105,7 @@
         </jar>
     </target>
     <target name="JavaInc" depends="init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="buildJavaInc.php"/>
             <arg value="META-INF/java/Java.inc"/>
             <arg value="META-INF/java/JavaBridge.inc"/>
@@ -122,7 +123,7 @@
         <copy file="${javaBaseDir}/META-INF/java/Java.inc" todir="${distDir}"/>
     </target>
     <target name="JavaIncJava" depends="JavaInc,init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildClassFromTextFile.php"/>
             <arg value="${javaBaseDir}/php/java/bridge/JavaInc.java"/>
             <arg value="JavaInc"/>
@@ -132,7 +133,7 @@
         </apply>
     </target>
     <target name="JavaProxyPhp" depends="JavaInc,init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildJavaProxy.php"/>
             <arg value="${javaBaseDir}/META-INF/java/JavaProxy.php"/>
             <fileset dir="${javaBaseDir}">
@@ -141,7 +142,7 @@
         </apply>
     </target>
     <target name="JavaProxyPhpJava" depends="JavaProxyPhp,init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildClassFromTextFile.php"/>
             <arg value="${javaBaseDir}/php/java/bridge/JavaProxy.java"/>
             <arg value="JavaProxy"/>
@@ -151,7 +152,7 @@
         </apply>
     </target>
     <target name="PhpDebuggerPHPJava" depends="init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildClassFromTextFile.php"/>
             <arg value="${javaBaseDir}/php/java/bridge/PhpDebuggerPHP.java"/>
             <arg value="PhpDebuggerPHP"/>
@@ -161,7 +162,7 @@
         </apply>
     </target>
     <target name="LauncherUnix" depends="init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildClassFromTextFile.php"/>
             <arg value="${javaBaseDir}/php/java/bridge/LauncherUnix.java"/>
             <arg value="LauncherUnix"/>
@@ -171,7 +172,7 @@
         </apply>
     </target>
     <target name="LauncherWindows" depends="init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildLauncherWindows.php"/>
             <fileset dir="${javaBaseDir}">
                 <include name="WEB-INF/cgi/launcher.exe"/>
@@ -179,7 +180,7 @@
         </apply>
     </target>
     <target name="JavaBridgeProperties" depends="init">
-        <apply executable="php" failonerror="true" dir="${javaBaseDir}" parallel="true">
+        <apply executable="${php_exec}" failonerror="true" dir="${javaBaseDir}" parallel="true">
             <arg value="${javaBaseDir}/buildJavaBridgeProperties.php"/>
             <arg value="${javaBaseDir}/php/java/bridge/global.properties"/>
             <fileset dir="${javaBaseDir}">
