@@ -3,15 +3,21 @@
 $s = "";
 array_shift($argv);
 $outfile = array_shift($argv);
-foreach($argv as $file) $s.= preg_replace('/\r/', '', file_get_contents($file));
+foreach($argv as $file) {
+    $s.= preg_replace('/\r/', '', file_get_contents($file));
+}
+
 
 $s = preg_replace('/^.*JAVA_DEBUG.*$/m', '', $s);
 $s = preg_replace('/^.*!java_defined.*$/m', '', $s);
 $s = preg_replace('/^<\?.*$/m', '', $s);
 $s = preg_replace('/\?>.*$/m', '', $s);
+
+// PHP7.0 support ?
 $s = preg_replace('!/\*([^/]|([^*]/))*\*/!s', '', $s);
 $s = preg_replace('|[	 ]+|', ' ', $s);
 $s = preg_replace('/^ *require_once.*$/m', '', $s);
+
 $s = preg_replace('|^ |m', '', $s);
 $s = preg_replace('| $|m', '', $s);
 $s = preg_replace('|([;{:]) //.*$|m', '$1', $s);
@@ -22,8 +28,10 @@ $s = preg_replace('/ *= */', '=', $s);
 $s = preg_replace('/, /', ',', $s);
 //$s = preg_replace('/\n}/', '}', $s);
 
+
 $version = trim(file_get_contents("../VERSION"));
 $s = preg_replace('/define[ ]*\("JAVA_PEAR_VERSION","[0-9.]+"\);/', 'define("JAVA_PEAR_VERSION","'.$version.'");', $s);
+
 
 $s = preg_replace("/^.*do not delete this line.*$/m", '', $s);
 
@@ -42,9 +50,9 @@ $str = <<<EOF
 
 EOF;
 
+
 $str .= "${s}}\n?>\n";
 $str = preg_replace('|\r|', '', $str);
-
 file_put_contents($outfile, $str);
 
-?>
+

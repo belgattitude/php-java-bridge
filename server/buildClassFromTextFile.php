@@ -16,4 +16,4 @@ EOF;
 
 file_put_contents($argv[1], $str);
 
-?>
+
