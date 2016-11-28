@@ -44,6 +44,12 @@ See the resulting files in the `/dist` folder :
 
 Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
 on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.  
+
+## Note on branches
+ 
+The master contains the latest code, while the original pjb621 fork (with few minor reformating) is kept
+in its own branch names 'Original-6.2.1'.  
+
  
 ## Future
 
