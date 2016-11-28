@@ -206,7 +206,7 @@
     </target>
     <target name="JavaDoc" depends="init">
         <javadoc access="public" author="true" classpath="unsupported/servlet-api.jar"
-                 destdir="server/documentation/API" doctitle="PHP/Java Bridge" nodeprecated="false"
+                 destdir="doc/API" doctitle="PHP/Java Bridge" nodeprecated="false"
                  nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
                  packagenames="php.java.servlet,javax.script,php.java.servlet.fastcgi,php.java.bridge,php.java.script,php.java.script.servlet,php.java.bridge.http"
                  source="1.4" sourcepath="server" splitindex="true" use="true" version="true"/>

@@ -40,10 +40,20 @@ See the resulting files in the `/dist` folder :
 - Obsolete files
 
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
-    - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/AbstractScriptEngine.html)*
+    - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
 
 Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
 on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.  
+
+## Api documentation
+
+You can build the doc with
+
+```console
+$ ant JavaDoc
+```
+
+Documentation will be generated in the '/doc/API' folder.
 
 ## Note on branches
  

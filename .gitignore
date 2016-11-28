@@ -3,6 +3,7 @@
 /dist
 /bin
 /nbproject
+/doc/API
 /.classpath
 /server/META-INF/java/JavaProxy.php
 /server/META-INF/java/Java.inc
@@ -14,3 +15,4 @@
 /server/php/java/bridge/JavaInc.java
 /server/php/java/bridge/LauncherWindows4.java
 /server/php/java/bridge/PhpDebuggerPHP.java
+
