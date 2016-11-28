@@ -38,7 +38,7 @@
     </target>
 
     <target name="compile" depends="init,JavaIncJava,JavaProxyPhpJava,PhpDebuggerPHPJava,LauncherUnix,LauncherWindows">
-        <javac srcdir="${javaSourceDir}" source="1.4" target="1.4" destdir="${javaClassDir}" debug="true"
+        <javac srcdir="${javaSourceDir}" source="1.7" target="1.7" destdir="${javaClassDir}" debug="true"
                deprecation="true">
             <exclude name="php/java/test/**/*.java"/>
             <classpath refid="compilePath"/>
@@ -209,7 +209,7 @@
                  destdir="doc/API" doctitle="PHP/Java Bridge" nodeprecated="false"
                  nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false"
                  packagenames="php.java.servlet,javax.script,php.java.servlet.fastcgi,php.java.bridge,php.java.script,php.java.script.servlet,php.java.bridge.http"
-                 source="1.4" sourcepath="server" splitindex="true" use="true" version="true"/>
+                 source="1.7" sourcepath="server" splitindex="true" use="true" version="true"/>
     </target>
     <target name="PhpDoc" depends="init">
         <apply executable="phpdoc" failonerror="true" dir="${javaBaseDir}" parallel="true">
