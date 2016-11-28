@@ -8,7 +8,7 @@
         <property name="libDir" value="${basedir}/unsupported"/>
         <property name="cgiDir" value="${javaBaseDir}/WEB-INF/cgi"/>
         <property name="sampleWebDir" value="${basedir}/examples/php+jsp"/>
-        <property name="php_exec" value="php5.6"/>
+        <property name="php_exec" value="php"/>
 
         <path id="compilePath">
             <fileset dir="${libDir}">

@@ -10,7 +10,6 @@ connect a native script engine, for example PHP, with a Java or ECMA 335 VM.
 Fork of the official sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) migrated
 to git (from latest release 6.2.1).
 
-
 ## Motivations
 
 This unofficial fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
@@ -43,6 +42,9 @@ See the resulting files in the `/dist` folder :
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/AbstractScriptEngine.html)*
 
+Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
+on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.  
+ 
 ## Future
 
 - Modernize documentation
