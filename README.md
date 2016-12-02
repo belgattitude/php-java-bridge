@@ -1,6 +1,6 @@
 # php-java-bridge
 
-**Unofficial** github repository for the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/).
+**Unofficial** github maintained repository for the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/).
 
 The VM Bridge is a network protocol which can be used to
 connect a native script engine, for example PHP, with a Java or ECMA 335 VM.
@@ -14,6 +14,13 @@ to git (from latest release 6.2.1).
 
 This unofficial fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
 and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects.
+
+## Documentation
+
+- Some recipes available in this README.
+- Documentation can be found in the [PHP/Java bridge]((http://php-java-bridge.sourceforge.net/pjb/)) site  
+- See the [generated API doc](http://docs.soluble.io/php-java-bridge/api).
+
 
 ## Status
 
