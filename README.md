@@ -25,8 +25,13 @@ and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects.
 ## Status
 
 - php-java-bridge migrated from sourceforge CSV repo to Github (from v6.2.1)
+ 
+## Build process   
   
-## How to build 
+Currently the project can be built with [ant](http://ant.apache.org/). Be aware
+that you need a java jdk installed as well as a PHP runtime (5.3-5.6).
+  
+### Build the servlet 
 
 Clone the project and run the `ant` command.
 
@@ -38,21 +43,27 @@ $ ant
 
 See the resulting files in the `/dist` folder :
 
-- Files required to run the bridge
+- Files required to run the bridge under a servlet container (tomcat...)
 
-    - `php-servlet.jar`: @todo
-    - `php-script.jar`: @todo
+    - `php-servlet.jar`: Servlet for php-java communication (required). 
+    - `php-script.jar`: Lib to allow java to talk with a php-cgi instance.
+
+- Command line standalone server to run the bridge without a servlet container (development)
+    
     - `JavaBridge.jar`: the standalone server used in [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools)
 
+      *See also the [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) project which
+       offers command line support and api from PHP.*
+      
 - Obsolete files
 
-    - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
+    - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
 
-Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
-on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.  
+     *Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
+     on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.*  
 
-## Api documentation
+### How to build documentation
 
 You can build the doc with
 
