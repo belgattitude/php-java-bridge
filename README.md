@@ -43,10 +43,16 @@ $ ant
 
 See the resulting files in the `/dist` folder :
 
-- Files required to run the bridge under a servlet container (tomcat...)
+- The bridge files.
 
-    - `php-servlet.jar`: Servlet for php-java communication (required). 
-    - `php-script.jar`: Lib to allow java to talk with a php-cgi instance.
+    - `php-servlet.jar`: Servlet for php-java communication (required). Approx 58k. 
+    - `php-script.jar`: Lib to allow java to talk with a php-cgi instance. Approx 58k.
+        
+- For convenience, you'll find ready to run war bundles, you can choose between :
+  
+    - `JavaBridgeTemplate.war`: Minimal war file (only php-servlet.jar, php-script.jar, web.xml and support for system php-cgi). Approx 500k.   
+    - `JavaBridge.war`: Example war file with some lib and examples. Approx **47Mb** !!!        
+            
 
 - Command line standalone server to run the bridge without a servlet container (development)
     
@@ -54,7 +60,7 @@ See the resulting files in the `/dist` folder :
 
       *See also the [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) project which
        offers command line support and api from PHP.*
-      
+        
 - Obsolete files
 
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
@@ -62,6 +68,23 @@ See the resulting files in the `/dist` folder :
 
      *Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
      on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.*  
+
+### How to deploy on Tomcat (Ubuntu)
+
+Ensure you have tomcat installed and a php-cgi 
+
+```console
+$ sudo apt-get install tomcat7 tomcat7-admin
+$ sudo apt-get install php-cgi
+```
+
+And copy the ready to run `JavaBridgeTemplate.war` (or `JavaBridge.war` or bundle yours) in the tomcat webapps folder:
+
+```console
+cp dist/JavaBridgeTemplate.war /var/lib/tomcat7/webapps
+```
+
+Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridge](http://localhost:8080/JavaBridgeTemplate).
 
 ### How to build documentation
 

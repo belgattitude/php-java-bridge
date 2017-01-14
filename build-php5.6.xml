@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="JavaBridge" basedir="." default="JavaBridgeWar">
+<project name="JavaBridge" basedir="." default="all">
     <target name="init">
         <property name="javaBaseDir" value="${basedir}/server"/>
         <property name="javaSourceDir" value="${javaBaseDir}"/>
@@ -277,4 +277,8 @@
             </webinf>
         </war>
     </target>
+    <target name="all"
+            depends="JavaBridgeTemplateWar,JavaBridgeWar">
+    </target>
+
 </project>
