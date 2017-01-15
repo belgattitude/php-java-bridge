@@ -86,6 +86,32 @@ cp dist/JavaBridgeTemplate.war /var/lib/tomcat7/webapps
 
 Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridge](http://localhost:8080/JavaBridgeTemplate).
 
+Errors are logged by default into
+
+```console
+$ cat /var/log/tomcat7/catalina.out
+```
+
+### Tomcat tuning tips
+
+If you get OutOfMemory errors, you can increase the java heap tomcat:
+
+```console
+$ vi /etc/default/tomcat7
+```
+
+Look for the Xmx default at 128m and increase 
+
+```
+JAVA_OPTS="-Djava.awt.headless=true -Xmx512m -XX:+UseConcMarkSweepGC"
+```
+
+and restart
+
+```console
+sudo service tomcat7 restart
+```
+
 ### How to build documentation
 
 You can build the doc with

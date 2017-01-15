@@ -1,13 +1,17 @@
 # CHANGELOG
 
 
-## 6.2.1_1 (2017-01-15)
+## 6.2.10 (2017-01-15)
    
 ### Changes
 
-- Cleanup embedded php-cgi binaries [see #3](https://github.com/belgattitude/php-java-bridge/issues/3)
-
-### Documentation
-
+- Removal embedded php-cgi binaries [see #3](https://github.com/belgattitude/php-java-bridge/issues/3)
+- Source code indentation
 - README.md: added Recipe for building and deploying on tomcat
+
+### Fixes
+ 
+- Added a `build-php5.6.xml` ant config 
+
+
 
