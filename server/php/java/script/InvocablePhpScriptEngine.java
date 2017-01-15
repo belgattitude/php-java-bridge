@@ -273,7 +273,7 @@ public class InvocablePhpScriptEngine extends AbstractPhpScriptEngine implements
         try {
             this.script = doEval(reader, context);
             if (this.script != null) {
-        	/* get the proxy, either the one from the user script or our default proxy */
+            /* get the proxy, either the one from the user script or our default proxy */
                 this.scriptClosure = script;
             }
         } catch (Exception e) {

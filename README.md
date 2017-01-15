@@ -124,7 +124,7 @@ You can build the doc with
 $ ant JavaDoc
 ```
 
-Documentation will be generated in the '/doc/API' folder.
+Documentation will be generated in the `/doc/API` folder.
 
 ## Note on branches
  

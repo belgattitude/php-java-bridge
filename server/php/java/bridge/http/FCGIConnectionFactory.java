@@ -64,7 +64,7 @@ public abstract class FCGIConnectionFactory {
      */
     public final boolean startServer(ILogger logger) {
     /*
-	 * Try to start the FastCGI server,
+     * Try to start the FastCGI server,
 	 */
         synchronized (fcgiStartLock) {
             if (!fcgiStarted) {

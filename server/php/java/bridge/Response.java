@@ -512,7 +512,7 @@ public final class Response {
                                     value instanceof java.lang.Byte) {
                                 writeBoolean(((Number) value).longValue() != 0);
                             } else {
-				/* Float, Double, BigDecimal, BigInteger, Double, Long, ... */
+                /* Float, Double, BigDecimal, BigInteger, Double, Long, ... */
                                 writeBoolean(((Number) value).doubleValue() != 0.0);
                             }
                         } else {

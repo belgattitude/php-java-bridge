@@ -104,7 +104,7 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
      */
     protected void setStandardEnvironmentValues(Map env) {
     /* send the session context now, otherwise the client has to
-	 * call handleRedirectConnection */
+     * call handleRedirectConnection */
         env.put(Util.X_JAVABRIDGE_CONTEXT, ctx.getId());
     }
 

@@ -279,7 +279,7 @@ public class FastCGIServlet extends HttpServlet {
         env.environment.put("SERVER_SIGNATURE", serverSignature);
         env.environment.put("DOCUMENT_ROOT", documentRoot);
         if (req.isSecure()) env.environment.put("HTTPS", "On");
-	        
+
 	        
 	/* send the session context now, otherwise the client has to 
 	 * call handleRedirectConnection */

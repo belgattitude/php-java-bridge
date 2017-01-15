@@ -1086,7 +1086,7 @@ public class JavaBridge implements Runnable {
                 throw new NullPointerException("cannot call \"" + method + "()\" on a Java null object. A previous Java call has returned a null value, use java_is_null($jvalue) to check.");
             }
         /* PR1616498: Do not use Util.getClass(): if object is a class, we must pass the class class.
-	     * All VM, including gcc >= 3.3.3, return the class class for class.getClass(), not null. This is okay for the cache implementation. */
+         * All VM, including gcc >= 3.3.3, return the class class for class.getClass(), not null. This is okay for the cache implementation. */
             MethodCache.Entry entry = methodCache.getEntry(method, object, args);
             selected = (Method) methodCache.get(entry);
 

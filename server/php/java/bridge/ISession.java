@@ -140,7 +140,7 @@ public interface ISession {
      * @return an integer specifying the number of
      * seconds this session remains open
      * between client requests
-     * @see        #setTimeout
+     * @see #setTimeout
      */
     public int getTimeout();
 
@@ -148,12 +148,12 @@ public interface ISession {
      * Returns the time when this session was created, measured
      * in milliseconds since midnight January 1, 1970 GMT.
      *
-     * @throws IllegalStateException if this method is called on an
-     *                               invalidated session
      * @return a <code>long</code> specifying
      * when this session was created,
      * expressed in
      * milliseconds since 1/1/1970 GMT
+     * @throws IllegalStateException if this method is called on an
+     *                               invalidated session
      */
 
     public long getCreationTime();
@@ -167,13 +167,13 @@ public interface ISession {
      * a value associated with the session, do not affect the access
      * time.
      *
-     * @throws IllegalStateException if this method is called on an
-     *                               invalidated session
      * @return a <code>long</code>
      * representing the last time
      * the client sent a request associated
      * with this session, expressed in
      * milliseconds since 1/1/1970 GMT
+     * @throws IllegalStateException if this method is called on an
+     *                               invalidated session
      */
 
     public long getLastAccessedTime();

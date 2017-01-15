@@ -1246,7 +1246,7 @@ public final class Util {
         protected void start() throws NullPointerException, IOException {
             File location;
         /*
-	     * Extract the php executable from args[0] ...
+         * Extract the php executable from args[0] ...
 	     */
             String[] php = new String[]{null};
             if (args == null) args = new String[]{null};

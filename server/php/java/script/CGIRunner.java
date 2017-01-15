@@ -108,7 +108,7 @@ public class CGIRunner extends Continuation {
             Util.printStackTrace(e);
             throw e;
         } catch (InterruptedException e) {
-		/*ignore*/
+        /*ignore*/
         } finally {
             if (natIn != null) try {
                 natIn.close();
