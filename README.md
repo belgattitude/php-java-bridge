@@ -26,19 +26,23 @@ and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects.
 
 - php-java-bridge migrated from sourceforge CSV repo to Github (from v6.2.1)
  
-## Build process   
+## Build
+  
+### Requirements
   
 Currently the project can be built with [ant](http://ant.apache.org/). Be aware
-that you need a java jdk installed as well as a PHP runtime (5.3-5.6).
+that you need a java jdk installed as well as a PHP runtime (5.3-5.6). Building
+under PHP7+ does not work, see [see #4](https://github.com/belgattitude/php-java-bridge/issues/4) for a solution.  
+
   
-### Build the servlet 
+### Building the project
 
 Clone the project and run the `ant` command.
 
 ```console
 $ git clone https://github.com/belgattitude/php-java-bridge.git
 $ cd php-java-bridge
-$ ant
+$ ant -Dphp_exec=/usr/bin/php
 ```
 
 See the resulting files in the `/dist` folder :
@@ -65,9 +69,9 @@ See the resulting files in the `/dist` folder :
 
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
-
-     *Note that if you intend to build the `Java.inc` client, you must be sure to install php < 7.0
-     on your machine. In case you have multiple version installed, run ant with `ant -buildfile build-php5.6.xml`.*  
+       (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4))
+     
+       
 
 ### How to deploy on Tomcat (Ubuntu)
 
