@@ -1,5 +1,13 @@
 <?php
 
+if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+    echo "[buildJavaInc.php] Error: building Java.inc requires version <= 7.0.0.\n";
+    echo "   [+] Your current version is " . PHP_VERSION . "\n";
+    echo "   [+] See the  https://github.com/belgattitude/php-java-bridge/issues/4  \n";
+    exit(1);
+}
+
+
 $s = "";
 array_shift($argv);
 $outfile = array_shift($argv);
