@@ -20,7 +20,11 @@
         <mkdir dir="${javaClassDir}"/>
     </target>
 
-    <target name="clean" depends="init">
+    <!--
+    Clean task have been renamed to cleanBuild
+    for compatibility with gradle
+    -->
+    <target name="cleanBuild" depends="init">
         <delete dir="server/documentation"/>
         <delete dir="documentation"/>
         <delete dir="dist"/>

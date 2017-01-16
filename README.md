@@ -26,7 +26,7 @@ and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects.
 
 - php-java-bridge migrated from sourceforge CSV repo to Github (from v6.2.1)
  
-## Build
+## Build 
   
 ### Requirements
   
@@ -42,36 +42,42 @@ Clone the project and run the `ant` command.
 ```console
 $ git clone https://github.com/belgattitude/php-java-bridge.git
 $ cd php-java-bridge
-$ ant -Dphp_exec=/usr/bin/php
+$ ant -Dphp_exec=/usr/bin/php5.6
 ```
 
 See the resulting files in the `/dist` folder :
 
 - The bridge files.
 
+    - `JavaBridge.jar`: Main library, providing also a standalone server
     - `php-servlet.jar`: Servlet for php-java communication (required). Approx 58k. 
     - `php-script.jar`: Lib to allow java to talk with a php-cgi instance. Approx 58k.
-        
+       
 - For convenience, you'll find ready to run war bundles, you can choose between :
   
     - `JavaBridgeTemplate.war`: Minimal war file (only php-servlet.jar, php-script.jar, web.xml and support for system php-cgi). Approx 500k.   
     - `JavaBridge.war`: Example war file with some lib and examples. Approx **47Mb** !!!        
             
-
-- Command line standalone server to run the bridge without a servlet container (development)
-    
-    - `JavaBridge.jar`: the standalone server used in [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools)
-
-      *See also the [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) project which
-       offers command line support and api from PHP.*
         
-- Obsolete files
-
+- Obsolete files kept for compatibility
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
        (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4))
      
+To clean your build:
+
+```console
+$ ant cleanBuild
+```
+
+See [#5](https://github.com/belgattitude/php-java-bridge/issues/5) for more info why `cleanBuild` instead of `clean`.
        
+       
+### Gradle notes
+       
+```
+$ gradle all -Dphp_exec=php5.6
+```
 
 ### How to deploy on Tomcat (Ubuntu)
 
