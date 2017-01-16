@@ -10,8 +10,7 @@ script engine, for example PHP, with a Java or ECMA 335 VM.
 This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
 is based on the latest official release (6.2.1) excluding all history versions (cleanup from the CVS repo).
 
-The original code can be found on the [Original-6.2.1 branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1)
-to preserve the original version. All new changes are currently made on the master branch, releases starting at 6.2.10.
+A copy of the original 6.2.1 release is available on a [separate branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1). All new changes are currently made on the master branch, releases starting at 6.2.10.
   
 Primarily this fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
 and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects which solves the PHP7+ compatibility. 
