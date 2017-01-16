@@ -1,51 +1,66 @@
 # php-java-bridge
 
-**Unofficial** github maintained repository for the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/).
+**Unofficial** repository for the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/).
 
-The VM Bridge is a network protocol which can be used to
-connect a native script engine, for example PHP, with a Java or ECMA 335 VM.
+The VM Bridge is a network protocol which can be used to connect a native 
+script engine, for example PHP, with a Java or ECMA 335 VM.
 
-## Introduction
+## Disclaimer
 
-Fork of the official sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) migrated
-to git (from latest release 6.2.1).
+This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
+is based on the latest official release (6.2.1) excluding all history versions (cleanup from the CVS repo).
 
-## Motivations
-
-This unofficial fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
-and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects.
-
+The original code can be found on the [Original-6.2.1 branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1)
+to preserve the original version. All new changes are currently made on the master branch, releases starting at 6.2.10.
+  
+Primarily this fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
+and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects which solves the PHP7+ compatibility. 
+ 
 ## Documentation
 
-- Some recipes available in this README.
-- Documentation can be found in the [PHP/Java bridge]((http://php-java-bridge.sourceforge.net/pjb/)) site  
-- See the [generated API doc](http://docs.soluble.io/php-java-bridge/api).
+- Still a WIP, check this README.md and the various doc files   
+- [API doc](http://docs.soluble.io/php-java-bridge/api).
+- Older documentation can be found in the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) site
 
+## Releases
 
-## Status
-
-- php-java-bridge migrated from sourceforge CSV repo to Github (from v6.2.1)
+- You can download pre-compiled [java bridge binaries](https://github.com/belgattitude/php-java-bridge/releases) on the releases page (jdk8). 
+- Alternatively you can build the project, first clone the project and follow the build steps.
+- [WIP] [Gradle starter project](https://github.com/belgattitude/pjb-starter-gradle) on it's way !!! 
  
-## Build 
-  
-### Requirements
-  
-Currently the project can be built with [ant](http://ant.apache.org/). Be aware
-that you need a java jdk installed as well as a PHP runtime (5.3-5.6). Building
-under PHP7+ does not work, see [see #4](https://github.com/belgattitude/php-java-bridge/issues/4) for a solution.  
+## Clone the project
 
-  
-### Building the project
-
-Clone the project and run the `ant` command.
+Run the `git clone` command clone in a directory:
 
 ```console
 $ git clone https://github.com/belgattitude/php-java-bridge.git
 $ cd php-java-bridge
+```
+
+## Build
+
+Building the project requires a php interpreter (5.3 - 5.6) installed, see [#5](https://github.com/belgattitude/php-java-bridge/issues/5).
+You can specify its location through the `-Dphp_exec=/usr/bin/php5.6`.
+
+See the `build.xml` for registered tasks. 
+
+### Option 1: with ant
+  
+```console
 $ ant -Dphp_exec=/usr/bin/php5.6
 ```
 
-See the resulting files in the `/dist` folder :
+**Warning** due to gradle support, the ant `clean` has been renamed in `cleanBuild`. See [5](https://github.com/belgattitude/php-java-bridge/issues/5). 
+
+### Option 2: with gradle
+
+```
+$ gradle all -Dphp_exec=php5.6
+```
+
+## Compiled files
+
+See the `/dist` folder :
 
 - The bridge files.
 
@@ -57,29 +72,16 @@ See the resulting files in the `/dist` folder :
   
     - `JavaBridgeTemplate.war`: Minimal war file (only php-servlet.jar, php-script.jar, web.xml and support for system php-cgi). Approx 500k.   
     - `JavaBridge.war`: Example war file with some lib and examples. Approx **47Mb** !!!        
-            
-        
+                    
 - Obsolete files kept for compatibility
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
        (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4))
      
-To clean your build:
+              
+## Deploy
 
-```console
-$ ant cleanBuild
-```
-
-See [#5](https://github.com/belgattitude/php-java-bridge/issues/5) for more info why `cleanBuild` instead of `clean`.
-       
-       
-### Gradle notes
-       
-```
-$ gradle all -Dphp_exec=php5.6
-```
-
-### How to deploy on Tomcat (Ubuntu)
+### Tomcat (Ubuntu)
 
 Ensure you have tomcat installed and a php-cgi 
 
@@ -131,16 +133,12 @@ $ ant JavaDoc
 ```
 
 Documentation will be generated in the `/doc/API` folder.
-
-## Note on branches
- 
-The master contains the latest code, while the original pjb621 fork (with few minor reformating) is kept
-in its own branch names 'Original-6.2.1'.  
-
  
 ## Future
 
 - Modernize documentation
-- Document recipes to compile from github
-- Provide a maven repo
+- Complete removal of `Java.inc` and remove deps to php in the build process.
+- Setup a maven repository or viable alternatives
+- More work on the [pjb-starter-grade](https://github.com/belgattitude/pjb-starter-gradle) project.
+
 
