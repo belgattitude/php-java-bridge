@@ -146,3 +146,14 @@ Documentation will be generated in the `/doc/API` folder.
 - More work on the [pjb-starter-grade](https://github.com/belgattitude/pjb-starter-gradle) project.
 
 
+## Credits
+
+
+Original developers:
+
+- Andre Felipe Machado, 
+- Sam Ruby, 
+- Kai Londenberg, 
+- Nandika Jayawardana, 
+- Sanka Samaranayake, 
+- Jost Boekemeier
