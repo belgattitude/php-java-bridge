@@ -42,7 +42,7 @@ $ cd php-java-bridge
 
 ## Build
 
-Building the project requires a php interpreter (5.3 - 5.6) installed, see [#5](https://github.com/belgattitude/php-java-bridge/issues/5).
+Building the project requires a php interpreter (5.3 - 5.6) installed, see (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4).
 You can specify its location through the `-Dphp_exec=/usr/bin/php5.6`.
 
 See the `build.xml` for registered tasks. 
@@ -79,7 +79,7 @@ See the `/dist` folder :
 - Obsolete files kept for compatibility
     - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
     - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
-       (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4))
+       
      
               
 ## Deploy
