@@ -109,7 +109,7 @@ Wait few seconds for deployment and point your browser to [http://localhost:8080
 Errors are logged by default into
 
 ```console
-$ cat /var/log/tomcat7/catalina.out
+$ cat /var/log/tomcat8/catalina.out
 ```
 
 ### Tomcat tuning tips
@@ -117,7 +117,7 @@ $ cat /var/log/tomcat7/catalina.out
 If you get OutOfMemory errors, you can increase the java heap tomcat:
 
 ```console
-$ vi /etc/default/tomcat7
+$ vi /etc/default/tomcat8
 ```
 
 Look for the Xmx default at 128m and increase 
@@ -129,7 +129,7 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx512m -XX:+UseConcMarkSweepGC"
 and restart
 
 ```console
-sudo service tomcat7 restart
+sudo service tomcat8 restart
 ```
 
 ### How to build documentation
