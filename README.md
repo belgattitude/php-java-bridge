@@ -15,8 +15,7 @@ See the [CHANGELOG.md](https://github.com/belgattitude/php-java-bridge/blob/mast
 
 A copy of the original 6.2.1 release is available on a [separate branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1). All new changes are currently made on the master branch, releases starting at 6.2.10.
 
-  
-  
+    
 Primarily this fork has been created to facilitate the development of [soluble-japha](https://github.com/belgattitude/soluble-japha)
 and [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) projects which solves the PHP7+ compatibility. 
  
@@ -85,22 +84,27 @@ See the `/dist` folder :
               
 ## Deploy
 
+Tested containers are :
+
+- Tomcat 7 
+- Tomcat 8
+
 ### Tomcat (Ubuntu)
 
 Ensure you have tomcat installed and a php-cgi 
 
 ```console
-$ sudo apt-get install tomcat7 tomcat7-admin
+$ sudo apt-get install tomcat8 tomcat8-admin
 $ sudo apt-get install php-cgi
 ```
 
 And copy the ready to run `JavaBridgeTemplate.war` (or `JavaBridge.war` or bundle yours) in the tomcat webapps folder:
 
 ```console
-cp dist/JavaBridgeTemplate.war /var/lib/tomcat7/webapps
+cp dist/JavaBridgeTemplate.war /var/lib/tomcat8/webapps
 ```
 
-Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridge](http://localhost:8080/JavaBridgeTemplate).
+Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate).
 
 Errors are logged by default into
 
