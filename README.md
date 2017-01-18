@@ -11,7 +11,7 @@ look to those projects:
 ## Disclaimer
 
 > This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
-> is based on the latest official release (6.2.1) excluding all history versions (cleanup from the CVS repo).
+> is based on the latest official release (6.2.1) excluding all previous versions and history (cleanup from the CVS repo).
 > See the [CHANGELOG.md](https://github.com/belgattitude/php-java-bridge/blob/master/CHANGELOG.md) or have a look to the [CHANGESET](https://github.com/belgattitude/php-java-bridge/compare/Original-6.2.1...master).
 > A copy of the original 6.2.1 release is available on a [separate branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1). All new changes are currently made on the master branch, releases starting at 6.2.10.
 
@@ -19,7 +19,7 @@ look to those projects:
 
 Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here are some plans and statuses of the fork:  
 
-- [x] Migration from csv to github
+- [x] Migration from CVS to github
 - [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
 - [x] Test and update of the build file, Tomcat8 and JDK8.
 - [x] Releasing a new version, with downloadable releases on Github (6.2.10)
@@ -27,7 +27,7 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [x] Preliminary support and conversion to gradle (with ant tasks).
 - [x] Regenerate and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
 - [ ] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
-- [ ] License issue; MIT or GPL (website indicates MIT, csv GPL) ? Try to contact original developers.
+- [ ] License issue; MIT or GPL (website indicates MIT while CVS GPL) ? Try to contact original developers.
 - [ ] Remove dependency of php in build scripts (should be possible to build without php) 
 - [ ] Deprecate and remove completely the `Java.inc` client.
 - [ ] Publish on maven (need help - must be made after removal of php dependency)
