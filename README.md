@@ -26,6 +26,7 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [x] Prepare a starter project with servlet 3.0 spec support, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
 - [x] Preliminary support and conversion to gradle (with ant tasks).
 - [x] Regenerate and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
+- [ ] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
 - [ ] License issue; MIT or GPL (website indicates MIT, csv GPL) ? Try to contact original developers.
 - [ ] Remove dependency of php in build scripts (should be possible to build without php) 
 - [ ] Deprecate and remove completely the `Java.inc` client.
@@ -33,6 +34,7 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [ ] Removal of obsolete code and resources.
 - [ ] Security review and safe practices.
 - [ ] Write JUnit tests
+- [ ] Start refactorings and improve ;)
 - [ ] Documentation (always a wip)
 
 And a lot more...
