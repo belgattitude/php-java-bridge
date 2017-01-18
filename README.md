@@ -159,15 +159,13 @@ $ ant JavaDoc
 
 Documentation will be generated in the `/doc/API` folder.
  
-## Future
+## Contribute
 
-- Modernize documentation
-- Complete removal of `Java.inc` and remove deps to php in the build process.
-- Setup a maven repository or viable alternatives
-- More work on the [pjb-starter-grade](https://github.com/belgattitude/pjb-starter-gradle) project.
-
+Feel free to fork and submit pull requests :)
 
 ## Credits
+
+* Fork initially made by [Sébastien Vanvelthem](https://github.com/belgattitude).
 
 
 Original developers:
