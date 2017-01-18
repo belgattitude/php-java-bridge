@@ -1,4 +1,4 @@
-# Unofficial repository for the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/).
+# Unofficial fork of the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) server.
 
 The VM Bridge is a network protocol which can be used to connect a native 
 script engine, for example PHP, with a Java VM. To get more information have a 
