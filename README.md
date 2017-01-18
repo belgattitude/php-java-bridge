@@ -17,7 +17,7 @@ look to those projects:
 
 ## Status
 
-Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here's some plan and status of the fork:  
+Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here are some plans and statuses of the fork:  
 
 - [x] Migration from csv to github
 - [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
