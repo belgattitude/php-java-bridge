@@ -19,20 +19,21 @@ look to those projects:
 
 Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here's some plan and status of the fork:  
 
-[+] Migration from csv to github
-[+] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
-[+] Test and update of the build file, Tomcat8 and JDK8.
-[+] Releasing a new version, with downloadable releases on Github (6.2.10)
-[+] Prepare a starter project with servlet 3.0 spec support, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
-[+] Preliminary support and conversion to gradle (with ant tasks).
-[+] Regenerate and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
-[ ] Remove dependency of php in build scripts (should be possible to build without php) 
-[ ] Deprecate and remove completely the `Java.inc` client.
-[ ] Publish on maven (need help - must be made after removal of php dependency)
-[ ] Removal of obsolete code and resources.
-[ ] Security review and safe practices.
-[ ] Write JUnit tests
-[ ] Documentation (always a wip)
+- [+] Migration from csv to github
+- [+] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
+- [+] Test and update of the build file, Tomcat8 and JDK8.
+- [+] Releasing a new version, with downloadable releases on Github (6.2.10)
+- [+] Prepare a starter project with servlet 3.0 spec support, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
+- [+] Preliminary support and conversion to gradle (with ant tasks).
+- [+] Regenerate and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
+- [ ] License issue; MIT or GPL (website indicates MIT, csv GPL) ? Try to contact original developers.
+- [ ] Remove dependency of php in build scripts (should be possible to build without php) 
+- [ ] Deprecate and remove completely the `Java.inc` client.
+- [ ] Publish on maven (need help - must be made after removal of php dependency)
+- [ ] Removal of obsolete code and resources.
+- [ ] Security review and safe practices.
+- [ ] Write JUnit tests
+- [ ] Documentation (always a wip)
 
 And a lot more...
 
