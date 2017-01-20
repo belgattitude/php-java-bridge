@@ -1,22 +1,20 @@
 group 'io.soluble.php-java-bridge'
-version '6.1.11-SNAPSHOT'
+version '6.2.11-SNAPSHOT'
 
 ant.importBuild 'build.xml'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '3.8.2' // the project still uses this junit API
 }
 
 clean {
     dependsOn cleanBuild
 }
-
-
