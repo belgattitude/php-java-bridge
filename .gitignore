@@ -1,12 +1,10 @@
-.idea/
+.idea
 *.iml
-*.lock
-dist/
-bin/
-nbproject/
-doc/API/
-.classpath/
-.projectKnowledge/
+/dist
+/bin
+/nbproject
+/doc/API
+/.classpath
 /server/META-INF/java/JavaProxy.php
 /server/META-INF/java/Java.inc
 /server/php/java/bridge/JavaProxy.java
@@ -17,3 +15,4 @@ doc/API/
 /server/php/java/bridge/JavaInc.java
 /server/php/java/bridge/LauncherWindows4.java
 /server/php/java/bridge/PhpDebuggerPHP.java
+
