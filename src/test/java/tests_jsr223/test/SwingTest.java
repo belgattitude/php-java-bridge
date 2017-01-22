@@ -10,7 +10,7 @@ import javax.script.Invocable;
 import javax.script.ScriptException;
 import javax.swing.SwingUtilities;
 
-import php.java.script.InvocablePhpScriptEngine;
+import io.soluble.pjb.script.InvocablePhpScriptEngine;
 
 /**
  * @author jostb
@@ -22,9 +22,9 @@ public class SwingTest {
         public void init();
     }
     public static void main(String s[]) throws FileNotFoundException, ScriptException, InterruptedException, InvocationTargetException {
-	System.setProperty("php.java.bridge.default_log_level", "5");
-	System.setProperty("php.java.bridge.default_log_file", "");
-	System.setProperty("php.java.bridge.php_exec", "/usr/bin/php-cgi");
+		System.setProperty("io.soluble.pjb.bridge.default_log_level", "5");
+		System.setProperty("io.soluble.pjb.bridge.default_log_file", "");
+		System.setProperty("io.soluble.pjb.bridge.php_exec", "/usr/bin/php-cgi");
 
 	    InvocablePhpScriptEngine engine = new InvocablePhpScriptEngine();
 	    engine.eval(new FileReader("test/SwingTest.php"));
