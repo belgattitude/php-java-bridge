@@ -6,11 +6,11 @@ import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
 
-public class SimpleCompileable extends TestCase {
+public class TestSimpleCompileable extends TestCase {
 
     private CompiledScript script;
 
-    public SimpleCompileable(String name) {
+    public TestSimpleCompileable(String name) {
         super(name);
     }
 

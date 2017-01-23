@@ -10,7 +10,7 @@ public class AllTests {
         //$JUnit-BEGIN$
         suite.addTestSuite(TestException.class);
         suite.addTestSuite(TestGetResult.class);
-        suite.addTestSuite(SimpleCompileable.class);
+        suite.addTestSuite(TestSimpleCompileable.class);
         suite.addTestSuite(TestGetInterface.class);
         suite.addTestSuite(TestScript.class);
         suite.addTestSuite(TestInvocablePhpScriptEngine.class);
