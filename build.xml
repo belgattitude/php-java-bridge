@@ -1,5 +1,99 @@
 <?xml version="1.0"?>
 <project name="JavaBridge" basedir="." default="all">
+
+    <target name="genInit">
+        <property name="srcDir" value="${basedir}/src"/>
+        <property name="distDir" value="${basedir}/build"/>
+        <property name="serverDir" value="${basedir}/server"/>
+        <property name="javaDir" value="${srcDir}/main/java"/>
+        <property name="pkgDir" value="${javaDir}/io/soluble/pjb"/>
+        <property name="resDir" value="${srcDir}/main/resources"/>
+        <property name="webappDir" value="${srcDir}/main/webapp"/>
+        <property name="php_exec" value="php"/>
+    </target>
+    <target name="genClean" depends="genInit">
+        <delete file="${resDir}/META-INF/java/Java.inc"/>
+        <delete file="${resDir}/META-INF/java/JavaProxy.php"/>
+        <delete file="${pkgDir}/bridge/JavaInc.java"/>
+        <delete file="${pkgDir}/bridge/JavaProxy.java"/>
+        <delete file="${pkgDir}/bridge/LauncherUnix.java"/>
+        <delete file="${pkgDir}/bridge/LauncherWindows.java"/>
+        <delete file="${pkgDir}/bridge/LauncherWindows2.java"/>
+        <delete file="${pkgDir}/bridge/LauncherWindows3.java"/>
+        <delete file="${pkgDir}/bridge/LauncherWindows4.java"/>
+    </target>
+    <target name="genJavaInc" depends="genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="${serverDir}/buildJavaInc.php"/>
+            <arg value="${resDir}/META-INF/java/Java.inc"/>
+            <arg value="META-INF/java/JavaBridge.inc"/>
+            <arg value="META-INF/java/Options.inc"/>
+            <arg value="META-INF/java/Client.inc"/>
+            <arg value="META-INF/java/GlobalRef.inc"/>
+            <arg value="META-INF/java/NativeParser.inc"/>
+            <arg value="META-INF/java/Parser.inc"/>
+            <arg value="META-INF/java/Protocol.inc"/>
+            <arg value="META-INF/java/SimpleParser.inc"/>
+            <fileset dir="${serverDir}">
+                <include name="META-INF/java/JavaProxy.inc"/>
+            </fileset>
+        </apply>
+        <copy file="${resDir}/META-INF/java/Java.inc" todir="${webappDir}/java/Java.inc"/>
+    </target>
+    <target name="genJavaProxyPhp" depends="genJavaInc,genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="${serverDir}/buildJavaProxy.php"/>
+            <arg value="${resDir}/META-INF/java/JavaProxy.php"/>
+            <fileset dir="${resDir}">
+                <include name="META-INF/java/Java.inc"/>
+            </fileset>
+        </apply>
+        <copy file="${resDir}/META-INF/java/JavaProxy.php" todir="${webappDir}/java/JavaProxy.php"/>
+    </target>
+    <target name="genJavaIncJava" depends="genJavaInc,genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="buildClassFromTextFile.php"/>
+            <arg value="${pkgDir}/bridge/JavaInc.java"/>
+            <arg value="JavaInc"/>
+            <fileset dir="${resDir}">
+                <include name="META-INF/java/Java.inc"/>
+            </fileset>
+        </apply>
+    </target>
+    <target name="genJavaProxyPhpJava" depends="genJavaProxyPhp,genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="buildClassFromTextFile.php"/>
+            <arg value="${pkgDir}/bridge/JavaProxy.java"/>
+            <arg value="JavaProxy"/>
+            <fileset dir="${resDir}">
+                <include name="META-INF/java/JavaProxy.php"/>
+            </fileset>
+        </apply>
+    </target>
+    <target name="genLauncherUnix" depends="genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="buildClassFromTextFile.php"/>
+            <arg value="${pkgDir}/bridge/LauncherUnix.java"/>
+            <arg value="LauncherUnix"/>
+            <fileset dir="${serverDir}">
+                <include name="WEB-INF/cgi/launcher.sh"/>
+            </fileset>
+        </apply>
+    </target>
+    <target name="genLauncherWindows" depends="genInit">
+        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+            <arg value="buildLauncherWindows.php"/>
+            <arg value="${pkgDir}/bridge" />
+            <fileset dir="${serverDir}">
+                <include name="WEB-INF/cgi/launcher.exe"/>
+            </fileset>
+        </apply>
+    </target>
+    <target name="genAll" depends="genLauncherWindows,genLauncherUnix,genJavaProxyPhpJava,genJavaIncJava">
+    </target>
+
+    <!-- legacy targets with wrong file paths: to be removed; do not use!
+
     <target name="init">
         <property name="javaBaseDir" value="${basedir}/server"/>
         <property name="javaSourceDir" value="${javaBaseDir}"/>
@@ -19,11 +113,6 @@
         <mkdir dir="${distDir}"/>
         <mkdir dir="${javaClassDir}"/>
     </target>
-
-    <!--
-    Clean task have been renamed to cleanBuild
-    for compatibility with gradle
-    -->
     <target name="cleanBuild" depends="init">
         <delete dir="server/documentation"/>
         <delete dir="documentation"/>
@@ -40,7 +129,6 @@
         <delete file="server/php/java/bridge/LauncherWindows3.java"/>
         <delete file="server/php/java/bridge/LauncherWindows4.java"/>
     </target>
-
     <target name="compile" depends="init,JavaIncJava,JavaProxyPhpJava,PhpDebuggerPHPJava,LauncherUnix,LauncherWindows">
         <javac srcdir="${javaSourceDir}" source="1.7" target="1.7" destdir="${javaClassDir}" debug="true"
                deprecation="true">
@@ -284,5 +372,7 @@
     <target name="all"
             depends="JavaBridgeTemplateWar,JavaBridgeWar">
     </target>
+
+    -->
 
 </project>

@@ -1,0 +1,48 @@
+If this directory contains a PHP FastCGI executable called
+<architecture>-<os>/php-cgi.sh] or <architecture>-<os>/php-cgi.exe,
+the PHP/Java Bridge library tries to call it via a /bin/sh wrapper 
+(see launcher.sh) or via a "launcher.exe" when the server 
+or the web context starts:
+
+
+   internet 
+  clients 
+        \                    
+         \ jsp/servlet/php req.                     .
+           \                                        .
+            ---- :8080 -- J2EE AS                   .
+           /                 |                      .
+          |                  |                      .
+          |                  ---- servlet         /------ :9667
+          |                  ---- FastCGIServlet /  .   PHP FastCGI Server
+          |                  ---- jsp               .        |
+          |                  ->-- PhpJavaServlet    .        \--- php
+          |                  ---- ...            \ ------->--\--- php -->|
+          |                                         .  P-J-B      ...    |
+          |                                         .  PROTOCOL          |
+          ------------------------------<--------------------------------|
+                                   P-J-B PROTOCOL   .
+
+
+
+
+UNIX: If /bin/sh is available and the php-cgi supports the -b flag,
+the library executes the following command during startup:
+
+REDIRECT_STATUS="200" \
+X_JAVABRIDGE_OVERRIDE_HOSTS="/" \
+PHP_FCGI_CHILDREN="5" \
+PHP_FCGI_MAX_REQUESTS="5000" \
+arch-os/launcher.sh arch-os/php-cgi -c php-cgi.ini -b 127.0.0.1:9667
+
+
+WINDOWS: If /bin/sh is not available or if the php-cgi.exe does not
+support the -b flag, the library executes the following command during
+startup:
+
+set REDIRECT_STATUS "200"
+set X_JAVABRIDGE_OVERRIDE_HOSTS "/"
+set PHP_FCGI_CHILDREN "5" 
+set PHP_FCGI_MAX_REQUESTS "5000"
+launcher.exe PHP-CGI NAMED-PIPE PHP-OPTIONS
+

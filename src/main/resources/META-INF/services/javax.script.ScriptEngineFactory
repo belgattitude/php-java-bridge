@@ -1,0 +1,9 @@
+# list of script engine factories 
+#
+# php             => io.soluble.pjb.script.PhpScriptEngineFactory
+# php-invocable   => io.soluble.pjb.script.InvocablePhpScriptEngineFactory
+# php-interactive => io.soluble.pjb.script.InteractivePhpScriptEngineFactory
+
+io.soluble.pjb.script.PhpScriptEngineFactory
+io.soluble.pjb.script.InvocablePhpScriptEngineFactory
+io.soluble.pjb.script.InteractivePhpScriptEngineFactory
