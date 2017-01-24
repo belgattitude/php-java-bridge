@@ -25,3 +25,5 @@ src/main/java/io/soluble/pjb/bridge/LauncherWindows3.java
 src/main/java/io/soluble/pjb/bridge/LauncherWindows4.java
 src/main/resources/META-INF/java/Java.inc
 src/main/resources/META-INF/java/JavaProxy.php
+/.nb-gradle/
+.nb-gradle-properties
