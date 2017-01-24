@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -23,6 +19,8 @@ package io.soluble.pjb.bridge;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.bridge;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +65,9 @@ public final class Util {
      * Script engines are started from this pool.
      * Use pool.destroy() to destroy the thread pool upon JVM or servlet shutdown
      */
-    public static final ThreadPool PHP_SCRIPT_ENGINE_THREAD_POOL = new ThreadPool("JavaBridgeStandaloneScriptEngineProxy", Integer.parseInt(Util.THREAD_POOL_MAX_SIZE)) {
+    public static final ThreadPool PHP_SCRIPT_ENGINE_THREAD_POOL = 
+            new ThreadPool("JavaBridgeStandaloneScriptEngineProxy", Integer.parseInt(Util.THREAD_POOL_MAX_SIZE)) {
+        @Override
         protected Delegate createDelegate(String name) {
             Delegate d = super.createDelegate(name);
             d.setDaemon(true);
@@ -172,8 +172,8 @@ public final class Util {
             if (useChainsaw)
                 try {
                     this.clogger = ChainsawLogger.createChainsawLogger();
-                } catch (Throwable t) {
-                    if (Util.logLevel > 5) t.printStackTrace();
+                } catch (Exception e) {
+                    if (Util.logLevel > 5) e.printStackTrace();
                     this.logger = logger;
                 }
             else {
@@ -189,6 +189,7 @@ public final class Util {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void printStackTrace(Throwable t) {
             if (clogger == null) logger.printStackTrace(t);
             else
@@ -203,6 +204,7 @@ public final class Util {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void log(int level, String msg) {
             if (clogger == null) logger.log(level, msg);
             else
@@ -393,33 +395,33 @@ public final class Util {
 
         try {
             JAVA_INC = Class.forName("io.soluble.pjb.bridge.JavaInc");
-        } catch (Exception e) {/*ignore*/}
+        } catch (ClassNotFoundException e) {/*ignore*/}
         try {
             PHPDEBUGGER_PHP = Class.forName("io.soluble.pjb.bridge.PhpDebuggerPHP");
-        } catch (Exception e) {/*ignore*/}
+        } catch (ClassNotFoundException e) {/*ignore*/}
         try {
             JAVA_PROXY = Class.forName("io.soluble.pjb.bridge.JavaProxy");
-        } catch (Exception e) {/*ignore*/}
+        } catch (ClassNotFoundException e) {/*ignore*/}
         try {
             LAUNCHER_UNIX = Class.forName("io.soluble.pjb.bridge.LauncherUnix");
-        } catch (Exception e) {/*ignore*/}
+        } catch (ClassNotFoundException e) {/*ignore*/}
         try {
             LAUNCHER_WINDOWS = Class.forName("io.soluble.pjb.bridge.LauncherWindows");
             LAUNCHER_WINDOWS2 = Class.forName("io.soluble.pjb.bridge.LauncherWindows2");
             LAUNCHER_WINDOWS3 = Class.forName("io.soluble.pjb.bridge.LauncherWindows3");
             LAUNCHER_WINDOWS4 = Class.forName("io.soluble.pjb.bridge.LauncherWindows4");
-        } catch (Exception e) {/*ignore*/}
+        } catch (ClassNotFoundException e) {/*ignore*/}
 
         Properties p = new Properties();
         try {
             InputStream in = Util.class.getResourceAsStream("global.properties");
             p.load(in);
             VERSION = p.getProperty("BACKEND_VERSION");
-        } catch (Throwable t) {
+        } catch (IOException t) {
             VERSION = "unknown";
             //t.printStackTrace();
         }
-        ;
+        
         ENVIRONMENT_BLACKLIST = getEnvironmentBlacklist(p);
         COMMON_ENVIRONMENT = getCommonEnvironment(ENVIRONMENT_BLACKLIST);
         DEFAULT_CGI_LOCATIONS = new String[]{"/usr/bin/php-cgi", "c:/Program Files/PHP/php-cgi.exe"};
@@ -454,7 +456,7 @@ public final class Util {
         } catch (Throwable xe) {/*ignore*/}
         try {
             MAX_WAIT = Integer.parseInt(getProperty(p, "io.soluble.pjb.bridge.max_wait", "15000"));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             MAX_WAIT = 15000;
         }
         try {
@@ -482,7 +484,6 @@ public final class Util {
         } catch (Throwable t) {
             //t.printStackTrace();
         }
-        ;
 
         // resolve java.io.tmpdir for windows; PHP doesn't like dos short file names like foo~1\bar~2\...
         TMPDIR = new File(System.getProperty("java.io.tmpdir", "/tmp"));
@@ -511,14 +512,14 @@ public final class Util {
         } catch (Throwable t) {
             //t.printStackTrace();
         }
-        ;
+        
         try {
             EXTENSION_NAME = "JavaBridge";
             EXTENSION_NAME = getProperty(p, "EXTENSION_DISPLAY_NAME", "JavaBridge");
         } catch (Throwable t) {
             //t.printStackTrace();
         }
-        ;
+
         try {
             PHP_EXEC = getProperty(p, "PHP_EXEC", null);
         } catch (Throwable t) {
@@ -528,7 +529,7 @@ public final class Util {
             String s = getProperty(p, "DEFAULT_LOG_LEVEL", "3");
             DEFAULT_LOG_LEVEL = Integer.parseInt(s);
             Util.logLevel = Util.DEFAULT_LOG_LEVEL; /* java.log_level in php.ini overrides */
-        } catch (Throwable t) {/*ignore*/}
+        } catch (NumberFormatException t) {/*ignore*/}
         try {
             DEFAULT_LOG_FILE_SET = false;
             DEFAULT_LOG_FILE = getProperty(p, "DEFAULT_LOG_FILE", Util.EXTENSION_NAME + ".log");
@@ -908,7 +909,7 @@ public final class Util {
         String path = phpFile.getParent();
         String file = phpFile.getName();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (path != null) {
             buf.append(path);
             buf.append(File.separatorChar);
@@ -944,7 +945,7 @@ public final class Util {
      */
     public static String checkError(String s) {
         // Is there a better way to check for a fatal error?
-        return (s.startsWith("PHP") && (s.indexOf("error:") > -1)) ? s : null;
+        return (s.startsWith("PHP") && (s.contains("error:"))) ? s : null;
     }
 
     /**

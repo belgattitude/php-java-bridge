@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.servlet;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -23,6 +19,8 @@ package io.soluble.pjb.servlet;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,6 +75,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
     /**
      * @inheritDoc
      */
+    @Override
     public void init(ServletConfig config) throws ServletException {
         maxKeepAliveRequests = ServletUtil.getMBeanProperty("*:type=Connector,port=8080", "maxKeepAliveRequests");
         keepAliveTimeout = ServletUtil.getMBeanProperty("*:type=Connector,port=8080", "keepAliveTimeout");
@@ -119,6 +118,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void destroy() {
         super.destroy();
     }
@@ -131,7 +131,6 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
      *
      * @param req         The HttpServletRequest
      * @param res         The HttpServletResponse
-     * @param credentials The provided credentials.
      * @return The (new) ServletContextFactory.
      */
     protected SimpleServletContextFactory getContextFactory(HttpServletRequest req, HttpServletResponse res) {
@@ -220,12 +219,12 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
             sin.close();
             try {
                 res.flushBuffer();
-            } catch (Throwable t) {
+            } catch (IOException t) {
                 Util.printStackTrace(t);
             } // resin ignores resOut.close()
             try {
                 resOut.close();
-            } catch (Throwable t) {
+            } catch (IOException t) {
                 Util.printStackTrace(t);
             } // Sun Java System AS 9 ignores flushBuffer()
             this.waitForContext(ctx);
@@ -278,6 +277,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
     /**
      * Dispatcher for the "http tunnel", "local channel" or "override redirect".
      */
+    @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         try {
@@ -285,10 +285,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
         } catch (RuntimeException e) {
             Util.printStackTrace(e);
             throw new ServletException(e);
-        } catch (IOException e) {
-            Util.printStackTrace(e);
-            throw e;
-        } catch (ServletException e) {
+        } catch (IOException | ServletException e) {
             Util.printStackTrace(e);
             throw e;
         }
@@ -297,6 +294,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
     /**
      * For backward compatibility
      */
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         String uri = req.getRequestURI();
