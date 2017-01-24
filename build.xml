@@ -14,6 +14,10 @@
     <target name="genClean" depends="genInit">
         <delete file="${resDir}/META-INF/java/Java.inc"/>
         <delete file="${resDir}/META-INF/java/JavaProxy.php"/>
+        <delete file="${webappDir}/java/Java.inc"/>
+        <delete file="${webappDir}/java/JavaProxy.php"/>
+        <delete file="${serverDir}/META-INF/java/Java.inc"/>
+        <delete file="${serverDir}/META-INF/java/JavaProxy.php"/>
         <delete file="${pkgDir}/bridge/JavaInc.java"/>
         <delete file="${pkgDir}/bridge/JavaProxy.java"/>
         <delete file="${pkgDir}/bridge/LauncherUnix.java"/>
@@ -25,30 +29,30 @@
     <target name="genJavaInc" depends="genInit">
         <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="${serverDir}/buildJavaInc.php"/>
-            <arg value="${resDir}/META-INF/java/Java.inc"/>
-            <arg value="META-INF/java/JavaBridge.inc"/>
-            <arg value="META-INF/java/Options.inc"/>
-            <arg value="META-INF/java/Client.inc"/>
-            <arg value="META-INF/java/GlobalRef.inc"/>
-            <arg value="META-INF/java/NativeParser.inc"/>
-            <arg value="META-INF/java/Parser.inc"/>
-            <arg value="META-INF/java/Protocol.inc"/>
-            <arg value="META-INF/java/SimpleParser.inc"/>
+            <arg value="${resDir}/META-INF/java/Java.inc"/> <!-- out -->
+            <arg value="${serverDir}/META-INF/java/JavaBridge.inc"/>
+            <arg value="${serverDir}/META-INF/java/Options.inc"/>
+            <arg value="${serverDir}/META-INF/java/Client.inc"/>
+            <arg value="${serverDir}/META-INF/java/GlobalRef.inc"/>
+            <arg value="${serverDir}/META-INF/java/NativeParser.inc"/>
+            <arg value="${serverDir}/META-INF/java/Parser.inc"/>
+            <arg value="${serverDir}/META-INF/java/Protocol.inc"/>
+            <arg value="${serverDir}/META-INF/java/SimpleParser.inc"/>
             <fileset dir="${serverDir}">
                 <include name="META-INF/java/JavaProxy.inc"/>
             </fileset>
         </apply>
-        <copy file="${resDir}/META-INF/java/Java.inc" todir="${webappDir}/java/Java.inc"/>
+        <copy file="${resDir}/META-INF/java/Java.inc" todir="${webappDir}/java"/>
     </target>
     <target name="genJavaProxyPhp" depends="genJavaInc,genInit">
         <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="${serverDir}/buildJavaProxy.php"/>
-            <arg value="${resDir}/META-INF/java/JavaProxy.php"/>
+            <arg value="${resDir}/META-INF/java/JavaProxy.php"/> <!-- out -->
             <fileset dir="${resDir}">
                 <include name="META-INF/java/Java.inc"/>
             </fileset>
         </apply>
-        <copy file="${resDir}/META-INF/java/JavaProxy.php" todir="${webappDir}/java/JavaProxy.php"/>
+        <copy file="${resDir}/META-INF/java/JavaProxy.php" todir="${webappDir}/java"/>
     </target>
     <target name="genJavaIncJava" depends="genJavaInc,genInit">
         <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
