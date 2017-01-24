@@ -8,6 +8,7 @@
         <property name="javaDir" value="${srcDir}/main/java"/>
         <property name="pkgDir" value="${javaDir}/io/soluble/pjb"/>
         <property name="resDir" value="${srcDir}/main/resources"/>
+        <property name="webappDir" value="${srcDir}/main/webapp"/>
         <property name="php_exec" value="php"/>
     </target>
     <target name="genClean" depends="genInit">
@@ -37,7 +38,7 @@
                 <include name="META-INF/java/JavaProxy.inc"/>
             </fileset>
         </apply>
-        <copy file="${resDir}/META-INF/java/Java.inc" todir="${distDir}"/>
+        <copy file="${resDir}/META-INF/java/Java.inc" todir="${webappDir}/java/Java.inc"/>
     </target>
     <target name="genJavaProxyPhp" depends="genJavaInc,genInit">
         <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
@@ -47,6 +48,7 @@
                 <include name="META-INF/java/Java.inc"/>
             </fileset>
         </apply>
+        <copy file="${resDir}/META-INF/java/JavaProxy.php" todir="${webappDir}/java/JavaProxy.php"/>
     </target>
     <target name="genJavaIncJava" depends="genJavaInc,genInit">
         <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">

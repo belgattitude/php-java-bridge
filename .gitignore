@@ -27,3 +27,5 @@ src/main/resources/META-INF/java/Java.inc
 src/main/resources/META-INF/java/JavaProxy.php
 /.nb-gradle/
 .nb-gradle-properties
+src/main/webapp/java/Java.inc
+src/main/webapp/java/JavaProxy.php
