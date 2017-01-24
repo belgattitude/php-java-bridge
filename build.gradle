@@ -5,6 +5,8 @@ ant.importBuild 'build.xml'
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -13,20 +15,34 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compileOnly('javax.servlet:servlet-api:2.5')
+    providedCompile('javax.servlet:servlet-api:2.5')
     testCompile('junit:junit:3.8.2')    // the project still uses this junit API
+    
+    def tomcatVersion = '7.0.59'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
 }
 
 jar {
+    baseName "JavaBridge"
     manifest {
         attributes("Main-Class": "io.soluble.pjb.Standalone",
                 "Implementation-Title": "php-java-bridge.jar",
                 "Implementation-Version": version)
     }
+}
+
+war {
+  baseName "JavaBridge"
+  //from 'src/rootContent' // adds a file-set to the root of the archive
 }
 
 clean {
@@ -45,3 +61,17 @@ jacocoTestReport {
         html.destination "${buildDir}/reports/coverage"
     }
 }
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
+    }
+}
+
+[tomcatRun, tomcatRunWar]*.contextPath = '/JavaBridge'
+[tomcatRun, tomcatRunWar]*.daemon = true
+
