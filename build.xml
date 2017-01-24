@@ -9,7 +9,7 @@
         <property name="pkgDir" value="${javaDir}/io/soluble/pjb"/>
         <property name="resDir" value="${srcDir}/main/resources"/>
         <property name="webappDir" value="${srcDir}/main/webapp"/>
-        <property name="php_exec" value="php"/>
+        <property name="php_exec" value="php"/>  <!-- This command should launch php5.6 on your system -->
     </target>
     <target name="genClean" depends="genInit">
         <delete file="${resDir}/META-INF/java/Java.inc"/>
