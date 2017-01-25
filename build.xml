@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project name="JavaBridge" basedir="." default="all">
-
+<project name="JavaBridge" basedir="." default="all" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    
     <target name="genInit">
         <property name="srcDir" value="${basedir}/src"/>
         <property name="distDir" value="${basedir}/build"/>
@@ -9,7 +9,7 @@
         <property name="pkgDir" value="${javaDir}/io/soluble/pjb"/>
         <property name="resDir" value="${srcDir}/main/resources"/>
         <property name="webappDir" value="${srcDir}/main/webapp"/>
-        <property name="php_exec" value="php"/>  <!-- This command should launch php5.6 on your system -->
+        <property name="phpExec" value="${php_exec}"/>  <!-- Value provided by -Dphp_exec=... -->
     </target>
     <target name="genClean" depends="genInit">
         <delete file="${resDir}/META-INF/java/Java.inc"/>
@@ -26,8 +26,15 @@
         <delete file="${pkgDir}/bridge/LauncherWindows3.java"/>
         <delete file="${pkgDir}/bridge/LauncherWindows4.java"/>
     </target>
-    <target name="genJavaInc" depends="genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+    <target name="-check-JavaInc">
+        <condition property="missingJavaInc">
+            <not>
+                <available file="${resDir}/META-INF/java/Java.inc"/>
+            </not>
+        </condition>
+    </target>
+    <target name="genJavaInc" depends="genInit,-check-JavaInc" if="missingJavaInc">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="${serverDir}/buildJavaInc.php"/>
             <arg value="${resDir}/META-INF/java/Java.inc"/> <!-- out -->
             <arg value="${serverDir}/META-INF/java/JavaBridge.inc"/>
@@ -44,8 +51,15 @@
         </apply>
         <copy file="${resDir}/META-INF/java/Java.inc" todir="${webappDir}/java"/>
     </target>
-    <target name="genJavaProxyPhp" depends="genJavaInc,genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+    <target name="-check-JavaProxyPhp">
+        <condition property="missingJavaProxyPhp">
+            <not>
+                <available file="${resDir}/META-INF/java/JavaProxy.php"/>
+            </not>
+        </condition>
+    </target>
+    <target name="genJavaProxyPhp" depends="genJavaInc,genInit,-check-JavaProxyPhp" if="missingJavaProxyPhp">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="${serverDir}/buildJavaProxy.php"/>
             <arg value="${resDir}/META-INF/java/JavaProxy.php"/> <!-- out -->
             <fileset dir="${resDir}">
@@ -55,7 +69,7 @@
         <copy file="${resDir}/META-INF/java/JavaProxy.php" todir="${webappDir}/java"/>
     </target>
     <target name="genJavaIncJava" depends="genJavaInc,genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="buildClassFromTextFile.php"/>
             <arg value="${pkgDir}/bridge/JavaInc.java"/>
             <arg value="JavaInc"/>
@@ -65,7 +79,7 @@
         </apply>
     </target>
     <target name="genJavaProxyPhpJava" depends="genJavaProxyPhp,genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="buildClassFromTextFile.php"/>
             <arg value="${pkgDir}/bridge/JavaProxy.java"/>
             <arg value="JavaProxy"/>
@@ -75,7 +89,7 @@
         </apply>
     </target>
     <target name="genLauncherUnix" depends="genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="buildClassFromTextFile.php"/>
             <arg value="${pkgDir}/bridge/LauncherUnix.java"/>
             <arg value="LauncherUnix"/>
@@ -85,7 +99,7 @@
         </apply>
     </target>
     <target name="genLauncherWindows" depends="genInit">
-        <apply executable="${php_exec}" failonerror="true" dir="${serverDir}" parallel="true">
+        <apply executable="${phpExec}" failonerror="true" dir="${serverDir}" parallel="true">
             <arg value="buildLauncherWindows.php"/>
             <arg value="${pkgDir}/bridge" />
             <fileset dir="${serverDir}">
