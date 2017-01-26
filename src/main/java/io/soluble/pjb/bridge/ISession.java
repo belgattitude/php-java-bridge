@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -24,7 +20,8 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
+package io.soluble.pjb.bridge;
+
 import java.util.Map;
 
 /**

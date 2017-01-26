@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -24,13 +20,15 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
+package io.soluble.pjb.bridge;
+
 import java.util.Comparator;
 
 final class IntegerComparator implements Comparator {
+    @Override
     public int compare(Object arg0, Object arg1) {
-        int k0 = ((Integer) arg0).intValue();
-        int k1 = ((Integer) arg1).intValue();
+        int k0 = ((Integer) arg0);
+        int k1 = ((Integer) arg1);
         if (k0 < k1) return -1;
         else if (k0 > k1) return 1;
         return 0;

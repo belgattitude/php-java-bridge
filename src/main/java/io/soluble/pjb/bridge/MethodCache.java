@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -24,7 +20,8 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
+package io.soluble.pjb.bridge;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,10 +87,11 @@ final class MethodCache {
         private boolean hasResult = false;
         private int result = 1;
 
+        @Override
         public int hashCode() {
             if (hasResult) return result;
-            for (int i = 0; i < params.length; i++) {
-                result = result * 31 + (params[i] == null ? 0 : params[i].hashCode());
+            for (Class param : params) {
+                result = result * 31 + (param == null ? 0 : param.hashCode());
             }
             result = result * 31 + clazz.hashCode();
             result = result * 31 + name.hashCode();
@@ -102,6 +100,7 @@ final class MethodCache {
             return result;
         }
 
+        @Override
         public boolean equals(Object o) {
             Entry that = (Entry) o;
             if (clazz != that.clazz) return false;
@@ -126,6 +125,7 @@ final class MethodCache {
     }
 
     private static final class NoCache extends Entry {
+        @Override
         public Class[] getParameterTypes(Method method) {
             return method.getParameterTypes();
         }

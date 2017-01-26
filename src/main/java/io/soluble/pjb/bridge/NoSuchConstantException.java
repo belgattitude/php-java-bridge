@@ -1,9 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
-import io.soluble.pjb.bridge.*;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier and others.
  *
@@ -25,6 +19,8 @@ import io.soluble.pjb.bridge.*;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.bridge;
 
 /**
  * Thrown when a class does not contain a constant.

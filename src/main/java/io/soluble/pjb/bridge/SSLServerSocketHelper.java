@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -24,7 +20,8 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
+package io.soluble.pjb.bridge;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -68,21 +65,25 @@ class SSLServerSocketHelper {
         return new ISocketFactory() {
 
             /**{@inheritDoc}*/
+            @Override
             public String getSocketName() {
                 return String.valueOf(port);
             }
 
             /**{@inheritDoc}*/
+            @Override
             public void close() throws IOException {
                 ssocket.close();
             }
 
             /**{@inheritDoc}*/
+            @Override
             public Socket accept() throws IOException {
                 return ssocket.accept();
             }
 
             /**{@inheritDoc}*/
+            @Override
             public String toString() {
                 return (isLocal ? "HTTP_LOCAL:" : "HTTPS:") + getSocketName();
             }

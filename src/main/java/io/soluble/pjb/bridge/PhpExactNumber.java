@@ -1,9 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
-import io.soluble.pjb.bridge.*;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -26,13 +20,15 @@ import io.soluble.pjb.bridge.*;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package io.soluble.pjb.bridge;
+
 final class PhpExactNumber extends Number {
 
     /**
      *
      */
     private static final long serialVersionUID = 3257566187666749240L;
-    private long l;
+    private final long l;
 
     /**
      * @param l
@@ -44,6 +40,7 @@ final class PhpExactNumber extends Number {
     /* (non-Javadoc)
      * @see java.lang.Number#intValue()
      */
+    @Override
     public int intValue() {
 
         return (int) l;
@@ -52,6 +49,7 @@ final class PhpExactNumber extends Number {
     /* (non-Javadoc)
      * @see java.lang.Number#longValue()
      */
+    @Override
     public long longValue() {
         return l;
     }
@@ -59,6 +57,7 @@ final class PhpExactNumber extends Number {
     /* (non-Javadoc)
      * @see java.lang.Number#floatValue()
      */
+    @Override
     public float floatValue() {
         return l;
     }
@@ -66,10 +65,12 @@ final class PhpExactNumber extends Number {
     /* (non-Javadoc)
      * @see java.lang.Number#doubleValue()
      */
+    @Override
     public double doubleValue() {
         return l;
     }
 
+    @Override
     public String toString() {
         return String.valueOf(l);
     }
