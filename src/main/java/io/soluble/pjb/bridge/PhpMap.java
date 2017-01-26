@@ -24,7 +24,6 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,7 +34,7 @@ import java.util.Map;
  *
  * @author jostb
  */
-abstract class PhpMap {
+public abstract class PhpMap {
     JavaBridge _bridge;
     Object value;
     Class componentType;

@@ -62,17 +62,17 @@ public class SessionFactory extends JavaBridgeFactory {
     }
 
     private ISession session(String name, short clientIsNew, int timeout) {
-        synchronized (JavaBridge.sessionHash) {
+        synchronized (JavaBridge.SESSION_HASH) {
             Session ref = null;
-            if (!JavaBridge.sessionHash.containsKey(name)) {
+            if (!JavaBridge.SESSION_HASH.containsKey(name)) {
                 ref = new Session(name);
-                JavaBridge.sessionHash.put(name, ref);
+                JavaBridge.SESSION_HASH.put(name, ref);
             } else {
-                ref = (Session) JavaBridge.sessionHash.get(name);
+                ref = (Session) JavaBridge.SESSION_HASH.get(name);
                 if (clientIsNew == ISession.SESSION_CREATE_NEW) { // client side gc'ed, destroy server ref now!
                     ref.destroy();
                     ref = new Session(name);
-                    JavaBridge.sessionHash.put(name, ref);
+                    JavaBridge.SESSION_HASH.put(name, ref);
                 } else {
                     ref.isNew = false;
                 }
