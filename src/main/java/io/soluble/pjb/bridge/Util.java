@@ -44,10 +44,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-import java.util.Vector;
 import java.util.Map.Entry;
 
 import io.soluble.pjb.bridge.http.FCGIConnectionPool;
+import java.util.ArrayList;
 
 
 /**
@@ -61,19 +61,7 @@ public final class Util {
         initGlobals();
     }
 
-    /**
-     * Script engines are started from this pool.
-     * Use pool.destroy() to destroy the thread pool upon JVM or servlet shutdown
-     */
-    public static final ThreadPool PHP_SCRIPT_ENGINE_THREAD_POOL = 
-            new ThreadPool("JavaBridgeStandaloneScriptEngineProxy", Integer.parseInt(Util.THREAD_POOL_MAX_SIZE)) {
-        @Override
-        protected Delegate createDelegate(String name) {
-            Delegate d = super.createDelegate(name);
-            d.setDaemon(true);
-            return d;
-        }
-    };
+    private Util() {}
 
     /**
      * Only for internal use. The library standalone ScriptEngine FastCGI connection pool, if any
@@ -140,97 +128,6 @@ public final class Util {
 
     public static final String X_JAVABRIDGE_INCLUDE_ONLY = "X_JAVABRIDGE_INCLUDE_ONLY";
 
-    private Util() {
-    }
-
-    /**
-     * Only for internal use. Use Util.getLogger() instread.
-     * <p>
-     * A bridge which uses log4j or the default logger.
-     */
-    public static class Logger implements ILogger {
-        protected ChainsawLogger clogger = null;
-        protected ILogger logger;
-
-        /**
-         * Use chainsaw, if available or a default logger.
-         */
-        public Logger() {
-            logger = new FileLogger(); // log to logStream        
-        }
-
-        /**
-         * Use chainsaw, if available.
-         *
-         * @param logger The specified logger.
-         */
-        public Logger(ILogger logger) {
-            this(!DEFAULT_LOG_FILE_SET, logger);
-        }
-
-        public Logger(boolean useChainsaw, ILogger logger) {
-            if (useChainsaw)
-                try {
-                    this.clogger = ChainsawLogger.createChainsawLogger();
-                } catch (Exception e) {
-                    if (Util.logLevel > 5) e.printStackTrace();
-                    this.logger = logger;
-                }
-            else {
-                this.logger = logger;
-            }
-        }
-
-        private ILogger getLogger() {
-            if (logger == null) return logger = new FileLogger();
-            return logger;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void printStackTrace(Throwable t) {
-            if (clogger == null) logger.printStackTrace(t);
-            else
-                try {
-                    clogger.printStackTrace(t);
-                } catch (Exception e) {
-                    clogger = null;
-                    getLogger().printStackTrace(t);
-                }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void log(int level, String msg) {
-            if (clogger == null) logger.log(level, msg);
-            else
-                try {
-                    clogger.log(level, msg);
-                } catch (Exception e) {
-                    clogger = null;
-                    getLogger().log(level, msg);
-                }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void warn(String msg) {
-            if (clogger == null) logger.warn(msg);
-            else
-                try {
-                    clogger.warn(msg);
-                } catch (Exception e) {
-                    clogger = null;
-                    getLogger().warn(msg);
-                }
-        }
-    }
-
     /**
      * The default PHP arguments. Can be passed via -Dio.soluble.pjb.bridge.php_exec_args=list of urlencoded strings separated by space
      * Default: "-d display_errors=Off -d log_errors=On -d java.persistent_servlet_connections=On"
@@ -285,12 +182,13 @@ public final class Util {
      * libraries).
      */
     public static final String DEFAULT_EXT_DIRS[] = {"/usr/share/java/ext", "/usr/java/packages/lib/ext"};
-
+    //TODO: platform neutrality
 
     /**
      * Set to true if the VM is gcj, false otherwise
      */
     public static final boolean IS_GNU_JAVA = checkVM();
+    //TODO: drop GNU Java support
 
     /**
      * The name of the extension, usually "JavaBridge" or "MonoBridge"
@@ -360,14 +258,6 @@ public final class Util {
      */
     public static String JAVABRIDGE_BASE;
 
-    private static String getProperty(Properties p, String key, String defaultValue) {
-        String s = null;
-        if (p != null) s = p.getProperty(key);
-        if (s == null) s = System.getProperty("io.soluble.pjb.bridge." + String.valueOf(key).toLowerCase());
-        if (s == null) s = defaultValue;
-        return s;
-    }
-
     /**
      * Only for internal use
      */
@@ -390,6 +280,28 @@ public final class Util {
     public static File HOME_DIR;
 
     private static String sessionSavePath;
+
+    /**
+     * Script engines are started from this pool.
+     * Use pool.destroy() to destroy the thread pool upon JVM or servlet shutdown
+     */
+    public static final ThreadPool PHP_SCRIPT_ENGINE_THREAD_POOL = 
+            new ThreadPool("JavaBridgeStandaloneScriptEngineProxy", Integer.parseInt(Util.THREAD_POOL_MAX_SIZE)) {
+        @Override
+        protected ThreadPool.Delegate createDelegate(String name) {
+            ThreadPool.Delegate d = super.createDelegate(name);
+            d.setDaemon(true);
+            return d;
+        }
+    };
+
+    private static String getProperty(Properties p, String key, String defaultValue) {
+        String s = null;
+        if (p != null) s = p.getProperty(key);
+        if (s == null) s = System.getProperty("io.soluble.pjb.bridge." + String.valueOf(key).toLowerCase());
+        if (s == null) s = defaultValue;
+        return s;
+    }
 
     private static void initGlobals() {
 
@@ -848,20 +760,16 @@ public final class Util {
     /**
      * Create a string array from a hashtable.
      *
-     * @param h The hashtable
+     * @param map The hashtable
      * @return The String
      * @throws NullPointerException
      */
-    public static String[] hashToStringArray(Map h) {
-        Vector v = new Vector();
-        Iterator e = h.keySet().iterator();
-        while (e.hasNext()) {
-            String k = e.next().toString();
-            v.add(k + "=" + h.get(k));
+    public static String[] hashToStringArray(Map<String,?> map) {
+        ArrayList<String> list = new ArrayList<>(map.size());
+        for (String key : map.keySet()) {
+            list.add(key + "=" + map.get(key));
         }
-        String[] strArr = new String[v.size()];
-        v.copyInto(strArr);
-        return strArr;
+        return list.toArray(new String[list.size()]);
     }
 
     /**
@@ -897,7 +805,8 @@ public final class Util {
     }
 
     /**
-     * Checks if the cgi binary buf-&lt;os.arch&gt;-&lt;os.name&gt;.sh or buf-&lt;os.arch&gt;-&lt;os.name&gt;.exe or buf-&lt;os.arch&gt;-&lt;os.name&gt; exists.
+     * Checks if the cgi binary buf-&lt;os.arch&gt;-&lt;os.name&gt;.sh or buf-&lt;os.arch&gt;-&lt;os.name&gt;.exe 
+     * or buf-&lt;os.arch&gt;-&lt;os.name&gt; exists.
      *
      * @param php the php binary or null
      * @return The full name or null.
@@ -946,6 +855,273 @@ public final class Util {
     public static String checkError(String s) {
         // Is there a better way to check for a fatal error?
         return (s.startsWith("PHP") && (s.contains("error:"))) ? s : null;
+    }
+
+    /**
+     * Redirect System.out and System.err to the configured logFile or System.err.
+     * System.out is always redirected, either to the logFile or to System.err.
+     * This is because System.out is reserved to report the status back to the
+     * container (IIS, Apache, ...) running the JavaBridge back-end.
+     *
+     * @param redirectOutput this flag is set, if natcJavaBridge has already redirected stdin, stdout, stderr
+     * @param logFile        the log file
+     */
+    static void redirectOutput(String logFile) {
+        redirectJavaOutput(logFile);
+    }
+
+    static void redirectJavaOutput(String logFile) {
+        Util.logStream = System.err;
+        if (logFile != null && logFile.length() > 0)
+            try {
+                Util.logStream = new java.io.PrintStream(new java.io.FileOutputStream(logFile));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        try {
+            System.setErr(logStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            System.setOut(logStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(9);
+        }
+    }
+
+    private static List getEnvironmentBlacklist(Properties p) {
+        List l = new LinkedList();
+        try {
+            String s = getProperty(p, "PHP_ENV_BLACKLIST", "PHPRC");
+            StringTokenizer t = new StringTokenizer(s, " ");
+            while (t.hasMoreTokens()) l.add(t.nextToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+            l = new LinkedList();
+            l.add("PHPRC");
+        }
+        return l;
+    }
+
+    private static HashMap getCommonEnvironment(List blacklist) {
+        String entries[] = {
+                "PATH", "PATH", "LD_LIBRARY_PATH", "LD_ASSUME_KERNEL", "USER", "TMP", "TEMP", "HOME", "HOMEPATH", "LANG", "TZ", "OS"
+        };
+        HashMap defaultEnv = new HashMap();
+        String key, val;
+        Method m = null;
+        try {
+            m = System.class.getMethod("getenv", new Class[]{String.class});
+        } catch (Exception e) {/*ignore*/}
+        for (String entrie : entries) {
+            val = null;
+            if (m != null) {
+                try {
+                    val = (String) m.invoke(System.class, (Object[]) new String[]{entrie});
+                } catch (Exception e) {
+                    m = null;
+                }
+            }
+            if (val == null) {
+                try {
+                    val = System.getProperty(entrie);
+                } catch (Exception e) {/*ignore*/}
+            }
+            if ((val != null) && (!blacklist.contains(entrie))) {
+                defaultEnv.put(entrie, val);
+            }
+        }
+
+        // check for windows SystemRoot, needed for socket operations
+        key = val = null;
+        if ((new File("c:/winnt")).isDirectory()) val = "c:\\winnt";
+        else if ((new File("c:/windows")).isDirectory()) val = "c:\\windows";
+        try {
+            String s = System.getenv(key = "SystemRoot");
+            if (s != null) val = s;
+        } catch (Throwable t) {/*ignore*/}
+        try {
+            String s = System.getProperty(key = "Windows.SystemRoot");
+            if (s != null) val = s;
+        } catch (Throwable t) {/*ignore*/}
+        if (val != null && (!blacklist.contains(key))) defaultEnv.put("SystemRoot", val);
+
+        // add all non-blacklisted environment entries
+        try {
+            m = System.class.getMethod("getenv", ZERO_PARAM);
+            Map map = (Map) m.invoke(System.class, ZERO_ARG);
+            for (Iterator ii = map.entrySet().iterator(); ii.hasNext(); ) {
+                Entry entry = (Entry) ii.next();
+                key = (String) entry.getKey();
+                val = (String) entry.getValue();
+
+                if (!blacklist.contains(key))
+                    defaultEnv.put(key, val);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return defaultEnv;
+    }
+
+    /**
+     * This procedure should be used whenever <code>object</code> may be a dynamic proxy:
+     * <code>String.valueOf(object) returns null, if object is a proxy and returns null.</code>
+     *
+     * @param object The object or dynamic proxy
+     * @return The string representation of object
+     */
+    public static String stringValueOf(Object object) {
+        String s = String.valueOf(object);
+        if (s == null) s = String.valueOf(s);
+        return s;
+    }
+
+    /**
+     * Create a new AppThreadPool.
+     *
+     * @param name The pool name
+     * @return A new AppThreadPool for up to {@link #THREAD_POOL_MAX_SIZE} runnables
+     */
+    public static AppThreadPool createThreadPool(String name) {
+        AppThreadPool pool = null;
+        int maxSize = 20;
+        try {
+            maxSize = Integer.parseInt(Util.THREAD_POOL_MAX_SIZE);
+        } catch (Throwable t) {
+            Util.printStackTrace(t);
+        }
+        if (maxSize > 0) {
+            pool = new AppThreadPool(name, maxSize);
+        }
+        return pool;
+    }
+
+
+    /**
+     * parse java.log_file=@HOST:PORT
+     *
+     * @param logFile The log file from the PHP .ini file
+     * @return true, if we can use the log4j logger, false otherwise.
+     */
+    static boolean setConfiguredLogger(String logFile) {
+        try {
+            return tryConfiguredChainsawLogger(logFile);
+        } catch (Exception e) {
+            printStackTrace(e);
+            Util.setDefaultLogger(new FileLogger());
+        }
+        return true;
+    }
+
+    /**
+     * parse java.log_file=@HOST:PORT
+     *
+     * @param logFile The log file from the PHP .ini file
+     * @return true, if we can use the log4j logger, false otherwise.
+     * @throws Exception
+     */
+    private static boolean tryConfiguredChainsawLogger(String logFile) throws Exception {
+        if (logFile != null && logFile.length() > 0 && logFile.charAt(0) == '@') {
+            logFile = logFile.substring(1, logFile.length());
+            int idx = logFile.indexOf(':');
+            int port = -1;
+            String host = null;
+            if (idx != -1) {
+                String p = logFile.substring(idx + 1, logFile.length());
+                if (p.length() > 0) port = Integer.parseInt(p);
+                host = logFile.substring(0, idx);
+            } else {
+                if (logFile.length() > 0) host = logFile;
+            }
+            ILogger logger = ConfiguredChainsawLogger.createLogger(host, port);
+            Util.setDefaultLogger(logger);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the time in GMT
+     *
+     * @param ms the time in milliseconds
+     * @return The formatted date string
+     */
+    public static String formatDateTime(long ms) {
+        java.sql.Timestamp t = new java.sql.Timestamp(ms);
+        DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, Locale.ENGLISH);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String str = formatter.format(t);
+        return str;
+    }
+
+    static final boolean checkVM() {
+        try {
+            return "libgcj".equals(System.getProperty("gnu.classpath.vm.shortname"));
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * Return the thread context class loader
+     *
+     * @return The context class loader
+     */
+    public static ClassLoader getContextClassLoader() {
+        ClassLoader loader = null;
+        try {
+            loader = Thread.currentThread().getContextClassLoader();
+        } catch (SecurityException ex) {/*ignore*/}
+        if (loader == null) loader = JavaBridge.class.getClassLoader();
+        return loader;
+    }
+
+    public static Class classForName(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, getContextClassLoader());
+    }
+
+    public static String getSimpleRedirectString(String webPath, String socketName, boolean isSecure) {
+        try {
+            StringBuilder buf = new StringBuilder();
+            buf.append(socketName);
+            buf.append("/");
+            buf.append(webPath);
+            URI uri = new URI(isSecure ? "s:127.0.0.1" : "h:127.0.0.1", buf.toString(), null);
+            return (uri.toASCIIString() + ".phpjavabridge");
+        } catch (URISyntaxException e) {
+            Util.printStackTrace(e);
+        }
+        StringBuilder buf = new StringBuilder(isSecure ? "s:127.0.0.1" : "h:127.0.0.1:");
+        buf.append(socketName);
+        buf.append('/');
+        buf.append(webPath);
+        buf.append(".phpjavabridge");
+        return buf.toString();
+    }
+
+    /**
+     * Destroy the thread associated with util.
+     */
+    public static void destroy() {
+        try {
+            PHP_SCRIPT_ENGINE_THREAD_POOL.destroy();
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+        }
+        try {
+            if (fcgiConnectionPool != null) fcgiConnectionPool.destroy();
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+        }
+        try {
+            JavaBridgeRunner.destroyRunner();
+        } catch (Exception e) {
+            Util.printStackTrace(e);
+        }
     }
 
     /**
@@ -1044,6 +1220,94 @@ public final class Util {
     }
 
     /**
+     * Only for internal use. Use Util.getLogger() instread.
+     * <p>
+     * A bridge which uses log4j or the default logger.
+     */
+    public static class Logger implements ILogger {
+        protected ChainsawLogger clogger = null;
+        protected ILogger logger;
+
+        /**
+         * Use chainsaw, if available or a default logger.
+         */
+        public Logger() {
+            logger = new FileLogger(); // log to logStream        
+        }
+
+        /**
+         * Use chainsaw, if available.
+         *
+         * @param logger The specified logger.
+         */
+        public Logger(ILogger logger) {
+            this(!DEFAULT_LOG_FILE_SET, logger);
+        }
+
+        public Logger(boolean useChainsaw, ILogger logger) {
+            if (useChainsaw)
+                try {
+                    this.clogger = ChainsawLogger.createChainsawLogger();
+                } catch (Exception e) {
+                    if (Util.logLevel > 5) e.printStackTrace();
+                    this.logger = logger;
+                }
+            else {
+                this.logger = logger;
+            }
+        }
+
+        private ILogger getLogger() {
+            if (logger == null) return logger = new FileLogger();
+            return logger;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void printStackTrace(Throwable t) {
+            if (clogger == null) logger.printStackTrace(t);
+            else
+                try {
+                    clogger.printStackTrace(t);
+                } catch (Exception e) {
+                    clogger = null;
+                    getLogger().printStackTrace(t);
+                }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void log(int level, String msg) {
+            if (clogger == null) logger.log(level, msg);
+            else
+                try {
+                    clogger.log(level, msg);
+                } catch (Exception e) {
+                    clogger = null;
+                    getLogger().log(level, msg);
+                }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void warn(String msg) {
+            if (clogger == null) logger.warn(msg);
+            else
+                try {
+                    clogger.warn(msg);
+                } catch (Exception e) {
+                    clogger = null;
+                    getLogger().warn(msg);
+                }
+        }
+    }
+
+    /**
      * Starts a CGI process and returns the process handle.
      */
     public static class Process extends java.lang.Process {
@@ -1051,22 +1315,25 @@ public final class Util {
         protected java.lang.Process proc;
         private String[] args;
         private File homeDir;
-        private Map env;
-        private boolean tryOtherLocations;
-        private boolean preferSystemPhp;
         private boolean isOldPhpVersion = false; // php < 5.3
-        private boolean includeJava;
-        private String cgiDir;
-        private String pearDir;
-        private String webInfDir;
+        private final Map env;
+        private final boolean tryOtherLocations;
+        private final boolean preferSystemPhp;
+        private final boolean includeJava;
+        private final String cgiDir;
+        private final String pearDir;
+        private final String webInfDir;
 
-        private String getQuoted(String key, String val) {
-            if (isOldPhpVersion) return key + val;
-            StringBuffer buf = new StringBuffer(key);
-            buf.append("'");
-            buf.append(val);
-            buf.append("'");
-            return buf.toString();
+        protected Process(String[] args, boolean includeJava, String cgiDir, String pearDir, String webInfDir, File homeDir, Map env, boolean tryOtherLocations, boolean preferSystemPhp) {
+            this.args = args;
+            this.homeDir = homeDir;
+            this.env = env;
+            this.tryOtherLocations = tryOtherLocations;
+            this.preferSystemPhp = preferSystemPhp;
+            this.includeJava = includeJava;
+            this.cgiDir = cgiDir;
+            this.pearDir = pearDir;
+            this.webInfDir = webInfDir;
         }
 
         /**
@@ -1080,7 +1347,12 @@ public final class Util {
          * @return args with PHP_ARGS appended
          */
         private String[] getPhpArgs(String[] args, boolean includeJava, String cgiDir, String pearDir, String webInfDir) {
-            String[] allArgs = new String[args.length + PHP_ARGS.length + ((sessionSavePath != null) ? 2 : 0) + (includeJava ? 1 : 0) + (cgiDir != null ? 2 : 0) + (pearDir != null ? 2 : 0) + (webInfDir != null ? 2 : 0)];
+            String[] allArgs = new String[args.length + PHP_ARGS.length + 
+                    ((sessionSavePath != null) ? 2 : 0) + 
+                    (includeJava ? 1 : 0) + 
+                    (cgiDir != null ? 2 : 0) + 
+                    (pearDir != null ? 2 : 0) + 
+                    (webInfDir != null ? 2 : 0)];
             int i = 0;
             for (i = 0; i < args.length; i++) {
                 allArgs[i] = args[i];
@@ -1109,11 +1381,20 @@ public final class Util {
                 allArgs[i++] = getQuoted("java.web_inf_dir=", webInfDir);
             }
             if (includeJava) allArgs[i++] = "-C"; // don't chdir, we'll do it
-            for (int j = 0; j < PHP_ARGS.length; j++) {
-                allArgs[i++] = PHP_ARGS[j];
+            for (String PHP_ARGS1 : PHP_ARGS) {
+                allArgs[i++] = PHP_ARGS1;
             }
 
             return allArgs;
+        }
+
+        private String getQuoted(String key, String val) {
+            if (isOldPhpVersion) return key + val;
+            StringBuilder buf = new StringBuilder(key);
+            buf.append("'");
+            buf.append(val);
+            buf.append("'");
+            return buf.toString();
         }
 
         protected String[] quoteArgs(String[] s) {
@@ -1305,18 +1586,6 @@ public final class Util {
                 throw new IOException("PHP not found. Please install php-cgi. PHP test command was: " + java.util.Arrays.asList(getTestArgumentArray(php, args)) + " ");
         }
 
-        protected Process(String[] args, boolean includeJava, String cgiDir, String pearDir, String webInfDir, File homeDir, Map env, boolean tryOtherLocations, boolean preferSystemPhp) {
-            this.args = args;
-            this.homeDir = homeDir;
-            this.env = env;
-            this.tryOtherLocations = tryOtherLocations;
-            this.preferSystemPhp = preferSystemPhp;
-            this.includeJava = includeJava;
-            this.cgiDir = cgiDir;
-            this.pearDir = pearDir;
-            this.webInfDir = webInfDir;
-        }
-
         /**
          * Starts a CGI process and returns the process handle.
          *
@@ -1432,9 +1701,11 @@ public final class Util {
             this.err = err;
         }
 
+        @Override
         protected void start() throws IOException {
             super.start();
             (new Util.Thread("CGIErrorReader") {
+                @Override
                 public void run() {
                     readErrorStream();
                 }
@@ -1444,6 +1715,7 @@ public final class Util {
         /**
          * {@inheritDoc}
          */
+        @Override
         public void checkError() throws PhpException {
             String errorString = error == null ? null : Util.checkError(error.toString());
             if (errorString != null) throw new PhpException(errorString);
@@ -1477,6 +1749,7 @@ public final class Util {
         /**
          * {@inheritDoc}
          */
+        @Override
         public synchronized int waitFor() throws InterruptedException {
             if (in == null) wait();
             return super.waitFor();
@@ -1486,6 +1759,10 @@ public final class Util {
          * Starts a CGI process and returns the process handle.
          *
          * @param args              The args array, e.g.: new String[]{null, "-b", ...};. If args is null or if args[0] is null, the function looks for the system property "io.soluble.pjb.bridge.php_exec".
+         * @param includeJava
+         * @param cgiDir
+         * @param pearDir
+         * @param webInfDir
          * @param homeDir           The home directory. If null, the current working directory is used.
          * @param env               The CGI environment. If null, Util.DEFAULT_CGI_ENVIRONMENT is used.
          * @param tryOtherLocations true if the should check DEFAULT_CGI_LOCATIONS
@@ -1502,168 +1779,9 @@ public final class Util {
         }
     }
 
-    /**
-     * Redirect System.out and System.err to the configured logFile or System.err.
-     * System.out is always redirected, either to the logFile or to System.err.
-     * This is because System.out is reserved to report the status back to the
-     * container (IIS, Apache, ...) running the JavaBridge back-end.
-     *
-     * @param redirectOutput this flag is set, if natcJavaBridge has already redirected stdin, stdout, stderr
-     * @param logFile        the log file
-     */
-    static void redirectOutput(String logFile) {
-        redirectJavaOutput(logFile);
-    }
-
-    static void redirectJavaOutput(String logFile) {
-        Util.logStream = System.err;
-        if (logFile != null && logFile.length() > 0)
-            try {
-                Util.logStream = new java.io.PrintStream(new java.io.FileOutputStream(logFile));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        try {
-            System.setErr(logStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            System.setOut(logStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(9);
-        }
-    }
-
-    private static List getEnvironmentBlacklist(Properties p) {
-        List l = new LinkedList();
-        try {
-            String s = getProperty(p, "PHP_ENV_BLACKLIST", "PHPRC");
-            StringTokenizer t = new StringTokenizer(s, " ");
-            while (t.hasMoreTokens()) l.add(t.nextToken());
-        } catch (Exception e) {
-            e.printStackTrace();
-            l = new LinkedList();
-            l.add("PHPRC");
-        }
-        return l;
-    }
-
-    private static HashMap getCommonEnvironment(List blacklist) {
-        String entries[] = {
-                "PATH", "PATH", "LD_LIBRARY_PATH", "LD_ASSUME_KERNEL", "USER", "TMP", "TEMP", "HOME", "HOMEPATH", "LANG", "TZ", "OS"
-        };
-        HashMap defaultEnv = new HashMap();
-        String key, val;
-        Method m = null;
-        try {
-            m = System.class.getMethod("getenv", new Class[]{String.class});
-        } catch (Exception e) {/*ignore*/}
-        for (int i = 0; i < entries.length; i++) {
-            val = null;
-            if (m != null) {
-                try {
-                    val = (String) m.invoke(System.class, (Object[]) new String[]{entries[i]});
-                } catch (Exception e) {
-                    m = null;
-                }
-            }
-            if (val == null) {
-                try {
-                    val = System.getProperty(entries[i]);
-                } catch (Exception e) {/*ignore*/}
-            }
-            if ((val != null) && (!blacklist.contains(entries[i])))
-                defaultEnv.put(entries[i], val);
-        }
-
-        // check for windows SystemRoot, needed for socket operations
-        key = val = null;
-        if ((new File("c:/winnt")).isDirectory()) val = "c:\\winnt";
-        else if ((new File("c:/windows")).isDirectory()) val = "c:\\windows";
-        try {
-            String s = System.getenv(key = "SystemRoot");
-            if (s != null) val = s;
-        } catch (Throwable t) {/*ignore*/}
-        try {
-            String s = System.getProperty(key = "Windows.SystemRoot");
-            if (s != null) val = s;
-        } catch (Throwable t) {/*ignore*/}
-        if (val != null && (!blacklist.contains(key))) defaultEnv.put("SystemRoot", val);
-
-        // add all non-blacklisted environment entries
-        try {
-            m = System.class.getMethod("getenv", ZERO_PARAM);
-            Map map = (Map) m.invoke(System.class, ZERO_ARG);
-            for (Iterator ii = map.entrySet().iterator(); ii.hasNext(); ) {
-                Entry entry = (Entry) ii.next();
-                key = (String) entry.getKey();
-                val = (String) entry.getValue();
-
-                if (!blacklist.contains(key))
-                    defaultEnv.put(key, val);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return defaultEnv;
-    }
-
-    /**
-     * This procedure should be used whenever <code>object</code> may be a dynamic proxy:
-     * <code>String.valueOf(object) returns null, if object is a proxy and returns null.</code>
-     *
-     * @param object The object or dynamic proxy
-     * @return The string representation of object
-     */
-    public static String stringValueOf(Object object) {
-        String s = String.valueOf(object);
-        if (s == null) s = String.valueOf(s);
-        return s;
-    }
-
-    /**
-     * Create a new AppThreadPool.
-     *
-     * @param name The pool name
-     * @return A new AppThreadPool for up to {@link #THREAD_POOL_MAX_SIZE} runnables
-     */
-    public static AppThreadPool createThreadPool(String name) {
-        AppThreadPool pool = null;
-        int maxSize = 20;
-        try {
-            maxSize = Integer.parseInt(Util.THREAD_POOL_MAX_SIZE);
-        } catch (Throwable t) {
-            Util.printStackTrace(t);
-        }
-        if (maxSize > 0) {
-            pool = new AppThreadPool(name, maxSize);
-        }
-        return pool;
-    }
-
-
-    /**
-     * parse java.log_file=@HOST:PORT
-     *
-     * @param logFile The log file from the PHP .ini file
-     * @return true, if we can use the log4j logger, false otherwise.
-     */
-    static boolean setConfiguredLogger(String logFile) {
-        try {
-            return tryConfiguredChainsawLogger(logFile);
-        } catch (Exception e) {
-            printStackTrace(e);
-            Util.setDefaultLogger(new FileLogger());
-        }
-        return true;
-    }
-
     private static final class ConfiguredChainsawLogger extends ChainsawLogger {
-        private String host;
-        private int port;
+        private final String host;
+        private final int port;
 
         private ConfiguredChainsawLogger(String host, int port) {
             super();
@@ -1677,6 +1795,7 @@ public final class Util {
             return logger;
         }
 
+        @Override
         public void configure(String host, int port) throws Exception {
             host = this.host != null ? this.host : host;
             port = this.port > 0 ? this.port : port;
@@ -1684,110 +1803,4 @@ public final class Util {
         }
     }
 
-    /**
-     * parse java.log_file=@HOST:PORT
-     *
-     * @param logFile The log file from the PHP .ini file
-     * @return true, if we can use the log4j logger, false otherwise.
-     * @throws Exception
-     */
-    private static boolean tryConfiguredChainsawLogger(String logFile) throws Exception {
-        if (logFile != null && logFile.length() > 0 && logFile.charAt(0) == '@') {
-            logFile = logFile.substring(1, logFile.length());
-            int idx = logFile.indexOf(':');
-            int port = -1;
-            String host = null;
-            if (idx != -1) {
-                String p = logFile.substring(idx + 1, logFile.length());
-                if (p.length() > 0) port = Integer.parseInt(p);
-                host = logFile.substring(0, idx);
-            } else {
-                if (logFile.length() > 0) host = logFile;
-            }
-            ILogger logger = ConfiguredChainsawLogger.createLogger(host, port);
-            Util.setDefaultLogger(logger);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Return the time in GMT
-     *
-     * @param ms the time in milliseconds
-     * @return The formatted date string
-     */
-    public static String formatDateTime(long ms) {
-        java.sql.Timestamp t = new java.sql.Timestamp(ms);
-        DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.LONG, Locale.ENGLISH);
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String str = formatter.format(t);
-        return str;
-    }
-
-    static final boolean checkVM() {
-        try {
-            return "libgcj".equals(System.getProperty("gnu.classpath.vm.shortname"));
-        } catch (Throwable t) {
-            return false;
-        }
-    }
-
-    /**
-     * Return the thread context class loader
-     *
-     * @return The context class loader
-     */
-    public static final ClassLoader getContextClassLoader() {
-        ClassLoader loader = null;
-        try {
-            loader = Thread.currentThread().getContextClassLoader();
-        } catch (SecurityException ex) {/*ignore*/}
-        if (loader == null) loader = JavaBridge.class.getClassLoader();
-        return loader;
-    }
-
-    public static final Class classForName(String name) throws ClassNotFoundException {
-        return Class.forName(name, true, getContextClassLoader());
-    }
-
-    public static String getSimpleRedirectString(String webPath, String socketName, boolean isSecure) {
-        try {
-            StringBuffer buf = new StringBuffer();
-            buf.append(socketName);
-            buf.append("/");
-            buf.append(webPath);
-            URI uri = new URI(isSecure ? "s:127.0.0.1" : "h:127.0.0.1", buf.toString(), null);
-            return (uri.toASCIIString() + ".phpjavabridge");
-        } catch (URISyntaxException e) {
-            Util.printStackTrace(e);
-        }
-        StringBuffer buf = new StringBuffer(isSecure ? "s:127.0.0.1" : "h:127.0.0.1:");
-        buf.append(socketName);
-        buf.append('/');
-        buf.append(webPath);
-        buf.append(".phpjavabridge");
-        return buf.toString();
-    }
-
-    /**
-     * Destroy the thread associated with util.
-     */
-    public static void destroy() {
-        try {
-            PHP_SCRIPT_ENGINE_THREAD_POOL.destroy();
-        } catch (Exception e) {
-            Util.printStackTrace(e);
-        }
-        try {
-            if (fcgiConnectionPool != null) fcgiConnectionPool.destroy();
-        } catch (Exception e) {
-            Util.printStackTrace(e);
-        }
-        try {
-            JavaBridgeRunner.destroyRunner();
-        } catch (Exception e) {
-            Util.printStackTrace(e);
-        }
-    }
 }
