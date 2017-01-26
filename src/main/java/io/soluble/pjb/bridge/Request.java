@@ -567,8 +567,7 @@ public final class Request implements IDocHandler {
     public void handleRequests() throws IOException {
         if (response == null) response = bridge.createResponse();
         this.arg = new SimpleArg();
-        while (Parser.OK == handleRequest())
-            ;
+        while (Parser.OK == handleRequest()) {}
     }
 
     /**

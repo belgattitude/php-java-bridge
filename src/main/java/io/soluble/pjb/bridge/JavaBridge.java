@@ -883,6 +883,8 @@ public final class JavaBridge implements Runnable {
                         //logError("Could not create Collection from Map: " +objectDebugDescription(arg) + ". Cause: " + ex);
                         throw new JavaBridgeIllegalArgumentException("Could not create Collection from Map: " + firstChars(arg), ex);
                     }
+                } else if ((java.util.Map.class).isAssignableFrom(parms[i])) {
+                    result[i] = arg;
                 } else if ((java.util.Hashtable.class).isAssignableFrom(parms[i])) {
                     try {
                         Map ht = (Map) arg;
@@ -895,8 +897,6 @@ public final class JavaBridge implements Runnable {
                         logError("Could not create Hashtable from Map: " + objectDebugDescription(arg) + ". Cause: " + ex);
                         throw new JavaBridgeIllegalArgumentException("Could not create Hashtable from Map: " + firstChars(arg), ex);
                     }
-                } else if ((java.util.Map.class).isAssignableFrom(parms[i])) {
-                    result[i] = arg;
                 } else if (arg instanceof PhpString) {
                     result[i] = ((PhpString) arg).getString(); // always prefer strings over byte[]
                 }
