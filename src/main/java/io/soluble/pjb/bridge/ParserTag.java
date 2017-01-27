@@ -27,7 +27,7 @@ package io.soluble.pjb.bridge;
  *
  * @author jostb
  */
-class ParserTag {
+public class ParserTag {
     /**
      * The number of strings.
      */

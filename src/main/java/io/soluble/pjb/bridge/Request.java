@@ -34,136 +34,16 @@ import java.util.LinkedList;
  */
 public final class Request implements IDocHandler {
 
-    private Parser parser;
-    private JavaBridge defaultBridge, bridge;
     protected static final IntegerComparator PHP_ARRAY_KEY_COMPARATOR = new IntegerComparator();
-
-    // Only used when the async. protocol is enabled.
-    protected static final class PhpNull {
-        public String toString() {
-            return ""; //evaluates to false
-        }
-    }
-
     protected static final PhpNull PHPNULL = new PhpNull();
+    protected static final Object[] ZERO_ARGS = new Object[0];
+    protected static final byte[] ZERO = {0};
+    protected static final Object ZERO_OBJECT = new Object();
 
-    protected Object getGlobalRef(int i) {
-        Object ref = bridge.globalRef.get(i);
-        if (ref == PHPNULL) return null;
-        return ref;
-    }
 
-    static final Object[] ZERO_ARGS = new Object[0];
-
-    private class SimpleContext {
-        public void parseID(ParserString string) {
-        }
-
-        public void setID(Response response) {
-        }
-    }
-
-    private class Context extends SimpleContext {
-        protected long id;
-
-        public void parseID(ParserString string) {
-            this.id = string.getLongValue();
-        }
-
-        public void setID(Response response) {
-            response.setID(id);
-        }
-    }
-
+    private final Parser parser;
+    private JavaBridge defaultBridge, bridge;
     private SimpleContext contextCache;
-
-    SimpleContext getContext() {
-        if (contextCache != null) return contextCache;
-        if (bridge.options.passContext()) {
-            return contextCache = new Context();
-        }
-        return contextCache = new SimpleContext();
-    }
-
-    private abstract class Arg {
-        protected byte type;
-        protected Object callObject;
-        protected String method;
-        protected SimpleContext id = getContext();
-        protected byte predicate;
-        protected Object key;
-        protected byte composite;
-
-        public abstract void add(Object val);
-
-        public abstract Object[] getArgs();
-
-        public abstract void reset();
-    }
-
-    private final class SimpleArg extends Arg {
-        private LinkedList list;
-
-        public void add(Object val) {
-            if (list == null) list = new LinkedList();
-            list.add(val);
-        }
-
-        public Object[] getArgs() {
-            return (list == null) ? Request.ZERO_ARGS : list.toArray();
-        }
-
-        public void reset() {
-            list = null;
-            composite = 0;
-            type = 0;
-            callObject = null;
-            method = null;
-            key = null;
-        }
-    }
-
-    private final class CompositeArg extends Arg {
-        private PhpArray ht = null;
-        private int count = 0;
-        private Arg parent;
-
-        public CompositeArg(Arg parent) {
-            this.parent = parent;
-        }
-
-        public void add(Object val) {
-            if (ht == null) ht = new PhpArray();
-            if (key != null) {
-                ht.put(key, val);
-            } else {
-                ht.put(new Integer(count++), val);
-            }
-
-        }
-
-        protected Arg pop() {
-            if (ht == null) ht = new PhpArray();
-            parent.add(ht);
-            return parent;
-        }
-
-        /* (non-Javadoc)
-         * @see php.java.bridge.Request.Arg#getArgs()
-         */
-        public Object[] getArgs() {
-            bridge.logError("Protocol error: getArgs");
-            return ZERO_ARGS;
-        }
-
-        /* (non-Javadoc)
-         * @see php.java.bridge.Request.Arg#reset()
-         */
-        public void reset() {
-            bridge.logError("Protocol error: reset");
-        }
-    }
-
     private Arg arg;
 
     /**
@@ -172,6 +52,21 @@ public final class Request implements IDocHandler {
      * <code>response.reset()</code> or <code>response.flush()</code> must be called at the end of each packet.
      */
     Response response = null;
+
+
+    protected Object getGlobalRef(int i) {
+        Object ref = bridge.globalRef.get(i);
+        if (ref == PHPNULL) return null;
+        return ref;
+    }
+
+    SimpleContext getContext() {
+        if (contextCache != null) return contextCache;
+        if (bridge.options.passContext()) {
+            return contextCache = new Context();
+        }
+        return contextCache = new SimpleContext();
+    }
 
     /**
      * Creates an empty request object.
@@ -183,9 +78,6 @@ public final class Request implements IDocHandler {
         this.bridge = bridge;
         this.parser = new Parser(bridge, this);
     }
-
-    static final byte[] ZERO = {0};
-    static final Object ZERO_OBJECT = new Object();
 
     /**
      * This method must be called with the current header option byte.
@@ -208,7 +100,6 @@ public final class Request implements IDocHandler {
      */
     public boolean init(InputStream in, OutputStream out) throws IOException {
         switch (parser.initOptions(in, out)) {
-
             case Parser.PING:
                 bridge.logDebug("PING - PONG - Closing Request");
                 out.write(ZERO, 0, 1);
@@ -228,7 +119,7 @@ public final class Request implements IDocHandler {
     }
 
     private Object createClassicExact(ParserString st[]) {
-        return new Integer(st[0].getClassicIntValue());
+        return st[0].getClassicIntValue();
     }
 
     private long getPhpLong(ParserString st[]) {
@@ -243,13 +134,14 @@ public final class Request implements IDocHandler {
             int val = st[0].getIntValue();
             if (st[1].string[st[1].off] != 'O')
                 val *= -1;
-            return (new Integer(val));
+            return (val);
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean begin(ParserTag[] tag) {
         boolean reply = true;
         ParserString[] st = tag[2].strings;
@@ -393,6 +285,7 @@ public final class Request implements IDocHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void end(ParserString[] string) {
         switch (string[0].string[0]) {
             case 'X': {
@@ -799,4 +692,112 @@ public final class Request implements IDocHandler {
     public void parseHeader(InputStream in) throws IOException {
         bridge.getFactory().parseHeader(this, in);
     }
+    
+    // Only used when the async. protocol is enabled.
+    protected static final class PhpNull {
+        @Override
+        public String toString() {
+            return ""; //evaluates to false
+        }
+    }
+
+    private class SimpleContext {
+        public void parseID(ParserString string) {
+        }
+
+        public void setID(Response response) {
+        }
+    }
+
+    private class Context extends SimpleContext {
+        protected long id;
+
+        @Override
+        public void parseID(ParserString string) {
+            this.id = string.getLongValue();
+        }
+
+        @Override
+        public void setID(Response response) {
+            response.setID(id);
+        }
+    }
+
+    private abstract class Arg {
+        protected byte type;
+        protected Object callObject;
+        protected String method;
+        protected SimpleContext id = getContext();
+        protected byte predicate;
+        protected Object key;
+        protected byte composite;
+
+        public abstract void add(Object val);
+        public abstract Object[] getArgs();
+        public abstract void reset();
+    }
+
+    private final class SimpleArg extends Arg {
+        private LinkedList list;
+
+        public void add(Object val) {
+            if (list == null) list = new LinkedList();
+            list.add(val);
+        }
+
+        public Object[] getArgs() {
+            return (list == null) ? Request.ZERO_ARGS : list.toArray();
+        }
+
+        public void reset() {
+            list = null;
+            composite = 0;
+            type = 0;
+            callObject = null;
+            method = null;
+            key = null;
+        }
+    }
+
+    private final class CompositeArg extends Arg {
+        private PhpArray ht = null;
+        private int count = 0;
+        private Arg parent;
+
+        public CompositeArg(Arg parent) {
+            this.parent = parent;
+        }
+
+        public void add(Object val) {
+            if (ht == null) ht = new PhpArray();
+            if (key != null) {
+                ht.put(key, val);
+            } else {
+                ht.put(new Integer(count++), val);
+            }
+
+        }
+
+        protected Arg pop() {
+            if (ht == null) ht = new PhpArray();
+            parent.add(ht);
+            return parent;
+        }
+
+        /* (non-Javadoc)
+         * @see php.java.bridge.Request.Arg#getArgs()
+         */
+        public Object[] getArgs() {
+            bridge.logError("Protocol error: getArgs");
+            return ZERO_ARGS;
+        }
+
+        /* (non-Javadoc)
+         * @see php.java.bridge.Request.Arg#reset()
+         */
+        public void reset() {
+            bridge.logError("Protocol error: reset");
+        }
+    }
+
 }

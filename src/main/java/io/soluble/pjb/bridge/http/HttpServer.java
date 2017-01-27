@@ -314,20 +314,34 @@ public abstract class HttpServer implements Runnable {
 
     /**
      * Sets the content length but leaves the rest of the body untouched.
+     * @param req
+     * @param res
+     * @throws java.io.IOException
      */
     protected void service(HttpRequest req, HttpResponse res) throws IOException {
         String contentLength = req.getHeader("Content-Length");
         if (contentLength == null) req.setContentLength(-1);
         else req.setContentLength(Integer.parseInt(contentLength));
         String method = req.getMethod();
-        if (method == PUT) doPut(req, res);
-        else if (method == GET) doGet(req, res);
-        else if (method == POST) doPost(req, res);
+        if (null != method) switch (method) {
+            case PUT:
+                doPut(req, res);
+                break;
+            case GET:
+                doGet(req, res);
+                break;
+            case POST:
+                doPost(req, res);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run() {
         try {
             doRun();
