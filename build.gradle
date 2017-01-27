@@ -1,6 +1,16 @@
 group 'io.soluble.pjb'
 version '6.2.11'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'war'
@@ -19,7 +29,7 @@ repositories {
 
 dependencies {
     providedCompile('javax.servlet:servlet-api:2.5')
-    runtime('log4j:log4j:1:2:17')
+    runtime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
     
     def tomcatVersion = '7.0.59'
@@ -36,27 +46,28 @@ if (System.getProperty('php_exec') == null) {
 
 ant.importBuild 'build.xml'
 
-jar {
-    baseName "JavaBridge"
-    manifest {
-        attributes("Main-Class": "io.soluble.pjb.Standalone",
-                "Implementation-Title": "php-java-bridge.jar",
-                "Implementation-Version": version)
-    }
-}
-
-war {
-  dependsOn jar
-  baseName "JavaBridge"
-  //from 'src/rootContent' // adds a file-set to the root of the archive
-}
-
 clean {
     dependsOn genClean
 }
 
-compileJava {
-    dependsOn genAll
+jar {
+    baseName "JavaBridge"
+    manifest {
+        attributes("Main-Class": "io.soluble.pjb.Standalone")
+    }
+}
+
+war {
+  baseName "JavaBridge"
+  //from 'src/rootContent' // could add a file-set to the root of the archive
+}
+
+tomcatRun {
+    contextPath = '/'
+    httpPort = 8090
+//    httpsPort = 8091
+//    enableSSL = true
+    daemon = true
 }
 
 jacocoTestReport {
@@ -67,16 +78,3 @@ jacocoTestReport {
         html.destination "${buildDir}/reports/coverage"
     }
 }
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
-    }
-}
-
-tomcatRun.contextPath = '/JavaBridge'
-tomcatRun.daemon = true
