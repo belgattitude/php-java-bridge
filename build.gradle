@@ -1,6 +1,7 @@
 group 'io.soluble.pjb'
 version '6.2.11'
-def artifactName = 'JavaBridge'
+def artifactId = 'JavaBridge'
+description 'A PHP/Java bridge'
 
 buildscript {
     repositories {
@@ -16,6 +17,9 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing purposes
+// required for publishing to MavenCentral
+apply plugin: 'signing'
+apply plugin: 'maven'
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -48,14 +52,14 @@ if (System.getProperty('php_exec') == null) {
 ant.importBuild 'build.xml'
 
 jar {
-    baseName artifactName
+    baseName artifactId
     manifest {
     attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
     }
 }
 
 war {
-  baseName artifactName
+  baseName artifactId
   //from 'src/rootContent' // could add a file-set to the root of the archive
 }
 
@@ -77,20 +81,45 @@ jacocoTestReport {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    baseName = artifactName
+    baseName = artifactId
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    baseName = artifactName
+    baseName = artifactId
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
+    archives jar, sourcesJar, javadocJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                name = project.name
+                artifactId = artifactId
+                packaging 'jar'
+                url 'https://github.com/belgattitude/php-java-bridge'
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'youraccount'
+                        name = 'Your Name'
+                        email = 'your.account@mail.com'
+                    }
+                }
+            }
+        }
+    }
 }
 
