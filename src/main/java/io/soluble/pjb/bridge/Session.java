@@ -95,7 +95,7 @@ class Session implements ISession {
     }
 
     /* (non-Javadoc)
-     * @see php.java.bridge.ISession#getAll()
+     * @see io.soluble.pjb.ISession#getAll()
      */
     public Map getAll() {
         this.lastAccessedTime = System.currentTimeMillis();
