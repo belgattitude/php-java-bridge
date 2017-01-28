@@ -1,5 +1,16 @@
 group 'io.soluble.pjb'
 version '6.2.11'
+def artifactName = 'JavaBridge'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+    }
+}
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
@@ -19,12 +30,13 @@ repositories {
 
 dependencies {
     providedCompile('javax.servlet:servlet-api:2.5')
+    runtime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
     
     def tomcatVersion = '7.0.59'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+    tomcat 'org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}',
+            'org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}'
+    tomcat('org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}') {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
 }
@@ -36,46 +48,48 @@ if (System.getProperty('php_exec') == null) {
 ant.importBuild 'build.xml'
 
 jar {
-    baseName "JavaBridge"
+    baseName artifactName
     manifest {
-        attributes("Main-Class": "io.soluble.pjb.Standalone",
-                "Implementation-Title": "php-java-bridge.jar",
-                "Implementation-Version": version)
+        attributes('Main-Class': 'io.soluble.pjb.Standalone')
     }
 }
 
 war {
-  dependsOn jar
-  baseName "JavaBridge"
-  //from 'src/rootContent' // adds a file-set to the root of the archive
+  baseName artifactName
+  //from 'src/rootContent' // could add a file-set to the root of the archive
 }
 
-clean {
-    dependsOn genClean
-}
-
-compileJava {
-    dependsOn genAll
+tomcatRun {
+    contextPath = '/'
+    httpPort = 8090
+//    httpsPort = 8091
+//    enableSSL = true
+    daemon = true
 }
 
 jacocoTestReport {
-    group = "Reporting"
+    group = 'Reporting'
     reports {
         xml.enabled true
         csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
+        html.destination '${buildDir}/reports/coverage'
     }
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
-    }
+task sourcesJar(type: Jar, dependsOn: classes) {
+    baseName = artifactName
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
-tomcatRun.contextPath = '/JavaBridge'
-tomcatRun.daemon = true
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    baseName = artifactName
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
