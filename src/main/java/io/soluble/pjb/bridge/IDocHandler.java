@@ -1,5 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -41,7 +39,7 @@ public interface IDocHandler {
      * @return true, if the parser should stop after reading the top-level end tag, false otherwise.
      * Implements a short path: Set this to true, if you already know that the current top-level request doesn't need a reply.
      */
-    public boolean begin(ParserTag[] tag);
+    boolean begin(ParserTag[] tag);
 
     /**
      * Called for each &lt;/tag&gt;
@@ -49,7 +47,7 @@ public interface IDocHandler {
      * @param strings The tag and the args.
      * @see IDocHandler#begin(ParserTag[])
      */
-    public void end(ParserString[] strings);
+    void end(ParserString[] strings);
 
     /**
      * Called for the header
@@ -57,7 +55,7 @@ public interface IDocHandler {
      * @param in the input stream
      * @throws IOException
      */
-    public void parseHeader(InputStream in) throws IOException;
+    void parseHeader(InputStream in) throws IOException;
 
 }
  

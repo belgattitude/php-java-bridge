@@ -1,9 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
-import io.soluble.pjb.bridge.*;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -26,6 +20,8 @@ import io.soluble.pjb.bridge.*;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package io.soluble.pjb.bridge;
+
 final class SimplePhpString extends PhpString {
     String s;
     JavaBridge bridge;
@@ -35,10 +31,12 @@ final class SimplePhpString extends PhpString {
         this.s = s;
     }
 
+    @Override
     public String getString() {
         return s;
     }
 
+    @Override
     public byte[] getBytes() {
         return bridge.options.getBytes(s);
     }

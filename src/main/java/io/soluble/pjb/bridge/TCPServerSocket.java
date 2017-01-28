@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -24,7 +20,8 @@ package io.soluble.pjb.bridge;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import io.soluble.pjb.bridge.*;
+package io.soluble.pjb.bridge;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -70,7 +67,6 @@ class TCPServerSocket implements ISocketFactory {
                 this.port = port;
                 return;
             } catch (IOException e) {
-                continue;
             }
 
         }
@@ -86,20 +82,24 @@ class TCPServerSocket implements ISocketFactory {
         }
     }
 
+    @Override
     public void close() throws IOException {
         sock.close();
     }
 
+    @Override
     public Socket accept() throws IOException {
         Socket s = sock.accept();
         s.setTcpNoDelay(true);
         return s;
     }
 
+    @Override
     public String getSocketName() {
         return String.valueOf(port);
     }
 
+    @Override
     public String toString() {
         return (local ? "INET_LOCAL:" : "INET:") + getSocketName();
     }

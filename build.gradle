@@ -12,6 +12,16 @@ buildscript {
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'war'
@@ -47,10 +57,14 @@ if (System.getProperty('php_exec') == null) {
 
 ant.importBuild 'build.xml'
 
+clean {
+    dependsOn genClean
+}
+
 jar {
     baseName artifactName
     manifest {
-        attributes('Main-Class': 'io.soluble.pjb.Standalone')
+    attributes('Main-Class': 'io.soluble.pjb.Standalone')
     }
 }
 
@@ -93,3 +107,4 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+

@@ -28,7 +28,7 @@ package io.soluble.pjb.bridge;
  *
  * @author jostb
  */
-class Options {
+public class Options {
 
     protected byte options = 0;
 
@@ -37,14 +37,20 @@ class Options {
      */
     private String encoding = null;
 
+    private boolean valuesCache, valuesCacheSet = false;
+    private boolean base64Cache, base64CacheSet = false;
+
+
     /**
      * Returns the file encoding, see java_set_file_encoding(). This option may change for each packet.
      *
      * @return The file encoding
      */
     public String getEncoding() {
-        if (encoding != null) return encoding;
-        return encoding = Util.DEFAULT_ENCODING;
+        if (encoding != null) {
+            encoding = Util.DEFAULT_ENCODING;
+        }
+        return encoding;
     }
 
     /**
@@ -62,8 +68,6 @@ class Options {
         }
     }
 
-    private boolean valuesCache, valuesCacheSet = false;
-
     /**
      * Returns true when the bridge must destroy object identity (see PROTOCOL.TXT) due
      * to limitations in the client (for PHP4 for example).
@@ -73,9 +77,9 @@ class Options {
      */
     public boolean preferValues() {
         if (!valuesCacheSet) {
-            int options = 3 & this.options;
+            int opts = 3 & this.options;
             valuesCacheSet = true;
-            return valuesCache = options == 2 || options == 1;
+            return valuesCache = opts == 2 || opts == 1;
         }
         return valuesCache;
     }
@@ -106,8 +110,6 @@ class Options {
         this.options = b;
     }
 
-    private boolean base64Cache, base64CacheSet = false;
-
     /**
      * Return true if we must return a base 64 encoded string
      * due to limitations in the client's XML parser.
@@ -117,9 +119,9 @@ class Options {
      */
     public boolean base64Data() {
         if (!base64CacheSet) {
-            int options = 2 & this.options;
+            int opts = 2 & this.options;
             base64CacheSet = true;
-            return base64Cache = options == 2;
+            return base64Cache = opts == 2;
         }
         return base64Cache;
     }

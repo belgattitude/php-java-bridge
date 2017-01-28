@@ -31,14 +31,17 @@ package io.soluble.pjb.bridge;
 
 final class DefaultOptions extends Options {
 
+    @Override
     public boolean base64Data() {
         return true;
     }
 
+    @Override
     public boolean preferValues() {
         return true;
     }
 
+    @Override
     public boolean passContext() {
         return false;
     }

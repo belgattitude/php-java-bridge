@@ -2,8 +2,6 @@
 
 package io.soluble.pjb.bridge;
 
-import io.soluble.pjb.bridge.*;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *

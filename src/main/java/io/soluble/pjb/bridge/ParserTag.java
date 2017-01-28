@@ -1,9 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
-import io.soluble.pjb.bridge.*;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -26,12 +20,14 @@ import io.soluble.pjb.bridge.*;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package io.soluble.pjb.bridge;
+
 /**
  * This structure carries the parsed tag and the arguments.
  *
  * @author jostb
  */
-class ParserTag {
+public class ParserTag {
     /**
      * The number of strings.
      */

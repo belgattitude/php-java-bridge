@@ -35,26 +35,26 @@ public interface ILogger {
     /**
      * fatal log level
      */
-    public static final int FATAL = 1;
+    static final int FATAL = 1;
     /**
      * error log level
      */
-    public static final int ERROR = 2;
+    static final int ERROR = 2;
     /**
      * info log level
      */
-    public static final int INFO = 3;
+    static final int INFO = 3;
     /**
      * debug log level
      */
-    public static final int DEBUG = 4;
+    static final int DEBUG = 4;
 
     /**
      * Log a stack trace
      *
      * @param t The Throwable
      */
-    public void printStackTrace(Throwable t);
+    void printStackTrace(Throwable t);
 
     /**
      * Log a message.
@@ -62,12 +62,12 @@ public interface ILogger {
      * @param level The log level 0: FATAL, 1:ERROR, 2: INFO, 3: DEBUG
      * @param msg   The message
      */
-    public void log(int level, String msg);
+    void log(int level, String msg);
 
     /**
      * Display a warning if logLevel >= 1
      *
      * @param msg The warn message
      */
-    public void warn(String msg);
+    void warn(String msg);
 }

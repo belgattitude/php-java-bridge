@@ -1,10 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
-import io.soluble.pjb.bridge.*;
-
-
 /*
  * Copyright (C) 2003-2009 Jost Boekemeier
  *
@@ -26,6 +19,8 @@ import io.soluble.pjb.bridge.*;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.bridge;
 
 /**
  * Classes which implement this interface receive a notification before their container terminates.

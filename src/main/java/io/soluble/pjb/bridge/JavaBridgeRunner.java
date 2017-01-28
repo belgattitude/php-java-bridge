@@ -1,7 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -23,6 +19,8 @@ package io.soluble.pjb.bridge;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.bridge;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -175,6 +173,7 @@ public class JavaBridgeRunner extends HttpServer {
      * @return The server socket.
      * @throws IOException
      */
+    @Override
     public ISocketFactory bind(String addr) throws IOException {
         socket = JavaBridge.bind(addr);
         return socket;
@@ -187,6 +186,7 @@ public class JavaBridgeRunner extends HttpServer {
      * @return The server socket.
      * @throws IOException
      */
+    @Override
     public ISocketFactory bindSecure(String addr) throws IOException {
         boolean isLocal = true;
         if (addr.startsWith("INET_LOCAL:")) {
@@ -209,10 +209,14 @@ public class JavaBridgeRunner extends HttpServer {
      * Handles both, override-redirect and redirect, see
      * see php.java.servlet.PhpJavaServlet#handleSocketConnection(HttpServletRequest, HttpServletResponse, String, boolean)
      * see php.java.servlet.PhpJavaServlet#handleRedirectConnection(HttpServletRequest, HttpServletResponse)
+     * @param req
+     * @param res
+     * @throws java.io.IOException
      */
+    @Override
     protected void doPut(HttpRequest req, HttpResponse res) throws IOException {
-        ChunkedInputStream sin = null;
-        ChunkedOutputStream sout = null;
+        ChunkedInputStream sin;
+        ChunkedOutputStream sout;
         String transferEncoding = getHeader("Transfer-Encoding", req);
         boolean isChunked = "chunked".equals(transferEncoding);
         if (!isChunked) throw new IllegalStateException("Please use a JEE server or servlet engine.");
@@ -246,102 +250,101 @@ public class JavaBridgeRunner extends HttpServer {
     protected boolean showDirectory(String fullName, File f, int length, HttpRequest req, HttpResponse res) throws IOException {
         if (!f.isDirectory()) return false;
         ByteArrayOutputStream xout = new ByteArrayOutputStream();
-        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(xout, Util.UTF8)));
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>Directory Listing for " + fullName + "/</title>");
-        out.println("<STYLE><!--H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} B{color : white;background-color : #0086b2;} A{color : black;} HR{color : #0086b2;} --></STYLE> </head>");
-        File parentFile = f.getParentFile();
-        String parentName = parentFile == null ? "/" : parentFile.getName();
-        out.println("<body><h1>Directory Listing for " + fullName + " - <a href=\"../\"><b>Up To " + parentName + "</b></a></h1><HR size=\"1\" noshade><table width=\"100%\" cellspacing=\"0\" cellpadding=\"5\" align=\"center\">");
-        out.println("<tr>");
-        out.println("<td align=\"left\"><font size=\"+1\"><strong>Filename</strong></font></td>");
-        out.println("<td align=\"left\"><font size=\"+1\"><strong>Type</strong></font></td>");
-        out.println("<td align=\"center\"><font size=\"+1\"><strong>Size</strong></font></td>");
-        out.println("<td align=\"right\"><font size=\"+1\"><strong>Last Modified</strong></font></td>");
-        out.println("");
-        out.println("</tr>");
-        File[] dir = f.listFiles();
-        int count = 0;
-        StringBuffer b = new StringBuffer();
-        for (int i = 0; i < dir.length; i++) {
-            File file = dir[i];
-            if (file.isHidden()) continue;
-            boolean even = count++ % 2 == 0;
-            if (even)
-                out.println("<tr>");
-            else
-                out.println("<tr bgcolor=\"eeeeee\">");
-
-            // mozilla replaces everything after the last slash:
-            // foo/bar baz becomes foo/baz and foo/bar/ baz becomes foo/bar/baz
-            if (fullName.length() != 0 && !fullName.endsWith("/")) {
-                b.append(f.getName());
-                b.append("/");
-            }
-            b.append(file.getName());
-            if (file.isDirectory()) b.append("/");
-
-            out.println("<td align=\"left\">&nbsp;&nbsp;");
-
-            if (file.isDirectory()) {
-                out.println("<a href=\"" + b.toString() + "\"><tt>" + file.getName() + "/</tt></a></td>");
-                out.println("<td align=\"left\">&nbsp;&nbsp;");
-                out.println("<a href=\"" + b.toString() + "?edit\"><tt>directory</tt></a></td>");
-            } else {
-                out.println("<a href=\"" + b.toString() + "\"><tt>" + file.getName() + "</tt></a></td>");
-                out.println("<td align=\"left\">&nbsp;&nbsp;");
-                out.println("<a href=\"" + b.toString() + "?show\"><tt>file</tt></a></td>");
-            }
-            out.println("<td align=\"right\"><tt>" + file.length() + "</tt></td>");
-            out.println("<td align=\"right\"><tt>" + Util.formatDateTime(file.lastModified()) + "</tt></td>");
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(xout, Util.UTF8)))) {
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Directory Listing for " + fullName + "/</title>");
+            out.println("<STYLE><!--H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} B{color : white;background-color : #0086b2;} A{color : black;} HR{color : #0086b2;} --></STYLE> </head>");
+            File parentFile = f.getParentFile();
+            String parentName = parentFile == null ? "/" : parentFile.getName();
+            out.println("<body><h1>Directory Listing for " + fullName + " - <a href=\"../\"><b>Up To " + parentName + "</b></a></h1><HR size=\"1\" noshade><table width=\"100%\" cellspacing=\"0\" cellpadding=\"5\" align=\"center\">");
+            out.println("<tr>");
+            out.println("<td align=\"left\"><font size=\"+1\"><strong>Filename</strong></font></td>");
+            out.println("<td align=\"left\"><font size=\"+1\"><strong>Type</strong></font></td>");
+            out.println("<td align=\"center\"><font size=\"+1\"><strong>Size</strong></font></td>");
+            out.println("<td align=\"right\"><font size=\"+1\"><strong>Last Modified</strong></font></td>");
+            out.println("");
             out.println("</tr>");
-            b.setLength(0);
-        }
-        out.println("</table>");
-        out.println("<HR size=\"1\" noshade><h3>Simple JSR 223 enabled web server version 0.0.1</h3>");
-        out.println("<h4>Available script engines</h4><ul>");
-        try {
-            Class c = Class.forName("javax.script.ScriptEngineManager");
-            Object o = c.newInstance();
-            Method ex = c.getMethod("getEngineByExtension", new Class[]{String.class});
-            if (ex.invoke(o, (Object[]) new String[]{"php"}) == null) {
-                out.println("Warning: php-script.jar not found. Please copy it to the directory containing JavaBridge.jar before starting JavaBridge.<br><br>");
+            File[] dir = f.listFiles();
+            int count = 0;
+            StringBuilder b = new StringBuilder();
+            for (File file : dir) {
+                if (file.isHidden()) continue;
+                boolean even = count++ % 2 == 0;
+                if (even)
+                    out.println("<tr>");
+                else
+                    out.println("<tr bgcolor=\"eeeeee\">");
+                
+                // mozilla replaces everything after the last slash:
+                // foo/bar baz becomes foo/baz and foo/bar/ baz becomes foo/bar/baz
+                if (fullName.length() != 0 && !fullName.endsWith("/")) {
+                    b.append(f.getName());
+                    b.append("/");
+                }
+                b.append(file.getName());
+                if (file.isDirectory()) b.append("/");
+                
+                out.println("<td align=\"left\">&nbsp;&nbsp;");
+                
+                if (file.isDirectory()) {
+                    out.println("<a href=\"" + b.toString() + "\"><tt>" + file.getName() + "/</tt></a></td>");
+                    out.println("<td align=\"left\">&nbsp;&nbsp;");
+                    out.println("<a href=\"" + b.toString() + "?edit\"><tt>directory</tt></a></td>");
+                } else {
+                    out.println("<a href=\"" + b.toString() + "\"><tt>" + file.getName() + "</tt></a></td>");
+                    out.println("<td align=\"left\">&nbsp;&nbsp;");
+                    out.println("<a href=\"" + b.toString() + "?show\"><tt>file</tt></a></td>");
+                }
+                out.println("<td align=\"right\"><tt>" + file.length() + "</tt></td>");
+                out.println("<td align=\"right\"><tt>" + Util.formatDateTime(file.lastModified()) + "</tt></td>");
+                out.println("</tr>");
+                b.setLength(0);
             }
-
-            Method e = c.getMethod("getEngineFactories", new Class[]{});
-            List factories = (List) e.invoke(o, new Object[]{});
-            StringBuffer buf = new StringBuffer();
-            for (Iterator ii = factories.iterator(); ii.hasNext(); ) {
-                o = ii.next();
-                Method getName = o.getClass().getMethod("getEngineName", new Class[]{});
-                Method getVersion = o.getClass().getMethod("getEngineVersion", new Class[]{});
-                Method getNames = o.getClass().getMethod("getNames", new Class[]{});
-                Method getExtensions = o.getClass().getMethod("getExtensions", new Class[]{});
-                buf.append("<li>");
-                buf.append(getName.invoke(o, new Object[]{}));
-                buf.append(", ");
-                buf.append("ver.: ");
-                buf.append(getVersion.invoke(o, new Object[]{}));
-                buf.append(", ");
-                buf.append("alias: ");
-                buf.append(getNames.invoke(o, new Object[]{}));
-                buf.append(", ");
-                buf.append(".ext: ");
-                buf.append(getExtensions.invoke(o, new Object[]{}));
-                buf.append("</li>");
-                out.println(buf);
-                buf.setLength(0);
+            out.println("</table>");
+            out.println("<HR size=\"1\" noshade><h3>Simple JSR 223 enabled web server version 0.0.1</h3>");
+            out.println("<h4>Available script engines</h4><ul>");
+            try {
+                Class c = Class.forName("javax.script.ScriptEngineManager");
+                Object o = c.newInstance();
+                Method ex = c.getMethod("getEngineByExtension", new Class[]{String.class});
+                if (ex.invoke(o, (Object[]) new String[]{"php"}) == null) {
+                    out.println("Warning: php-script.jar not found. Please copy it to the directory containing JavaBridge.jar before starting JavaBridge.<br><br>");
+                }
+                
+                Method e = c.getMethod("getEngineFactories", new Class[]{});
+                List factories = (List) e.invoke(o, new Object[]{});
+                StringBuffer buf = new StringBuffer();
+                for (Iterator ii = factories.iterator(); ii.hasNext(); ) {
+                    o = ii.next();
+                    Method getName = o.getClass().getMethod("getEngineName", new Class[]{});
+                    Method getVersion = o.getClass().getMethod("getEngineVersion", new Class[]{});
+                    Method getNames = o.getClass().getMethod("getNames", new Class[]{});
+                    Method getExtensions = o.getClass().getMethod("getExtensions", new Class[]{});
+                    buf.append("<li>");
+                    buf.append(getName.invoke(o, new Object[]{}));
+                    buf.append(", ");
+                    buf.append("ver.: ");
+                    buf.append(getVersion.invoke(o, new Object[]{}));
+                    buf.append(", ");
+                    buf.append("alias: ");
+                    buf.append(getNames.invoke(o, new Object[]{}));
+                    buf.append(", ");
+                    buf.append(".ext: ");
+                    buf.append(getExtensions.invoke(o, new Object[]{}));
+                    buf.append("</li>");
+                    out.println(buf);
+                    buf.setLength(0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            out.println("</font></ul>");
+            out.println("</body>");
+            out.println("</html>");
+            res.addHeader("Content-Type", "text/html; charset=UTF-8");
+            res.addHeader("Last-Modified", Util.formatDateTime(f.lastModified()));
         }
-        out.println("</font></ul>");
-        out.println("</body>");
-        out.println("</html>");
-        res.addHeader("Content-Type", "text/html; charset=UTF-8");
-        res.addHeader("Last-Modified", Util.formatDateTime(f.lastModified()));
-        out.close();
         int outLength = xout.size();
         res.setContentLength(outLength);
         xout.writeTo(res.getOutputStream());
@@ -353,6 +356,7 @@ public class JavaBridgeRunner extends HttpServer {
      * JSR223 script engine to the java ext dirs (usually /usr/share/java/ext or /usr/java/packages/lib/ext) and start the HTTP server:
      * java -jar JavaBridge.jar HTTP_LOCAL:8080. Browse to http://localhost:8080/test.php.
      *
+     * @param name
      * @param f      The full name as a file
      * @param params The request parameter
      * @param length The length of the file
@@ -368,11 +372,13 @@ public class JavaBridgeRunner extends HttpServer {
     /**
      * Display a simple text file
      *
+     * @param name
      * @param f      The full name as a file
      * @param params The request parameter
      * @param length The length of the file
      * @param req    The HTTP request object
      * @param res    The HTTP response object
+     * @param show
      * @throws IOException
      */
     protected void showTextFile(String name, String params, File f, int length, HttpRequest req, HttpResponse res, boolean show) throws IOException {
@@ -383,11 +389,11 @@ public class JavaBridgeRunner extends HttpServer {
         res.addHeader("Last-Modified", Util.formatDateTime(f.lastModified()));
         if (show) res.addHeader("Content-Type", "text/plain");
         res.setContentLength(length);
-        InputStream in = new FileInputStream(f);
-        buf = new byte[Util.BUF_SIZE];
-        out = res.getOutputStream();
-        while ((c = in.read(buf)) != -1) out.write(buf, 0, c);
-        in.close();
+        try (InputStream in = new FileInputStream(f)) {
+            buf = new byte[Util.BUF_SIZE];
+            out = res.getOutputStream();
+            while ((c = in.read(buf)) != -1) out.write(buf, 0, c);
+        }
     }
 
     /**
@@ -398,7 +404,9 @@ public class JavaBridgeRunner extends HttpServer {
      *
      * @param req The HttpRequest
      * @param res The HttpResponse
+     * @throws java.io.IOException
      */
+    @Override
     protected void doGet(HttpRequest req, HttpResponse res) throws IOException {
         handleDoGet(req, res);
     }
@@ -410,6 +418,7 @@ public class JavaBridgeRunner extends HttpServer {
      *
      * @param req The HttpRequest
      * @param res The HttpResponse
+     * @throws java.io.IOException
      */
     protected void handleDoGet(HttpRequest req, HttpResponse res) throws IOException {
 
@@ -432,7 +441,7 @@ public class JavaBridgeRunner extends HttpServer {
             }
             File f = Standalone.getCanonicalWindowsFile(name);
             if (f == null || !f.exists()) f = new File(Util.HOME_DIR, name);
-            if (f == null || !f.exists()) return;
+            if (!f.exists()) return;
             if (f.isHidden()) return;
             long l = f.length();
             if (l >= Integer.MAX_VALUE) throw new IOException("file " + name + " too large");

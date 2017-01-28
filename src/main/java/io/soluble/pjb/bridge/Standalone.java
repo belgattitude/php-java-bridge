@@ -1,6 +1,3 @@
-/*-*- mode: Java; tab-width:8 -*-*/
-package io.soluble.pjb.bridge;
-
 /*
  * Copyright (C) 2003-2007 Jost Boekemeier
  *
@@ -22,6 +19,8 @@ package io.soluble.pjb.bridge;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+package io.soluble.pjb.bridge;
 
 import java.io.File;
 import java.io.IOException;
@@ -268,10 +267,8 @@ public class Standalone {
             args[5] = "-classpath";
             args[6] = System.getProperty("java.class.path", ".");
             args[7] = "io.soluble.pjb.bridge.Standalone";
-
-            for (int j = 0; j < s.length; j++) {
-                args[j + 8] = s[j];
-            }
+            System.arraycopy(s, 0, args, 8, s.length);
+            
             try {
                 System.in.close();
                 System.out.close();
@@ -281,6 +278,7 @@ public class Standalone {
             }
 
             new Util.Thread(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         Runtime.getRuntime().exec(args);
@@ -289,9 +287,10 @@ public class Standalone {
                     }
                 }
             }).start();
+            
             try {
                 Thread.sleep(20000);
-            } catch (Throwable t) {
+            } catch (InterruptedException t) {
             }
             System.exit(0);
         }
@@ -314,7 +313,11 @@ public class Standalone {
             if (s.length == 0 &&
                     (System.getProperty("io.soluble.pjb.bridge.exec_sun_vm", "true").equals("true")) &&
                     ((sunJavaInstalled && checkGNUVM()) || isExecutableJavaBridgeJar)) {
-                Process p = Runtime.getRuntime().exec(new String[]{javaExec, "-Dio.soluble.pjb.bridge.exec_sun_vm=false", "-classpath", cp, "io.soluble.pjb.bridge.Standalone"}, null, wd);
+                Process p = Runtime.getRuntime().exec(new String[]{
+                    javaExec, 
+                    "-Dio.soluble.pjb.bridge.exec_sun_vm=false", 
+                    "-classpath", cp, 
+                    "io.soluble.pjb.bridge.Standalone"}, null, wd);
                 if (p != null) System.exit(p.waitFor());
             }
         } catch (Throwable t) {/*ignore*/}

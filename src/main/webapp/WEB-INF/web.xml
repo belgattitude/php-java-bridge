@@ -3,7 +3,8 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-    <!-- support for JEE cluster, remove this line if you want to put non-serializable objects into the java_session() -->
+    <!-- support for JEE cluster, remove this line if you want to put non-serializable objects into the java_session() 
+    -->
     <distributable/>
 
     <!-- Prefer a system PHP executable, if available. Otherwise use the PHP from the .war file. Default is Off -->
@@ -11,10 +12,12 @@
         <param-name>prefer_system_php_exec</param-name>
         <param-value>On</param-value>
     </context-param>
-    <!-- Your system PHP executable. Default is /usr/bin/php-cgi or c:/Program Files/PHP/php-cgi.exe -->
+    <!-- Your system PHP executable. Default is /usr/bin/php-cgi or c:/Program Files/PHP/php-cgi.exe 
+         If exported (Linux) or on the path (Windows) you can use 'php-cgi' as a platform independant pointer to the executable
+    -->
     <context-param>
         <param-name>php_exec</param-name>
-        <param-value>php-cgi.exe</param-value>
+        <param-value>php-cgi</param-value>
     </context-param>
 
     <!-- Handle PHP urls which cannot be expressed using a standard servlet spec 2.2 url-pattern, 
