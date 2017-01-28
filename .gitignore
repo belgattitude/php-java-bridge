@@ -16,3 +16,4 @@ manifest.mf
 *.lock
 *.log
 devNull
+out/

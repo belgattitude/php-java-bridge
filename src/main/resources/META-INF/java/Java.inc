@@ -70,9 +70,9 @@ trigger_error('Please use <a href="http://php-java-bridge.sourceforge.net/pjb/we
 }
 function java_virtual($path,$return=false) {
 $req=java_context()->getHttpServletRequest();
-$req=new java("php.java.servlet.VoidInputHttpServletRequest",$req);
+$req=new java("io.soluble.pjb.servlet.VoidInputHttpServletRequest",$req);
 $res=java_context()->getHttpServletResponse();
-$res=new java("php.java.servlet.RemoteHttpServletResponse",$res);
+$res=new java("io.soluble.pjb.servlet.RemoteHttpServletResponse",$res);
 $req->getRequestDispatcher($path)->include($req,$res);
 if ($return) return $res->getBufferContents();
 echo $res->getBufferContents();
@@ -1225,7 +1225,7 @@ if (!$peer) {
 $java=file_exists(ini_get("extension_dir")."/JavaBridge.jar")?ini_get("extension_dir")."/JavaBridge.jar":(java_get_base()."/JavaBridge.jar");
 if (!file_exists($java))
 throw new java_IOException("Could not find $java in ".getcwd().". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_".JAVA_PEAR_VERSION."/exploded/JavaBridge.jar/download and try again.");
-$java_cmd="java -Dphp.java.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0";
+$java_cmd="java -Dio.soluble.pjb.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0";
 if (!$again)
 throw new java_ConnectException("No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)");
 if (!java_checkCliSapi())

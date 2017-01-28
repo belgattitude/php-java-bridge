@@ -47,7 +47,7 @@ public class Options {
      * @return The file encoding
      */
     public String getEncoding() {
-        if (encoding != null) {
+        if (encoding == null) {
             encoding = Util.DEFAULT_ENCODING;
         }
         return encoding;

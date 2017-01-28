@@ -1227,7 +1227,7 @@ public class JavaInc {
 "$java=file_exists(ini_get(\"extension_dir\").\"/JavaBridge.jar\")?ini_get(\"extension_dir\").\"/JavaBridge.jar\":(java_get_base().\"/JavaBridge.jar\");\n"+
 "if (!file_exists($java))\n"+
 "throw new java_IOException(\"Could not find $java in \".getcwd().\". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_\".JAVA_PEAR_VERSION.\"/exploded/JavaBridge.jar/download and try again.\");\n"+
-"$java_cmd=\"java -Dphp.java.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
+"$java_cmd=\"java -Dio.soluble.pjb.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
 "if (!$again)\n"+
 "throw new java_ConnectException(\"No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)\");\n"+
 "if (!java_checkCliSapi())\n"+

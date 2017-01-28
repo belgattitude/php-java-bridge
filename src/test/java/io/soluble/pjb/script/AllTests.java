@@ -4,9 +4,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllTests {
+    
+    public static TestSuite suite;
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("Test for io.soluble.pjb.test");
+        suite = new TestSuite("Test for io.soluble.pjb.test");
         //$JUnit-BEGIN$
         suite.addTestSuite(TestException.class);
         suite.addTestSuite(TestGetResult.class);
