@@ -33,8 +33,8 @@ package io.soluble.pjb.bridge;
  * <br>
  *
  * @author jostb
- * @see php.java.bridge.PhpProcedure#invoke(Object, String, Object[])
- * @see php.java.bridge.PhpProcedure#invoke(Object, java.lang.reflect.Method, Object[])
+ * @see io.soluble.pjb.bridge.PhpProcedure#invoke(Object, String, Object[])
+ * @see io.soluble.pjb.bridge.PhpProcedure#invoke(Object, java.lang.reflect.Method, Object[])
  */
 public interface Invocable {
 

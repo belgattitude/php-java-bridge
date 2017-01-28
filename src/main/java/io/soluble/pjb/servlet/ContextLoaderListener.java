@@ -57,7 +57,7 @@ import io.soluble.pjb.servlet.fastcgi.FCGIProcess;
  */
 
 /**
- * Register the PHP/Java Bridge when the web context starts. Used by java_context()->onShutdown(proc). The
+ * Register the PHP/Java Bridge when the web context starts. Used by java_context()-&gt;onShutdown(proc). The
  * WEB-INF/web.xml contains a listener attribute:
  * <blockquote>
  * <code>

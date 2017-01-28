@@ -53,8 +53,9 @@ public final class PhpProcedure implements InvocationHandler {
      *
      * @param bridge     - The request handling bridge
      * @param name       - The name, e.g. java_closure($this, "alwaysCallMe")
-     * @param names      - A map of names, e.g. java_closure($this, array("javaName1" => "php_name1", ...);
-     * @param interfaces - The list of interfaces that this proxy must implement, may be empty. E.g. java_closure($this, null, null, array(new Java("java.awt.event.ActionListener"));
+     * @param names      - A map of names, e.g. java_closure($this, array("javaName1" =&gt; "php_name1", ...);
+     * @param interfaces - The list of interfaces that this proxy must implement, may be empty. E.g. 
+     *                     java_closure($this, null, null, array(new Java("java.awt.event.ActionListener"));
      * @param object     - An opaque object ID (protocol-level).
      * @return A new proxy instance.
      */

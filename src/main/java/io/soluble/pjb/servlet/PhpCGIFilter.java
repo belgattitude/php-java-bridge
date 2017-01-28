@@ -48,7 +48,7 @@ import io.soluble.pjb.bridge.Util;
  * <code>
  * &lt;filter&gt;<br>
  * &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
- * &lt;filter-class&gt;php.java.servlet.PhpCGIFilter&lt;/filter-class&gt;<br>
+ * &lt;filter-class&gt;io.soluble.pjb.servlet.PhpCGIFilter&lt;/filter-class&gt;<br>
  * &lt;/filter&gt;<br>
  * &lt;filter-mapping&gt;<br>
  * &lt;filter-name&gt;PhpCGIFilter&lt;/filter-name&gt;<br>
@@ -57,7 +57,7 @@ import io.soluble.pjb.bridge.Util;
  * </code>
  * </blockquote>
  *
- * @see php.java.servlet.fastcgi.FastCGIServlet
+ * @see io.soluble.pjb.servlet.fastcgi.FastCGIServlet
  */
 public class PhpCGIFilter implements Filter {
 

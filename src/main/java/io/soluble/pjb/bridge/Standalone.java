@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  * (starts the built-in servlet engine listening on all interfaces or loopback).
  * <p> Example:<br> <code> java
  * -Djava.awt.headless=true -jar JavaBridge.jar INET_LOCAL:9676 5
- * bridge.log &<br> telnet localhost 9676<br> &lt;CreateInstance
+ * bridge.log <br> telnet localhost 9676<br> &lt;CreateInstance
  * value="java.lang.Long" predicate="Instance" id="0"&gt;<br> &lt;Long
  * value="6"/&gt; <br> &lt;/CreateInstance&gt;<br> &lt;Invoke
  * value="1" method="toString" predicate="Invoke" id="0"/&gt;<br>

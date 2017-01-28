@@ -38,8 +38,8 @@ import io.soluble.pjb.bridge.Util;
  * <p>
  * Instances of this class are thrown away at the end of the request.
  *
- * @see php.java.servlet.ServletContextFactory
- * @see php.java.script.PhpScriptContextFactory
+ * @see io.soluble.pjb.servlet.ServletContextFactory
+ * @see io.soluble.pjb.script.PhpScriptContextFactory
  */
 public class SimpleContextFactory implements IContextFactoryVisitor {
 

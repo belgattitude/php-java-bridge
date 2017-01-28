@@ -32,7 +32,7 @@ package io.soluble.pjb.bridge;
 public interface IManaged {
 
     /**
-     * Initialize a library. This method may be called via java_context()->init(...)
+     * Initialize a library. This method may be called via java_context()-&gt;init(...)
      * to initialize a library. Within init() onShutdown() may be called to
      * register a shutdown hook for the library.
      *
@@ -43,7 +43,7 @@ public interface IManaged {
     public Object init(Object callable) throws Exception;
 
     /**
-     * Register a shutdown hook for the library. This method may be called via java_context()->onShutdown(...)
+     * Register a shutdown hook for the library. This method may be called via java_context()-&gt;onShutdown(...)
      * to register a shutdown hook during init().
      *
      * @param closeable Its close() method will be called before the context or the VM terminates.

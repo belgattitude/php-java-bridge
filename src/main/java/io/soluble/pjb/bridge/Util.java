@@ -503,7 +503,7 @@ public final class Util {
     }
 
     /**
-     * Display a stack trace if logLevel >= 1
+     * Display a stack trace if logLevel &gt;= 1
      *
      * @param t The Throwable
      */

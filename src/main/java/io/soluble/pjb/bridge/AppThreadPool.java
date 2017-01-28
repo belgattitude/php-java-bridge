@@ -183,7 +183,7 @@ public final class AppThreadPool extends ThreadPool {
      * Creates a new thread pool.
      *
      * @param name        - The name of the pool threads.
-     * @param poolMaxSize - The max. number of threads, must be >= 1.
+     * @param poolMaxSize - The max. number of threads, must be &gt;= 1.
      */
     public AppThreadPool(String name, int poolMaxSize) {
         super(name, poolMaxSize);

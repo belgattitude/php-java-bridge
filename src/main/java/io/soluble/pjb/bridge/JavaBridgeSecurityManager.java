@@ -45,8 +45,10 @@ public class JavaBridgeSecurityManager extends SecurityManager {
     protected static final Permission MODIFY_THREAD_PERMISSION = new RuntimePermission("modifyThread");
 
     /**
-     * @inheritDoc Internal groups may pass, user groups are checked against the <code>javabridge.policy</code> file.
+     * {@inheritDoc}
+     * Internal groups may pass, user groups are checked against the <code>javabridge.policy</code> file.
      */
+    @Override
     public void checkAccess(ThreadGroup g) {
         if (g == null) {
             throw new NullPointerException("thread group can't be null");
@@ -77,6 +79,7 @@ public class JavaBridgeSecurityManager extends SecurityManager {
      *
      * @return The current thread group
      */
+    @Override
     public ThreadGroup getThreadGroup() {
         try {
             AppThreadPool.Delegate delegate = (AppThreadPool.Delegate) Thread.currentThread();
@@ -88,10 +91,12 @@ public class JavaBridgeSecurityManager extends SecurityManager {
     }
 
     /**
-     * @inheritDoc <code>System.exit(...)</code> can by switched off by removing
+     * {@inheritDoc}
+     * <code>System.exit(...)</code> can by switched off by removing
      * <code>permission java.lang.RuntimePermission "exitVM";</code>
      * from the policy file.
      */
+    @Override
     public void checkExit(int status) {
         //super.checkExit(status);
 

@@ -1824,8 +1824,7 @@ public final class JavaBridge implements Runnable {
      *
      * @param name The session name, if any
      * @param clientIsNew true, if the client wants a new session
-     * @param timeout session timeout in seconds. If timeout is <= 0, the session will never expire @return The session context
-     * .
+     * @param timeout session timeout in seconds. If timeout is &lt;= 0, the session will never expire @return The session context
      * @return 
      * @throws Exception
      * @see io.soluble.pjb.bridge.ISession

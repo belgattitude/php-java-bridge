@@ -60,7 +60,7 @@ public class SimpleServletContextFactory extends io.soluble.pjb.bridge.http.Simp
      * Set the HttpServletRequest for session sharing. This implementation does nothing, the proxy must have been set in the constructor.
      *
      * @param req The HttpServletRequest
-     * @see php.java.servlet.RemoteServletContextFactory#setSessionFactory(HttpServletRequest)
+     * @see io.soluble.pjb.servlet.RemoteServletContextFactory#setSessionFactory(HttpServletRequest)
      */
     protected void setSessionFactory(HttpServletRequest req) {
     }

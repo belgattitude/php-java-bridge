@@ -38,7 +38,7 @@ public abstract class AbstractChannel {
      * Returns the channel's input stream.
      *
      * @return The InputStream
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public abstract InputStream getInputStream() throws IOException;
 
@@ -46,7 +46,7 @@ public abstract class AbstractChannel {
      * Returns the channel's output stream.
      *
      * @return The OutputStream.
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public abstract OutputStream getOuptutStream() throws IOException;
 
@@ -59,7 +59,7 @@ public abstract class AbstractChannel {
      * Returns the name of the channel, for example the socket # or the pipe name.
      *
      * @return the name of the channel.
-     * @see php.java.bridge.http.AbstractChannelName#getName()
+     * @see io.soluble.pjb.bridge.http.AbstractChannelName#getName()
      */
     public abstract String getName();
 }

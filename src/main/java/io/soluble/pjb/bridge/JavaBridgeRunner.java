@@ -57,7 +57,7 @@ import io.soluble.pjb.bridge.http.RemoteHttpContextFactory;
  * }<br>
  *
  * @author jostb
- * @see php.java.script.PhpScriptContext
+ * @see io.soluble.pjb.script.PhpScriptContext
  */
 public class JavaBridgeRunner extends HttpServer {
 
@@ -207,8 +207,8 @@ public class JavaBridgeRunner extends HttpServer {
 
     /**
      * Handles both, override-redirect and redirect, see
-     * see php.java.servlet.PhpJavaServlet#handleSocketConnection(HttpServletRequest, HttpServletResponse, String, boolean)
-     * see php.java.servlet.PhpJavaServlet#handleRedirectConnection(HttpServletRequest, HttpServletResponse)
+     * see io.soluble.pjb.servlet.PhpJavaServlet#handleSocketConnection(HttpServletRequest, HttpServletResponse, String, boolean)
+     * see io.soluble.pjb.servlet.PhpJavaServlet#handleRedirectConnection(HttpServletRequest, HttpServletResponse)
      * @param req
      * @param res
      * @throws java.io.IOException

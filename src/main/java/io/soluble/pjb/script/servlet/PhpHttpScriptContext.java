@@ -27,8 +27,6 @@ import io.soluble.pjb.script.IPhpScriptContext;
 import io.soluble.pjb.script.PhpScriptContextDecorator;
 import io.soluble.pjb.script.PhpScriptWriter;
 import io.soluble.pjb.script.ResultProxy;
-import io.soluble.pjb.script.servlet.HttpFastCGIProxy;
-import io.soluble.pjb.script.servlet.PhpScriptLogWriter;
 import io.soluble.pjb.servlet.ContextLoaderListener;
 import io.soluble.pjb.servlet.ServletUtil;
 
@@ -60,9 +58,9 @@ import io.soluble.pjb.servlet.ServletUtil;
  * Use
  * <blockquote>
  * <code>
- * static final CompiledScript script = ((Compilable)(new ScriptEngineManager().getEngineByName("php-invocable"))).compile("<?php ...?>");<br>
+ * static final CompiledScript script = ((Compilable)(new ScriptEngineManager().getEngineByName("php-invocable"))).compile("&lt;?php ...?&gt;");<br>
  * <br>
- * script.eval(new php.java.script.servlet.PhpCompiledHttpScriptContext(script.getEngine().getContext(),this,application,request,response));
+ * script.eval(new io.soluble.pjb.script.servlet.PhpCompiledHttpScriptContext(script.getEngine().getContext(),this,application,request,response));
  * </code>
  * </blockquote>
  *
@@ -75,6 +73,10 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      * PhpScriptContext
      *
      * @param ctx the script context to be decorated
+     * @param servlet
+     * @param context
+     * @param request
+     * @param response
      */
     public PhpHttpScriptContext(ScriptContext ctx, Servlet servlet, ServletContext context, HttpServletRequest request, HttpServletResponse response) {
         super((IPhpScriptContext) ctx);
@@ -87,6 +89,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Continuation createContinuation(Reader reader, Map env,
                                            OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
                                            ILogger logger, boolean isCompiled) {
@@ -100,6 +103,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
         return cont;
     }
 
+    @Override
     public void startContinuation() {
         ContextLoaderListener listener = ContextLoaderListener.getContextLoaderListener((ServletContext) getServletContext());
         listener.getThreadPool().start(getContinuation());
@@ -129,21 +133,24 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getAttribute(String key, int scope) {
-        if (scope == REQUEST_SCOPE) {
-            return request.getAttribute(key);
-        } else if (scope == SESSION_SCOPE) {
-            return request.getSession().getAttribute(key);
-        } else if (scope == APPLICATION_SCOPE) {
-            return context.getAttribute(key);
-        } else {
-            return super.getAttribute(key, scope);
+        switch (scope) {
+            case REQUEST_SCOPE:
+                return request.getAttribute(key);
+            case SESSION_SCOPE:
+                return request.getSession().getAttribute(key);
+            case APPLICATION_SCOPE:
+                return context.getAttribute(key);
+            default:
+                return super.getAttribute(key, scope);
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getAttribute(String name) throws IllegalArgumentException {
         Object result;
         if (name == null) {
@@ -164,16 +171,22 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setAttribute(String key, Object value, int scope)
             throws IllegalArgumentException {
-        if (scope == REQUEST_SCOPE) {
-            request.setAttribute(key, value);
-        } else if (scope == SESSION_SCOPE) {
-            request.getSession().setAttribute(key, value);
-        } else if (scope == APPLICATION_SCOPE) {
-            context.setAttribute(key, value);
-        } else {
-            super.setAttribute(key, value, scope);
+        switch (scope) {
+            case REQUEST_SCOPE:
+                request.setAttribute(key, value);
+                break;
+            case SESSION_SCOPE:
+                request.getSession().setAttribute(key, value);
+                break;
+            case APPLICATION_SCOPE:
+                context.setAttribute(key, value);
+                break;
+            default:
+                super.setAttribute(key, value, scope);
+                break;
         }
     }
 
@@ -209,6 +222,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Writer getWriter() {
         if (writer == null) {
             try {
@@ -223,6 +237,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setWriter(Writer writer) {
         if (!(writer instanceof PhpScriptWriter)) {
             writer = new PhpScriptWriter(new WriterOutputStream(writer));
@@ -235,6 +250,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Writer getErrorWriter() {
         if (errorWriter == null) {
             setErrorWriter(PhpScriptLogWriter.getWriter(new io.soluble.pjb.servlet.Logger()));
@@ -245,6 +261,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setErrorWriter(Writer errorWriter) {
         if (!(errorWriter instanceof PhpScriptWriter)) {
             errorWriter = new PhpScriptWriter(new WriterOutputStream(errorWriter));
@@ -257,6 +274,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Reader getReader() {
         if (reader == null) {
             try {
@@ -268,6 +286,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
         return reader;
     }
 
+    @Override
     public void setReader(Reader reader) {
         super.setReader(this.reader = reader);
     }
@@ -275,6 +294,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object init(Object callable) throws Exception {
         return io.soluble.pjb.bridge.http.Context.getManageable(callable);
     }
@@ -282,6 +302,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void onShutdown(Object closeable) {
         io.soluble.pjb.servlet.HttpContext.handleManaged(closeable, context);
     }
@@ -291,6 +312,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      *
      * @return The http servlet reponse
      */
+    @Override
     public Object getHttpServletResponse() {
         return response;
     }
@@ -300,6 +322,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      *
      * @return The http servlet request
      */
+    @Override
     public Object getHttpServletRequest() {
         return request;
     }
@@ -309,6 +332,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      *
      * @return The http servlet
      */
+    @Override
     public Object getServlet() {
         return servlet;
     }
@@ -318,6 +342,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      *
      * @return The servlet config
      */
+    @Override
     public Object getServletConfig() {
         return servlet.getServletConfig();
     }
@@ -327,6 +352,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
      *
      * @return The servlet context
      */
+    @Override
     public Object getServletContext() {
         return context;
     }
@@ -334,6 +360,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getRealPath(String path) {
         return ServletUtil.getRealPath(context, path);
     }
@@ -341,6 +368,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * @deprecated
      */
+    @Override
     public String getRedirectString(String webPath) {
         throw new NotImplementedException();
     }
@@ -348,6 +376,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * @deprecated
      */
+    @Override
     public String getRedirectString() {
         throw new NotImplementedException();
     }
@@ -355,8 +384,9 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getRedirectURL(String webPath) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(getSocketName());
         buf.append("/");
         buf.append(webPath);
@@ -372,6 +402,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getSocketName() {
         return String.valueOf(ServletUtil.getLocalPort(request));
     }
@@ -379,6 +410,7 @@ public class PhpHttpScriptContext extends PhpScriptContextDecorator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ContextServer getContextServer() {
         return ContextLoaderListener.getContextLoaderListener(context).getContextServer();
     }

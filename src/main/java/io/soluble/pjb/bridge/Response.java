@@ -356,8 +356,8 @@ public final class Response {
     }
 
     /**
-     * Writer used by the async protocol. It always returns <V ...>
-     * or <O ...>, even for NULL, Class values, although Exceptions
+     * Writer used by the async protocol. It always returns &lt;V ...&gt;
+     * or &lt;O ...&gt;, even for NULL, Class values, although Exceptions
      * are handled.  When the client-side cache is enabled, the client
      * will select an Async or AsyncVoidWriter in the next call.
      */
@@ -385,7 +385,7 @@ public final class Response {
 
     /**
      * Writer used by the async protocol (begin/end document). It
-     * always returns <V ...> or <O ...>, even for NULL, Class or
+     * always returns &lt;V ...&gt; or &lt;O ...&gt;, even for NULL, Class or
      * Exception values.  When the client-side cache is enabled, the
      * client will select an Async or AsyncVoidWriter in the next
      * call.
@@ -715,7 +715,7 @@ public final class Response {
     }
 
     /**
-     * Selects a specialized writer which always writes <O ...> or <V ..>, even for NULL, Class and Exception values.
+     * Selects a specialized writer which always writes &lt;O ...&gt; or &lt;V ..&gt;, even for NULL, Class and Exception values.
      * This triggers the client cache so that it selects the AsyncNull or AsyncWriter.
      *
      * @return The async. writer

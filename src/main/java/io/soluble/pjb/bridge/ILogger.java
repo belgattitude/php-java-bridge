@@ -26,9 +26,9 @@ package io.soluble.pjb.bridge;
  * The log interface for the PHP/Java Bridge log.
  *
  * @author jostb
- * @see php.java.bridge.FileLogger
- * @see php.java.bridge.ChainsawLogger
- * @see php.java.bridge.SimpleLog4jLogger
+ * @see io.soluble.pjb.bridge.FileLogger
+ * @see io.soluble.pjb.bridge.ChainsawLogger
+ * @see io.soluble.pjb.bridge.SimpleLog4jLogger
  */
 public interface ILogger {
 
@@ -65,7 +65,7 @@ public interface ILogger {
     void log(int level, String msg);
 
     /**
-     * Display a warning if logLevel >= 1
+     * Display a warning if logLevel &gt;= 1
      *
      * @param msg The warn message
      */

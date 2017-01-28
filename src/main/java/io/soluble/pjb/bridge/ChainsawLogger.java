@@ -89,7 +89,6 @@ public class ChainsawLogger extends SimpleLog4jLogger implements ILogger {
     /**
      * Create a new chainsaw logger.
      *
-     * @throws UnknownHostException If the host does not exist.
      * @see io.soluble.pjb.bridge.Util#setDefaultLogger(ILogger)
      */
     protected ChainsawLogger() {

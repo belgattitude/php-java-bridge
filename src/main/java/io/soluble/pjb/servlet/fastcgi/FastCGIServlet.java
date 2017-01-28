@@ -67,7 +67,7 @@ import io.soluble.pjb.servlet.ServletUtil;
  * <code>launcher.exe -a "path_to_php-cgi.exe" -b 9667</code>.</p>
  *
  * @author jostb
- * @see php.java.bridge.Util#DEFAULT_CGI_LOCATIONS
+ * @see io.soluble.pjb.bridge.Util#DEFAULT_CGI_LOCATIONS
  */
 public class FastCGIServlet extends HttpServlet {
     protected static final String _80 = "80";
@@ -114,6 +114,7 @@ public class FastCGIServlet extends HttpServlet {
      * @see io.soluble.pjb.bridge.http.FCGIConnectionPool
      * @see #destroy()
      */
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
@@ -143,6 +144,7 @@ public class FastCGIServlet extends HttpServlet {
     /**
      * Destroys the FastCGI connection pool, if it exists.
      */
+    @Override
     public void destroy() {
         super.destroy();
     }
@@ -197,7 +199,7 @@ public class FastCGIServlet extends HttpServlet {
         envp.put("GATEWAY_INTERFACE", "CGI/1.1");
         envp.put("SERVER_PROTOCOL", ServletUtil.nullsToBlanks(req.getProtocol()));
         int port = ServletUtil.getLocalPort(req);
-        Integer iPort = (port == 0 ? new Integer(-1) : new Integer(port));
+        Integer iPort = (port == 0 ? -1 : port);
         envp.put("SERVER_PORT", iPort.toString());
         envp.put("REQUEST_METHOD", ServletUtil.nullsToBlanks(req.getMethod()));
         envp.put("SCRIPT_NAME", env.contextPath + env.servletPath);
@@ -221,7 +223,7 @@ public class FastCGIServlet extends HttpServlet {
 
 
         Enumeration headers = req.getHeaderNames();
-        String header = null;
+        String header;
         StringBuffer buffer = new StringBuffer();
 
         while (headers.hasMoreElements()) {
@@ -255,14 +257,14 @@ public class FastCGIServlet extends HttpServlet {
 
         String sPort = (String) env.environment.get("SERVER_PORT");
         String standardPort = req.isSecure() ? _443 : _80;
-        StringBuffer httpHost = new StringBuffer((String) env.environment.get("SERVER_NAME"));
+        StringBuilder httpHost = new StringBuilder((String) env.environment.get("SERVER_NAME"));
         if (!standardPort.equals(sPort)) { // append port only if necessary, see Patch#3040838
             httpHost.append(":");
             httpHost.append(sPort);
         }
         env.environment.put("HTTP_HOST", httpHost.toString());
 
-        String remotePort = null;
+        String remotePort;
         try {
             remotePort = String.valueOf(req.getRemotePort());
         } catch (Throwable t) {
@@ -301,14 +303,14 @@ public class FastCGIServlet extends HttpServlet {
      * Optimized run method for FastCGI. Makes use of the large FCGI_BUF_SIZE and the specialized in.read().
      * It is a modified copy of the parseBody.
      *
-     * @throws InterruptedException
-     * @see HeaderParser#parseBody(byte[], InputStream, OutputStream, HeaderParser)
+     * @see io.soluble.pjb.bridge.http.HeaderParser#parseBody(byte[], java.io.InputStream, io.soluble.pjb.bridge.http.OutputStreamFactory, io.soluble.pjb.bridge.http.HeaderParser)
      */
-    protected void parseBody(HttpServletRequest req, HttpServletResponse res, Environment env) throws FCGIConnectionException, FCGIConnectException, IOException, ServletException {
+    protected void parseBody(HttpServletRequest req, HttpServletResponse res, Environment env) 
+            throws FCGIConnectionException, FCGIConnectException, IOException, ServletException {
         final byte[] buf = new byte[FCGIUtil.FCGI_BUF_SIZE];// headers cannot be larger than this value!
 
-        InputStream in = null;
-        OutputStream out = null;
+        InputStream in;
+        OutputStream out;
 
         FCGIInputStream natIn = null;
         FCGIOutputStream natOut = null;
@@ -327,7 +329,7 @@ public class FastCGIServlet extends HttpServlet {
             natOut.writeBegin();
             natOut.writeParams(env.environment);
 
-            String line = null;
+            String line;
             int i = 0, n, s = 0;
             boolean eoh = false;
             boolean rn = false;
@@ -339,10 +341,11 @@ public class FastCGIServlet extends HttpServlet {
                 // used by either http/1.1 chunked connections or "WebSockets",
                 // see http://tools.ietf.org/html/draft-hixie-thewebsocketprotocol-70
                 final InputStream inputStream = in;
-                in = null;
+                //in = null;
                 final FCGIOutputStream natOutputStream = natOut;
                 natOut = null;
                 (new Thread() {
+                    @Override
                     public void run() {
                         int n;
                         try {
@@ -445,7 +448,8 @@ public class FastCGIServlet extends HttpServlet {
         return new Environment();
     }
 
-    protected void execute(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException, InterruptedException {
+    protected void execute(HttpServletRequest req, HttpServletResponse res) 
+            throws IOException, ServletException, InterruptedException {
 
         Environment env = getEnvironment();
         setupRequestVariables(req, env);
@@ -458,11 +462,10 @@ public class FastCGIServlet extends HttpServlet {
                 Util.logDebug("PHP FastCGI server failed: " + ex);
                 Util.printStackTrace(ex);
             }
-            IOException ex2 = new IOException("PHP FastCGI server failed: ");
-            ex2.initCause(ex);
-            throw ex2;
+            throw new IOException("PHP FastCGI server failed: ", ex);
         } catch (FCGIConnectionException x) {
-            Util.logError("PHP application terminated unexpectedly, have you started php-cgi with the environment setting PHP_FCGI_MAX_REQUESTS=" + contextLoaderListener.getPhpMaxRequests() + "?  Error: " + x);
+            Util.logError("PHP application terminated unexpectedly, have you started php-cgi with the environment setting PHP_FCGI_MAX_REQUESTS=" + 
+                    contextLoaderListener.getPhpMaxRequests() + "?  Error: " + x);
             if (Util.logLevel > 1) {
                 Util.logDebug("PHP FastCGI instance failed: " + x);
                 Util.printStackTrace(x);
@@ -495,7 +498,8 @@ public class FastCGIServlet extends HttpServlet {
                     env.allHeaders.add(line);
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e) {/*not a valid header*/} catch (StringIndexOutOfBoundsException e) {/*not a valid header*/}
+        } catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {/*not a valid header*/}
+        /*not a valid header*/ 
     }
 
     protected void handle(HttpServletRequest req, HttpServletResponse res)
@@ -506,14 +510,15 @@ public class FastCGIServlet extends HttpServlet {
             try {
                 res.reset();
             } catch (Exception ex) {/*ignore*/}
-            StringBuffer buf = new StringBuffer("PHP FastCGI server not running. Please see server log for details.");
+            StringBuilder buf = new StringBuilder("PHP FastCGI server not running. Please see server log for details.");
             if (contextLoaderListener.getChannelName() != null && context != null) {
                 buf.append(" Or start a PHP FastCGI server using the command:\n");
-                buf.append(contextLoaderListener.getChannelName().getFcgiStartCommand(ServletUtil.getRealPath(context, ContextLoaderListener.CGI_DIR), contextLoaderListener.getPhpMaxRequests()));
+                buf.append(contextLoaderListener.getChannelName()
+                        .getFcgiStartCommand(ServletUtil.getRealPath(
+                                context, ContextLoaderListener.CGI_DIR), 
+                                contextLoaderListener.getPhpMaxRequests()));
             }
-            IOException ex = new IOException(buf.toString());
-            ex.initCause(e);
-            throw ex;
+            throw new IOException(buf.toString(), e);
         } catch (ServletException e) {
             try {
                 res.reset();
@@ -528,21 +533,25 @@ public class FastCGIServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         handle(req, res);
     }
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         handle(req, res);
     }
 
+    @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         handle(req, res);
     }
 
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         if (Util.logLevel > 4) {

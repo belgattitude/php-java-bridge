@@ -33,8 +33,8 @@ import io.soluble.pjb.bridge.Util;
  * A bridge pattern which either uses the PipeContextServer or the SocketContextServer,
  * depending on the OS and/or the security restrictions. On windows, which cannot use named pipes,
  * a SocketContextServer is used. All other operating systems use a PipeContextServer unless the
- * system property php.java.bridge.promiscuous is set to true or the system property
- * php.java.bridge.no_pipe_server is set to true.
+ * system property io.soluble.pjb.promiscuous is set to true or the system property
+ * io.soluble.pjb.no_pipe_server is set to true.
  * <p>
  * A ContextServer instance represents the current web context.
  * When the PipeContextServer is used, there can be more than one PipeContextServer instance per classloader, the ContextFactory.get() checks

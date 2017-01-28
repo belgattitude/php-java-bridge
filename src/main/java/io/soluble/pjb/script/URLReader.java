@@ -179,7 +179,7 @@ public class URLReader extends Reader implements IScriptReader {
     }
 
     /* (non-Javadoc)
-     * @see php.java.script.IScriptReader#read(java.util.Map, java.io.OutputStream, php.java.bridge.Util.HeaderParser)
+     * @see io.soluble.pjb.script.IScriptReader#read(java.util.Map, java.io.OutputStream, io.soluble.pjb.Util.HeaderParser)
      */
     public void read(Map env, OutputStream out, HeaderParser headerParser) throws IOException {
         InputStream natIn = null;

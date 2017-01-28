@@ -41,12 +41,11 @@ public interface IPhpScriptEngine extends ScriptEngine, Compilable, java.io.File
      *
      * @throws IOException
      */
-    public void close() throws IOException;
+    void close() throws IOException;
 
     /**
      * alias for {@link #close()}
      *
-     * @throws IOException
      */
-    public void release();
+    void release();
 }

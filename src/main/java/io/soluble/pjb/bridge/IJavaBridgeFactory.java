@@ -39,7 +39,7 @@ public interface IJavaBridgeFactory {
      * @param clientIsNew one of {@link ISession#SESSION_CREATE_NEW} {@link ISession#SESSION_GET_OR_CREATE} or {@link ISession#SESSION_GET}
      * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
-     * @see php.java.bridge.ISession
+     * @see io.soluble.pjb.bridge.ISession
      */
     public ISession getSession(String name, short clientIsNew, int timeout);
 
@@ -47,7 +47,7 @@ public interface IJavaBridgeFactory {
      * Return the associated JSR223 context
      *
      * @return The JSR223 context, if supported by the environment or null.
-     * @see php.java.bridge.http.ContextFactory#getContext()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#getContext()
      */
     public IContext getContext();
 

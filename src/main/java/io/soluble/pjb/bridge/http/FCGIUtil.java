@@ -117,7 +117,7 @@ public class FCGIUtil {
      * This controls how many child processes the PHP process spawns.
      * Default is 5. The value should be less than THREAD_POOL_MAX_SIZE
      *
-     * @see php.java.bridge.Util#THREAD_POOL_MAX_SIZE
+     * @see io.soluble.pjb.bridge.Util#THREAD_POOL_MAX_SIZE
      */
     public static final String PHP_FCGI_CONNECTION_POOL_SIZE = "5"; // should be less than Util.THREAD_POOL_MAX_SIZE;
 

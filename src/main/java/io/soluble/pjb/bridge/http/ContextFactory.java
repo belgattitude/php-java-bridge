@@ -79,9 +79,9 @@ import io.soluble.pjb.bridge.Util;
  * belongs to the same ContextServer.
  * </p>
  *
- * @see php.java.servlet.ServletContextFactory
+ * @see io.soluble.pjb.servlet.ServletContextFactory
  * @see io.soluble.pjb.bridge.http.ContextServer
- * @see php.java.bridge.SessionFactory#TIMER_DURATION
+ * @see io.soluble.pjb.bridge.SessionFactory#TIMER_DURATION
  */
 public final class ContextFactory extends SessionFactory implements IContextFactory {
 
@@ -95,6 +95,7 @@ public final class ContextFactory extends SessionFactory implements IContextFact
     static {
         try {
             getTimer().addJob(new Runnable() {
+                @Override
                 public void run() {
                     destroyOrphaned();
                 }
@@ -107,8 +108,8 @@ public final class ContextFactory extends SessionFactory implements IContextFact
     private static final HashMap contexts = new HashMap();
     private static final HashMap liveContexts = new HashMap();
 
-    private String id;
-    private long timestamp;
+    private final String id;
+    private final long timestamp;
 
     private IContextFactoryVisitor visitor;
     private boolean initialized;
@@ -166,7 +167,7 @@ public final class ContextFactory extends SessionFactory implements IContextFact
      * to the list of context factories kept by this classloader.
      *
      * @return The created ContextFactory.
-     * @see php.java.bridge.http.ContextFactory#get(String)
+     * @see io.soluble.pjb.bridge.http.ContextFactory#get(String)
      */
     public static IContextFactory addNew() {
         return new SimpleContextFactory(EMPTY_CONTEXT_NAME, false);
@@ -180,7 +181,7 @@ public final class ContextFactory extends SessionFactory implements IContextFact
      * @param id The ID
      * @return The ContextFactory or null.
      * @throws SecurityException if id belongs to a different ContextServer.
-     * @see php.java.bridge.http.ContextFactory#addNew()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#addNew()
      */
     /* See PhpJavaServlet#contextServer, http.ContextRunner#contextServer and 
      * JavaBridgeRunner#ctxServer. */
@@ -350,7 +351,7 @@ public final class ContextFactory extends SessionFactory implements IContextFact
      * Should be called by Context.addNew() only.
      *
      * @param context The context.
-     * @see php.java.bridge.http.ContextFactory#addNew()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#addNew()
      */
     public void setContext(IContext context) {
         visitor.setContext(context);

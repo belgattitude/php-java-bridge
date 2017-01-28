@@ -50,9 +50,9 @@ import io.soluble.pjb.bridge.Util;
  * </code>
  *
  * @author jostb
- * @see php.java.script.IPhpScriptContext
+ * @see io.soluble.pjb.script.IPhpScriptContext
  * @see javax.script.ScriptContext
- * @see php.java.script.PhpScriptContext
+ * @see io.soluble.pjb.script.PhpScriptContext
  */
 public class Context implements IManaged, Invocable, IContext {
 
@@ -251,7 +251,7 @@ public class Context implements IManaged, Invocable, IContext {
      * Used when scripts are running outside of a servlet environment:
      * Either the Standalone or the JSR223 Standalone (see PhpScriptContext). <br>
      * Within a servlet environment use the ContextLoaderListener instead:
-     * Either php.java.servlet.Context or the JSR223 Context (see PhpSimpleHttpScriptContext).
+     * Either io.soluble.pjb.servlet.Context or the JSR223 Context (see PhpSimpleHttpScriptContext).
      *
      * @param closeable The procedure close(), will be called before the VM terminates
      */

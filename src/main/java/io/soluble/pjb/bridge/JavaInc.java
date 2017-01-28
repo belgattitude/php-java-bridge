@@ -72,9 +72,9 @@ public class JavaInc {
 "}\n"+
 "function java_virtual($path,$return=false) {\n"+
 "$req=java_context()->getHttpServletRequest();\n"+
-"$req=new java(\"php.java.servlet.VoidInputHttpServletRequest\",$req);\n"+
+"$req=new java(\"io.soluble.pjb.servlet.VoidInputHttpServletRequest\",$req);\n"+
 "$res=java_context()->getHttpServletResponse();\n"+
-"$res=new java(\"php.java.servlet.RemoteHttpServletResponse\",$res);\n"+
+"$res=new java(\"io.soluble.pjb.servlet.RemoteHttpServletResponse\",$res);\n"+
 "$req->getRequestDispatcher($path)->include($req,$res);\n"+
 "if ($return) return $res->getBufferContents();\n"+
 "echo $res->getBufferContents();\n"+

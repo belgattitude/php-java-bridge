@@ -71,8 +71,8 @@ import io.soluble.pjb.bridge.http.IContext;
  * <blockquote>
  * <code>
  * ScriptEngine e = (new ScriptEngineManager()).getEngineByName("php-invocable");<br>
- * e.eval(new php.java.script.URLReader(new URL("http://localhost/hello.php")));<br>
- * System.out.println(((Invocable)e).invokeMethod(e.get("php.java.bridge.PhpProcedure"), "f", new Object[]{}));<br>
+ * e.eval(new io.soluble.pjb.script.URLReader(new URL("http://localhost/hello.php")));<br>
+ * System.out.println(((Invocable)e).invokeMethod(e.get("io.soluble.pjb.PhpProcedure"), "f", new Object[]{}));<br>
  * ((Closeable)e).close();<br>
  * </code>
  * </blockquote>

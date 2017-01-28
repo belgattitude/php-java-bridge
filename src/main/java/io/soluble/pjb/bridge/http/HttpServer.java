@@ -44,9 +44,9 @@ import io.soluble.pjb.bridge.Util;
  * @author jostb
  * @see io.soluble.pjb.bridge.http.HttpRequest
  * @see io.soluble.pjb.bridge.http.HttpResponse
- * @see php.java.script.Continuation
- * @see php.java.script.URLReader
- * @see php.java.script.Continuation
+ * @see io.soluble.pjb.script.Continuation
+ * @see io.soluble.pjb.script.URLReader
+ * @see io.soluble.pjb.script.Continuation
  */
 public abstract class HttpServer implements Runnable {
     /**
@@ -120,7 +120,6 @@ public abstract class HttpServer implements Runnable {
      * Create a new HTTP Server.
      *
      * @param serverPort The port# as a string. Prefix may be INET: or INET_LOCAL:
-     * @param isSecure
      * @throws IOException
      * @see HttpServer#destroy()
      */

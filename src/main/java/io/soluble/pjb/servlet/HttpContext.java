@@ -138,7 +138,7 @@ public class HttpContext extends io.soluble.pjb.bridge.http.Context {
     /**
      * Only for internal use. <br><br>
      * Used when scripts are running within of a servlet environment:
-     * Either php.java.servlet.Context or the JSR223 Context (see PhpSimpleHttpScriptContext).<br>
+     * Either io.soluble.pjb.servlet.Context or the JSR223 Context (see PhpSimpleHttpScriptContext).<br>
      * Outside of a servlet environment use the ContextLoaderListener instead:
      * Either the Standalone or the JSR223 Standalone (see PhpScriptContext).
      *
@@ -172,7 +172,7 @@ public class HttpContext extends io.soluble.pjb.bridge.http.Context {
      * @param path the path
      * @param ctx  the servlet context
      * @return the real path
-     * @deprecated Use {@link php.java.servlet.ServletUtil#getRealPath(ServletContext, String)}
+     * @deprecated Use {@link io.soluble.pjb.servlet.ServletUtil#getRealPath(ServletContext, String)}
      */
     public static String getRealPathInternal(String path, ServletContext ctx) {
         return ServletUtil.getRealPath(ctx, path);

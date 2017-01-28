@@ -42,8 +42,9 @@ public interface IScriptReader {
     /**
      * These header values appear in the environment map passed to PHP
      */
-    public static final String[] HEADER = new String[]{Util.X_JAVABRIDGE_CONTEXT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS,
-            Util.X_JAVABRIDGE_INCLUDE_ONLY, Util.X_JAVABRIDGE_INCLUDE, Util.X_JAVABRIDGE_REDIRECT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT};
+    static final String[] HEADER = new String[]{Util.X_JAVABRIDGE_CONTEXT, Util.X_JAVABRIDGE_OVERRIDE_HOSTS,
+            Util.X_JAVABRIDGE_INCLUDE_ONLY, Util.X_JAVABRIDGE_INCLUDE, Util.X_JAVABRIDGE_REDIRECT, 
+            Util.X_JAVABRIDGE_OVERRIDE_HOSTS_REDIRECT};
 
     /**
      * Read from the URL and write the data to out.
@@ -52,9 +53,7 @@ public interface IScriptReader {
      * @param out          The OutputStream.
      * @param headerParser The header parser
      * @throws IOException
-     * @throws ServletException
      */
-    public abstract void read(Map env, OutputStream out,
-                              HeaderParser headerParser) throws IOException;
+    abstract void read(Map env, OutputStream out, HeaderParser headerParser) throws IOException;
 
 }

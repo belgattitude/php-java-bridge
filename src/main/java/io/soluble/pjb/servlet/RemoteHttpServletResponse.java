@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
  * A servlet response which writes its output to an internal buffer. The buffer can be fetched using
- * "getBufferContents()". May be used by remote PHP scripts (those accessing PhpJavaServlet) through the "java_context()->getHttpServletResponse()" API.
+ * "getBufferContents()". May be used by remote PHP scripts (those accessing PhpJavaServlet) through the "java_context()-&gt;getHttpServletResponse()" API.
  * Also used by the "java_virtual()" API.
  *
  * @author jostb

@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  * Implementing classes are able to use the FastCGI machinery.
- * Currently implemented by {@link php.java.servlet.fastcgi.FastCGIServlet} and {@link php.java.script.FastCGIProxy}
+ * Currently implemented by {@link io.soluble.pjb.servlet.fastcgi.FastCGIServlet} and {@link io.soluble.pjb.script.FastCGIProxy}
  */
 public interface IFCGIProcessFactory {
     /**
@@ -39,83 +39,80 @@ public interface IFCGIProcessFactory {
      *
      * @param msg The message to log
      */
-    public void log(String msg);
+    void log(String msg);
 
     /**
      * Create a FastCGI Process
      *
      * @param args        The PHP arguments
-     * @param webInfDir   The web inf dir
-     * @param pearDir     The bear dir
-     * @param cgiDir      The cgi dir
      * @param includeJava automatically include Java.inc in each script
      * @param home        The PHP home dir or null
      * @param env         The process environment
      * @return a FastCGI process object
      * @throws IOException
      */
-    public IFCGIProcess createFCGIProcess(String[] args, boolean includeJava, File home, Map env) throws IOException;
+    IFCGIProcess createFCGIProcess(String[] args, boolean includeJava, File home, Map env) throws IOException;
 
     /**
      * Get the connection pool size, usually FCGIUtil#PHP_FCGI_CONNECTION_POOL_SIZE
      *
      * @return The connection pool size
      */
-    public String getPhpConnectionPoolSize();
+    String getPhpConnectionPoolSize();
 
     /**
      * Get the max requests value, usually {@link FCGIUtil#PHP_FCGI_MAX_REQUESTS}
      *
      * @return The connection pool size
      */
-    public String getPhpMaxRequests();
+    String getPhpMaxRequests();
 
     /**
      * Get the path to the PHP binary. For example "/usr/bin/php-cgi".
      *
      * @return The path or the name of the PHP FastCGI binary or null (defaults to php-cgi or php-cgi.exe on the PATH)
      */
-    public String getPhp();
+    String getPhp();
 
     /**
      * Get the value of the php_include_java option from the WEB-INF/web.xml. Should return true in most cases.
      *
      * @return the php_include_java option
      */
-    public boolean getPhpIncludeJava();
+    boolean getPhpIncludeJava();
 
     /**
      * Get the process environment map used for PHP.
      *
      * @return the process environment.
      */
-    public HashMap getEnvironment();
+    HashMap getEnvironment();
 
     /**
      * Used for debugging only. Should always return true.
      *
      * @return true
      */
-    public boolean canStartFCGI();
+    boolean canStartFCGI();
 
     /**
      * The full path to the pear dir. Defaults to WEB-INF/cgi. Use TMPDIR for a standalone runner.
      *
      * @return the full path to the cgi dir
      */
-    public String getCgiDir();
+    String getCgiDir();
 
     /**
      * The full path to the pear dir. Defaults to WEB-INF/pear. Use TMPDIR for a standalone runner.
      *
      * @return the full path to the pear dir
      */
-    public String getPearDir();
+    String getPearDir();
 
     /**
      * The full path to the web-inf dir. Defaults to WEB-INF. Use TMPDIR for a standalone runner.
      *
      * @return the full path to the WEB-INF dir
      */
-    public String getWebInfDir();
+    String getWebInfDir();
 }

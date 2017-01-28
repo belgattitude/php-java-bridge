@@ -64,7 +64,7 @@ public class FCGIProcess extends Util.Process implements IFCGIProcess {
     }
 
     /* (non-Javadoc)
-     * @see php.java.servlet.fastcgi.IFCGIProcess#start()
+     * @see io.soluble.pjb.servlet.fastcgi.IFCGIProcess#start()
      */
     public void start() throws NullPointerException, IOException {
         super.start();

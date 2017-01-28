@@ -60,7 +60,8 @@ import io.soluble.pjb.bridge.http.WriterOutputStream;
  * @see io.soluble.pjb.script.InvocablePhpScriptEngine
  * @see io.soluble.pjb.script.PhpScriptEngine
  */
-abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements IPhpScriptEngine, Compilable, java.io.FileFilter, CloneableScript {
+abstract class AbstractPhpScriptEngine extends AbstractScriptEngine 
+        implements IPhpScriptEngine, Compilable, java.io.FileFilter, CloneableScript {
 
     /**
      * The allocated script
@@ -139,6 +140,7 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
     /* (non-Javadoc)
      * @see javax.script.ScriptEngine#eval(java.io.Reader, javax.script.ScriptContext)
      */
+    @Override
     public Object eval(Reader reader, ScriptContext context) throws ScriptException {
         return evalPhp(reader, context);
     }
@@ -181,18 +183,15 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
         }
         FileWriter writer = new FileWriter(compilerOutputFile);
         char[] buf = new char[Util.BUF_SIZE];
-        Reader localReader = getLocalReader(reader, true);
-        try {
+        try (Reader localReader = getLocalReader(reader, true)) {
             int c;
             while ((c = localReader.read(buf)) > 0)
                 writer.write(buf, 0, c);
             writer.close();
-        } finally {
-            localReader.close();
         }
     }
 
-    private void updateGlobalEnvironment(ScriptContext context) throws IOException {
+    private void updateGlobalEnvironment() throws IOException {
         if (isCompiled) {
             if (compilerOutputFile == null)
                 throw new NullPointerException("SCRIPT_FILENAME");
@@ -201,12 +200,13 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
     }
 
     private final class SimpleHeaderParser extends HeaderParser {
-        private WriterOutputStream writer;
+        private final WriterOutputStream writer;
 
         public SimpleHeaderParser(WriterOutputStream writer) {
             this.writer = writer;
         }
 
+        @Override
         public void parseHeader(String header) {
             if (header == null) return;
             int idx = header.indexOf(':');
@@ -216,6 +216,7 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
             addHeader(key, val);
         }
 
+        @Override
         public void addHeader(String key, String val) {
             if (val != null && key.equals("content-type")) {
                 int idx = val.indexOf(';');
@@ -232,7 +233,7 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
     protected Continuation getContinuation(Reader reader, ScriptContext context) throws IOException {
         HeaderParser headerParser = HeaderParser.DEFAULT_HEADER_PARSER; // ignore encoding, we pass everything directly
         IPhpScriptContext phpScriptContext = (IPhpScriptContext) context;
-        updateGlobalEnvironment(context);
+        updateGlobalEnvironment();
         OutputStream out = ((PhpScriptWriter) (context.getWriter())).getOutputStream();
         OutputStream err = ((PhpScriptWriter) (context.getErrorWriter())).getOutputStream();
 
@@ -271,8 +272,9 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
      */
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
+    @Override
     public Object eval(String script, ScriptContext context)
             throws ScriptException {
         if (script == null) return evalPhp((Reader) null, context);
@@ -289,8 +291,9 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
+    @Override
     public ScriptEngineFactory getFactory() {
         return this.factory;
     }
@@ -298,6 +301,7 @@ abstract class AbstractPhpScriptEngine extends AbstractScriptEngine implements I
     /**
      * Release the continuation
      */
+    @Override
     public void release() {
         if (continuation != null) {
             try {

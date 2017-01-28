@@ -80,7 +80,7 @@ final class ParserString {
      * Returns the string encoded via java_set_file_encoding().
      *
      * @return The encoded string value.
-     * @see php.java.bridge.Options#getEncoding()
+     * @see io.soluble.pjb.Options#getEncoding()
      */
     public String getStringValue() {
         return bridge.getString(string, off, length);
@@ -90,7 +90,7 @@ final class ParserString {
      * Returns the cached string encoded via java_set_file_encoding().
      *
      * @return The encoded string value.
-     * @see php.java.bridge.Options#getEncoding()
+     * @see io.soluble.pjb.Options#getEncoding()
      */
     public String getCachedStringValue() {
         return bridge.getCachedString(string, off, length);

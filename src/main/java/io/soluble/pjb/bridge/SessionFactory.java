@@ -36,12 +36,12 @@ import io.soluble.pjb.bridge.http.IContext;
  * Create new session instances
  *
  * @author jostb
- * @see php.java.bridge.Session
+ * @see io.soluble.pjb.bridge.Session
  * @see io.soluble.pjb.bridge.http.Context
- * @see php.java.servlet.HttpContext
+ * @see io.soluble.pjb.servlet.HttpContext
  * @see io.soluble.pjb.bridge.http.ContextFactory
- * @see php.java.servlet.ServletContextFactory
- * @see php.java.script.PhpScriptContextFactory
+ * @see io.soluble.pjb.servlet.ServletContextFactory
+ * @see io.soluble.pjb.script.PhpScriptContextFactory
  */
 public class SessionFactory extends JavaBridgeFactory {
 
@@ -90,7 +90,7 @@ public class SessionFactory extends JavaBridgeFactory {
      * @param clientIsNew one of {@link ISession#SESSION_CREATE_NEW} {@link ISession#SESSION_GET_OR_CREATE} or {@link ISession#SESSION_GET}
      * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
-     * @see php.java.bridge.ISession
+     * @see io.soluble.pjb.bridge.ISession
      */
     public ISession getSession(String name, short clientIsNew, int timeout) {
         if (name == null) name = JavaBridge.PHPSESSION;
@@ -102,7 +102,7 @@ public class SessionFactory extends JavaBridgeFactory {
      * Return the associated context
      *
      * @return Always null
-     * @see php.java.bridge.http.ContextFactory#getContext()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#getContext()
      */
     public IContext getContext() {
         return null;

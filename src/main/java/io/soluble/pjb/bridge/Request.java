@@ -654,7 +654,7 @@ public final class Request implements IDocHandler {
      * associated session-/contextFactory will be automatically destroyed when the request is done.
      *
      * @param bridge The fresh bridge and its ContextFactory
-     * @see php.java.bridge.http.IContextFactory#recycle(String)
+     * @see io.soluble.pjb.bridge.http.IContextFactory#recycle(String)
      */
     public void setBridge(JavaBridge bridge) {
         defaultBridge = this.bridge;
@@ -785,7 +785,7 @@ public final class Request implements IDocHandler {
         }
 
         /* (non-Javadoc)
-         * @see php.java.bridge.Request.Arg#getArgs()
+         * @see io.soluble.pjb.Request.Arg#getArgs()
          */
         public Object[] getArgs() {
             bridge.logError("Protocol error: getArgs");
@@ -793,7 +793,7 @@ public final class Request implements IDocHandler {
         }
 
         /* (non-Javadoc)
-         * @see php.java.bridge.Request.Arg#reset()
+         * @see io.soluble.pjb.Request.Arg#reset()
          */
         public void reset() {
             bridge.logError("Protocol error: reset");

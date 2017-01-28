@@ -40,9 +40,9 @@ public interface IContextFactory extends IJavaBridgeFactory {
      * </p>
      *
      * @param id The fresh id
-     * @see php.java.bridge.http.ContextFactory#recycle()
-     * @see php.java.bridge.Request#setBridge(php.java.bridge.JavaBridge)
-     * @see php.java.bridge.Request#recycle()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#recycle()
+     * @see io.soluble.pjb.bridge.Request#setBridge(io.soluble.pjb.JavaBridge)
+     * @see io.soluble.pjb.bridge.Request#recycle()
      */
     public void recycle(String id);
 
@@ -86,7 +86,7 @@ public interface IContextFactory extends IJavaBridgeFactory {
      * Return a JSR223 context
      *
      * @return The context
-     * @see php.java.servlet.ServletContextFactory#getContext()
+     * @see io.soluble.pjb.servlet.ServletContextFactory#getContext()
      * @see io.soluble.pjb.bridge.http.Context
      */
     public IContext getContext();
@@ -96,7 +96,7 @@ public interface IContextFactory extends IJavaBridgeFactory {
      * Should be called by Context.addNew() only.
      *
      * @param context
-     * @see php.java.bridge.http.ContextFactory#addNew()
+     * @see io.soluble.pjb.bridge.http.ContextFactory#addNew()
      */
     public void setContext(IContext context);
 
@@ -105,7 +105,7 @@ public interface IContextFactory extends IJavaBridgeFactory {
      * @param clientIsNew true if the client wants a new session
      * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
-     * @see php.java.bridge.ISession
+     * @see io.soluble.pjb.bridge.ISession
      */
     public ISession getSession(String name, short clientIsNew, int timeout);
 
@@ -114,7 +114,7 @@ public interface IContextFactory extends IJavaBridgeFactory {
      * @param clientIsNew true if the client wants a new session
      * @param timeout     timeout in seconds. If 0 the session does not expire.
      * @return The session
-     * @see php.java.bridge.ISession
+     * @see io.soluble.pjb.bridge.ISession
      */
     public ISession getSimpleSession(String name, short clientIsNew, int timeout);
 

@@ -47,11 +47,11 @@ import io.soluble.pjb.bridge.http.ContextServer;
  * requests and then re-directs to a private (socket- or pipe-)
  * communication channel.  This is the fastest mechanism to connect
  * php and java. It is even 1.5 times faster than local ("unix
- * domain") sockets used by the php.java.bridge.JavaBridge standalone
+ * domain") sockets used by the io.soluble.pjb.JavaBridge standalone
  * listener.  </p>
  * <p>
- * To enable fcg/servlet debug code start the servlet engine with -Dphp.java.bridge.default_log_level=6.
- * For example: <code>java -Dphp.java.bridge.default_log_level=6 -jar /opt/jakarta-tomcat-5.5.9/bin/bootstrap.jar</code>
+ * To enable fcg/servlet debug code start the servlet engine with -Dio.soluble.pjb.default_log_level=6.
+ * For example: <code>java -Dio.soluble.pjb.default_log_level=6 -jar /opt/jakarta-tomcat-5.5.9/bin/bootstrap.jar</code>
  * </p>
  * <p>There cannot be more than one PhpJavaServlet instance per web application. If you extend from this class, make sure to change
  * the .phpjavabridge =&gt; PhpJavaServlet mapping in the WEB-INF/web.xml. </p>
@@ -73,7 +73,7 @@ public /*singleton*/ class PhpJavaServlet extends HttpServlet {
     private String keepAliveParam;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void init(ServletConfig config) throws ServletException {

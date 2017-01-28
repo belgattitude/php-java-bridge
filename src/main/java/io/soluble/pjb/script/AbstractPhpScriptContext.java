@@ -83,7 +83,7 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public void setContinuation(Continuation kont) {
         this.kont = kont;
@@ -91,14 +91,14 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public Continuation getContinuation() {
         return kont;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public boolean call(Object kont) throws Exception {
         if (!continuationCalled) {

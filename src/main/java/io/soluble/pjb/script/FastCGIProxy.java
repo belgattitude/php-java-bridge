@@ -53,7 +53,7 @@ import io.soluble.pjb.bridge.http.OutputStreamFactory;
  * This class can be used to run (and to connect to) a FastCGI server.
  *
  * @author jostb
- * @see php.java.script.servlet.HttpFastCGIProxy
+ * @see io.soluble.pjb.script.servlet.HttpFastCGIProxy
  */
 
 public class FastCGIProxy extends Continuation implements IFCGIProcessFactory {

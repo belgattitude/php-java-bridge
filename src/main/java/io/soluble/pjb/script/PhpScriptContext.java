@@ -44,11 +44,11 @@ import io.soluble.pjb.bridge.http.IContext;
  * This class implements a simple script context for PHP. It starts a standalone
  * <code>JavaBridgeRunner</code> which listens for requests from php instances.<p>
  * <p>
- * In a servlet environment please use a <code>php.java.script.http.PhpSimpleHttpScriptContext</code> instead.
+ * In a servlet environment please use a <code>io.soluble.pjb.script.http.PhpSimpleHttpScriptContext</code> instead.
  *
  * @author jostb
  * @see io.soluble.pjb.script.PhpScriptContext
- * @see php.java.bridge.JavaBridgeRunner
+ * @see io.soluble.pjb.bridge.JavaBridgeRunner
  */
 
 public final class PhpScriptContext extends AbstractPhpScriptContext {
@@ -59,6 +59,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object init(Object callable) throws Exception {
         return io.soluble.pjb.bridge.http.Context.getManageable(callable);
     }
@@ -66,6 +67,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void onShutdown(Object closeable) {
         io.soluble.pjb.bridge.http.Context.handleManaged(closeable);
     }
@@ -75,6 +77,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
      *
      * @return none
      */
+    @Override
     public Object getHttpServletRequest() {
         throw new IllegalStateException("PHP not running in a servlet environment");
     }
@@ -84,6 +87,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
      *
      * @return none
      */
+    @Override
     public Object getServletContext() {
         throw new IllegalStateException("PHP not running in a servlet environment");
     }
@@ -93,6 +97,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
      *
      * @return none
      */
+    @Override
     public Object getHttpServletResponse() {
         throw new IllegalStateException("PHP not running in a servlet environment");
     }
@@ -102,6 +107,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
      *
      * @return none
      */
+    @Override
     public Object getServlet() {
         throw new IllegalStateException("PHP not running in a servlet environment");
     }
@@ -111,6 +117,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
      *
      * @return none
      */
+    @Override
     public Object getServletConfig() {
         throw new IllegalStateException("PHP not running in a servlet environment");
     }
@@ -118,6 +125,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getRealPath(String path) {
         return io.soluble.pjb.bridge.http.Context.getRealPathInternal(path);
     }
@@ -125,6 +133,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object get(String key) {
         return getBindings(IContext.ENGINE_SCOPE).get(key);
     }
@@ -132,6 +141,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void put(String key, Object val) {
         getBindings(IContext.ENGINE_SCOPE).put(key, val);
     }
@@ -139,6 +149,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void remove(String key) {
         getBindings(IContext.ENGINE_SCOPE).remove(key);
     }
@@ -146,6 +157,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void putAll(Map map) {
         getBindings(IContext.ENGINE_SCOPE).putAll(map);
     }
@@ -153,6 +165,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map getAll() {
         return Collections.unmodifiableMap(getBindings(IContext.ENGINE_SCOPE));
     }
@@ -160,6 +173,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Continuation createContinuation(Reader reader, Map env,
                                            OutputStream out, OutputStream err, HeaderParser headerParser, ResultProxy result,
                                            ILogger logger, boolean isCompiled) {
@@ -175,7 +189,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
 
     private static JavaBridgeRunner httpServer;
 
-    private static synchronized final JavaBridgeRunner getHttpServer() {
+    private static synchronized JavaBridgeRunner getHttpServer() {
         if (httpServer != null) return httpServer;
         try {
             return httpServer = JavaBridgeRunner.getRequiredInstance();
@@ -188,20 +202,26 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getSocketName() {
         return getHttpServer().getSocket().getSocketName();
     }
 
     /**
+     * @return 
      * @deprecated
      */
+    @Override
     public String getRedirectString() {
         throw new NotImplementedException();
     }
 
     /**
+     * @param webPath
+     * @return 
      * @deprecated
      */
+    @Override
     public String getRedirectString(String webPath) {
         throw new NotImplementedException();
     }
@@ -209,6 +229,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getRedirectURL(String webPath) {
         return "http://127.0.0.1:" + getSocketName() + webPath;
     }
@@ -216,6 +237,7 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ContextServer getContextServer() {
         return getHttpServer().getContextServer();
     }
