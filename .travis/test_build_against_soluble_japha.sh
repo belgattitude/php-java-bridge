@@ -52,7 +52,6 @@ install_soluble_japha() {
 runEmbeddedTomcat() {
     cd $PROJECT_DIR
     gradle tomcatRun
-
 }
 
 runPHPUnit()  {
@@ -69,8 +68,9 @@ stopEmbeddedTomcat() {
 
 
 # Here's the steps
-
 install_soluble_japha;
 runEmbeddedTomcat;
+# Sleep for travis
+sleep 3
 runPHPUnit;
 stopEmbeddedTomcat;

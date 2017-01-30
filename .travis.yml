@@ -12,12 +12,17 @@ jdk:
 os:
   - linux
 
-before_install:
- # for debugging purposes
- - php --version
+before_script:
+  # for debugging purposes
+  - php --version
+  - chmod +x gradlew
 
 script:
   - ./gradlew test
   - ./.travis/test_build_against_soluble_japha.sh
+  - ./gradlew jacocoTestReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 
