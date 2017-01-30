@@ -161,8 +161,10 @@ Feel free to fork and submit pull requests :)
 
 ## Credits
 
-* Fork initially made by [Sébastien Vanvelthem](https://github.com/belgattitude).
+See the [CREDITS.md](./CREDITS.md) for an updated list of contributions.
 
+* Java refactorings and modernizations made by [Christian P. Lerch](https://github.com/cplerch)
+* Fork initially made by [Sébastien Vanvelthem](https://github.com/belgattitude).
 
 Original developers:
 
