@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/pjb-starter-gradle)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Unofficial fork of the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) server.
 
 The VM Bridge is a network protocol which can be used to connect a native 
@@ -36,6 +39,9 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [ ] Write JUnit tests
 - [ ] Start refactorings and improve ;)
 - [ ] Documentation (always a wip)
+
+- Master branch: [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/php-java-bridge)
+- Develop branch: [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=develop)](https://travis-ci.org/belgattitude/php-java-bridge)
 
 Please **[participate in the discussion for future ideas here](https://github.com/belgattitude/php-java-bridge/issues/6)**. 
 

@@ -8,11 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Build: Preliminary support for Gradle (still relying on ant build.xml), see [#5](https://github.com/belgattitude/php-java-bridge/issues/5) and [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
+- Build: Support for Gradle (still relying on ant build.xml), see [#5](https://github.com/belgattitude/php-java-bridge/issues/5) and [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
 - Build: New tasks added in gradle 'jacocoTestReport', see P/R [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
 - Test: Resurrect existing unit tests
 - Test: test and coverage using Jacoco added, see P/R [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
 - Doc: trick to build when default interpreter is php 7+, see [#4](https://github.com/belgattitude/php-java-bridge/issues/4)
+- License: MIT license where applicable, see [#10](https://github.com/belgattitude/php-java-bridge/issues/10) 
 
 ### Removed
 
