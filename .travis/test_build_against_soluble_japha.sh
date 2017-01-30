@@ -49,7 +49,8 @@ install_soluble_japha() {
 }
 
 
-runEmbeddedTomcat() {
+runEmbeddedTomcatDaemon() {
+    # Launch through the embedded gradle tomcat plugin
     cd $PROJECT_DIR
     gradle tomcatRun
 }
@@ -58,7 +59,7 @@ runPHPUnit()  {
     cd $JAPHA_DIR
     echo "[*] Running phpunit"
     cp ../phpunit.travis.xml .
-    phpunit -c ./phpunit.travis.xml
+    ./vendor/bin/phpunit -c ./phpunit.travis.xml -v --debug
 }
 
 stopEmbeddedTomcat() {
@@ -69,8 +70,6 @@ stopEmbeddedTomcat() {
 
 # Here's the steps
 install_soluble_japha;
-runEmbeddedTomcat;
-# Sleep for travis
-sleep 3
+runEmbeddedTomcatDaemon;
 runPHPUnit;
 stopEmbeddedTomcat;
