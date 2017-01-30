@@ -38,8 +38,10 @@ dependencies {
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
     
     def tomcatVersion = '7.0.59'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat(
+            "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+    )
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
@@ -95,6 +97,12 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives jar, sourcesJar, javadocJar
 }
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
+
 
 uploadArchives {
     repositories {

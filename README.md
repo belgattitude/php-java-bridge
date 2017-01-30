@@ -49,8 +49,16 @@ Please **[participate in the discussion for future ideas here](https://github.co
 - You can download pre-compiled [java bridge binaries](https://github.com/belgattitude/php-java-bridge/releases) on the releases page (jdk8). 
 - Alternatively you can build the project, first clone the project and follow the build steps.
 - [Gradle starter project](https://github.com/belgattitude/pjb-starter-gradle) on it's way !!! 
+
+## Build the project
+
+### Requirements
+
+ - Oracle JDK 7,8
+ - Gradle and Ant installed
+ - PHP CLI >= 5.3, < 7.0, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4) 
  
-## Clone the project
+### Clone the project
 
 Run the `git clone` command clone in a directory:
 
@@ -59,79 +67,69 @@ $ git clone https://github.com/belgattitude/php-java-bridge.git
 $ cd php-java-bridge
 ```
 
-## Build
+### Build 
 
-Building the project requires a php interpreter (5.3 - 5.6) installed, see (for building under PHP7, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4).
-You can specify its location through the `-Dphp_exec=/usr/bin/php5.6`.
+> Building the project requires a php interpreter (5.3 - 5.6) installed. By default
+> it will use the `php` found in system path, but you can specify another location through the `-Dphp_exec=` argument.  
 
-See the `build.xml` for registered tasks. 
+```
+$ gradle build 
+```
 
-### Option 1: with ant
-  
+### Generated files
+
+See the `/build/libs` folder :
+
+| File          | Description   | Approx. size |
+| ------------- | ------------- | ------------ |
+| `JavaBridge-<VERSION>.jar`  | JavaBridge library. | +/- 500k |
+| `JavaBridge-<VERSION>.war`  | Ready to deploy war template file. | +/- 900k |
+| `JavaBridge-<VERSION>-sources.jar`  | JavaBridge sources. | +/- 400k |
+| `JavaBridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
+       
+
+## Develop
+                                                         
+### Gradle tasks
+
 ```shell
-$ ant -Dphp_exec=/usr/bin/php5.6
+$ gradle tomcatRun
+$ # gradle tomcatStop (to stop the server)
 ```
+                   
+                                     
+## Usage
 
-**Warning** due to gradle support, the ant `clean` has been renamed in `cleanBuild`. See [5](https://github.com/belgattitude/php-java-bridge/issues/5). 
+### Deploy
 
-### Option 2: with gradle
+> Currently only tested on Tomcat 7/8, should be running on any servlet 2.5 compatible container.
 
-```
-$ gradle all -Dphp_exec=php5.6
-```
+#### Deploy on Tomcat8 
 
-## Compiled files
-
-See the `/dist` folder :
-
-- The bridge files.
-
-    - `JavaBridge.jar`: Main library, providing also a standalone server
-    - `php-servlet.jar`: Servlet for php-java communication (required). Approx 58k. 
-    - `php-script.jar`: Lib to allow java to talk with a php-cgi instance. Approx 58k.
-       
-- For convenience, you'll find ready to run war bundles, you can choose between :
-  
-    - `JavaBridgeTemplate.war`: Minimal war file (only php-servlet.jar, php-script.jar, web.xml and support for system php-cgi). Approx 500k.   
-    - `JavaBridge.war`: Example war file with some lib and examples. Approx **47Mb** !!!        
-                    
-- Obsolete files kept for compatibility
-    - `script-api.jar`: *obsolete javax.script package. Included from Java 1.6, see [doc](https://docs.oracle.com/javase/7/docs/api/index.html?javax/script/package-summary.html)*
-    - `Java.inc`: *obsolete php client, replaced by [soluble-japha](https://github.com/belgattitude/soluble-japha)*
-       
-     
-              
-## Deploy
-
-Tested containers are :
-
-- Tomcat 7 
-- Tomcat 8
-
-### Tomcat (Ubuntu)
-
-Ensure you have tomcat installed and a php-cgi 
+Ensure you have tomcat installed and a php-cgi
 
 ```shell
 $ sudo apt-get install tomcat8 tomcat8-admin
 $ sudo apt-get install php-cgi
 ```
 
-And copy the ready to run `JavaBridgeTemplate.war` (or `JavaBridge.war` or bundle yours) in the tomcat webapps folder:
+And copy the ready to run `JavaBridge-<VERSION>.war` in the tomcat webapps folder:
 
 ```shell
-cp dist/JavaBridgeTemplate.war /var/lib/tomcat8/webapps
+$ cp build/libs/JavaBridge-<VERSION>.war /var/lib/tomcat8/webapps/JavaBridge.war
 ```
 
-Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate).
+Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridge](http://localhost:8080/JavaBridge).
 
-Errors are logged by default into
+Have a look to the error log if needed:
 
 ```shell
 $ cat /var/log/tomcat8/catalina.out
 ```
 
-### Tomcat tuning tips
+## FAQ
+
+### OutOfMemory errors under Tomcat
 
 If you get OutOfMemory errors, you can increase the java heap tomcat:
 
@@ -148,18 +146,8 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx512m -XX:+UseConcMarkSweepGC"
 and restart
 
 ```shell
-sudo service tomcat8 restart
+$ sudo service tomcat8 restart
 ```
-
-### How to build documentation
-
-You can build the doc with
-
-```shell
-$ ant JavaDoc
-```
-
-Documentation will be generated in the `/doc/API` folder.
  
 ## Contribute
 

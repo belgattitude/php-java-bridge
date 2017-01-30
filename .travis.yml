@@ -1,0 +1,23 @@
+dist: trusty
+sudo: required
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+#services:
+#  - mysql
+
+os:
+  - linux
+
+before_install:
+ # for debugging purposes
+ - php --version
+
+script:
+  - ./gradlew test
+  - ./.travis/test_build_against_soluble_japha.sh
+
+
