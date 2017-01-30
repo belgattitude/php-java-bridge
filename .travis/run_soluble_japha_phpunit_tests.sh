@@ -3,16 +3,14 @@
 # Travis specific post-test script to run the test suite provided
 # in the latest release of https://github.com/belgattitude/soluble-japha client.
 #
-# Very hacky
 #
 # usage:
-#   > ./test_build_against_soluble_japha.sh
+#   > ./run_soluble_japha_phpunit_tests.sh
 #
 # requirements:
 #   - php >= 5.6, php 7+
 #   - git
 #   - composer
-#   - java
 #   - linux
 #
 # @author Vanvelthem Sébastien
@@ -55,7 +53,7 @@ runPHPUnit()  {
     cd $JAPHA_DIR
     echo "[*] Running phpunit"
     cp ../phpunit.travis.xml .
-    ./vendor/bin/phpunit -c ./phpunit.travis.xml -v --debug
+    ./vendor/bin/phpunit -c ./phpunit.travis.xml -v
 }
 
 

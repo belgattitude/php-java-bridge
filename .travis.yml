@@ -24,13 +24,13 @@ script:
   - sleep 10
   - cat ./tomcat.log
   - sudo netstat -nlp | grep :8090
-  - ./.travis/test_build_against_soluble_japha.sh
-  - ./gradlew jacocoTestReport
+  - ./.travis/run_soluble_japha_phpunit_tests.sh
 
 after_failure:
   - cat ./tomcat.log
 
 after_success:
+  #- ./gradlew build jacocoTestReport
   - bash <(curl -s https://codecov.io/bash)
 
 
