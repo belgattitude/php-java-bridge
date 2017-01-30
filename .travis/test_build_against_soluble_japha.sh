@@ -24,9 +24,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$SCRIPT_DIR/.."
 JAPHA_DIR="$SCRIPT_DIR/soluble-japha"
 
-install_soluble_japha() {
+install_soluble_japha_master() {
 
-    echo "[*] Installing latest release of soluble-japha";
+    echo "[*] Installing master branch of soluble-japha";
 
     # 1. Clone the soluble-japha project (if not already exists)
     if [ ! -d $JAPHA_DIR ]; then
@@ -71,7 +71,11 @@ stopEmbeddedTomcat() {
 
 
 # Here's the steps
-install_soluble_japha;
+install_soluble_japha_master;
 runEmbeddedTomcatDaemon;
+
+# TRAVIS ATTEMPT TO FIX ISSUE
+sleep 5
+
 runPHPUnit;
 stopEmbeddedTomcat;

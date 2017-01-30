@@ -10,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        //classpath 'org.ajoberstar:gradle-git:1.6.0'
     }
 }
 
@@ -20,6 +21,7 @@ apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing 
 // required for publishing to MavenCentral
 apply plugin: 'signing'
 apply plugin: 'maven'
+//apply plugin: 'github-pages'
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -67,7 +69,8 @@ war {
 
 tomcatRun {
     contextPath = '/'
-    httpPort = 8090
+    httpPort = 8090;
+    outputFile = file('./tomcat.log')
 //    httpsPort = 8091
 //    enableSSL = true
     daemon = true
@@ -131,3 +134,16 @@ uploadArchives {
     }
 }
 
+/*
+githubPages {
+    repoUri = 'git@github.com:belgattitude/php-java-bridge.git'
+
+    pages {
+        from(javadoc.outputs.files) {
+            into 'docs/javadoc'
+        }
+        from(groovydoc.outputs.files) {
+            into 'docs/groovydoc'
+        }
+    }
+}*/

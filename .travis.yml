@@ -22,6 +22,10 @@ script:
   - ./.travis/test_build_against_soluble_japha.sh
   - ./gradlew jacocoTestReport
 
+after_failure:
+  -
+  - cat ./tomcat.log
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
