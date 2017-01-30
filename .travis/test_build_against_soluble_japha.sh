@@ -75,7 +75,10 @@ install_soluble_japha_master;
 runEmbeddedTomcatDaemon;
 
 # TRAVIS ATTEMPT TO FIX ISSUE
-sleep 5
+cat $PROJECT_DIR/tomcat.log
+echo "SLEEPING"
+sleep 20
+cat $PROJECT_DIR/tomcat.log
 
 runPHPUnit;
 stopEmbeddedTomcat;
