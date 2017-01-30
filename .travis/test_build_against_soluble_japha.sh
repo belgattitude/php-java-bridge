@@ -51,12 +51,6 @@ install_soluble_japha_master() {
 }
 
 
-runEmbeddedTomcatDaemon() {
-    # Launch through the embedded gradle tomcat plugin
-    cd $PROJECT_DIR
-    gradle clean tomcatRun
-}
-
 runPHPUnit()  {
     cd $JAPHA_DIR
     echo "[*] Running phpunit"
@@ -64,22 +58,8 @@ runPHPUnit()  {
     ./vendor/bin/phpunit -c ./phpunit.travis.xml -v --debug
 }
 
-stopEmbeddedTomcat() {
-    cd $PROJECT_DIR
-    gradle tomcatStop
-}
-
 
 # Here's the steps
 install_soluble_japha_master;
-runEmbeddedTomcatDaemon;
-
-# TRAVIS ATTEMPT TO FIX ISSUE
-cat $PROJECT_DIR/tomcat.log
-echo "SLEEPING"
-sleep 20
-cat $PROJECT_DIR/tomcat.log
-netstat -nlp | grep :8090
-
 runPHPUnit;
-stopEmbeddedTomcat;
+

@@ -19,11 +19,15 @@ before_script:
 
 script:
   - ./gradlew test
+  - ./gradlew clean tomcatRun
+  - cat ./tomcat.log
+  - sleep 10
+  - cat ./tomcat.log
+  - sudo netstat -nlp | grep :8090
   - ./.travis/test_build_against_soluble_japha.sh
   - ./gradlew jacocoTestReport
 
 after_failure:
-  -
   - cat ./tomcat.log
 
 after_success:
