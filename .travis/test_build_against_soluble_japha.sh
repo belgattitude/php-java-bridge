@@ -54,7 +54,7 @@ install_soluble_japha_master() {
 runEmbeddedTomcatDaemon() {
     # Launch through the embedded gradle tomcat plugin
     cd $PROJECT_DIR
-    gradle tomcatRun
+    gradle clean tomcatRun
 }
 
 runPHPUnit()  {
@@ -79,6 +79,7 @@ cat $PROJECT_DIR/tomcat.log
 echo "SLEEPING"
 sleep 20
 cat $PROJECT_DIR/tomcat.log
+netstat -nlp | grep :8090
 
 runPHPUnit;
 stopEmbeddedTomcat;
