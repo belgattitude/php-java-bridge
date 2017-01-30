@@ -37,9 +37,11 @@ install_soluble_japha() {
     cd $JAPHA_DIR
 
     # 3. Checkout latest release
-    git fetch --tags
-    latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-    git checkout ${latestTag}
+    #git fetch --tags
+    #latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+    #git checkout ${latestTag}
+
+    git checkout master
 
     # 4. Run composer install
     composer install
