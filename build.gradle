@@ -1,7 +1,7 @@
+// PROJECT_NAME is defined in settings.gradle
 group 'io.soluble.pjb'
-version '6.2.11'
-def artifactId = 'JavaBridge'
-description 'A PHP/Java bridge'
+version '6.2.11-SNAPSHOT'
+description 'PHP/Java bridge server'
 
 buildscript {
     repositories {
@@ -19,9 +19,16 @@ apply plugin: 'jacoco'
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing purposes
 // required for publishing to MavenCentral
-apply plugin: 'signing'
-apply plugin: 'maven'
+//apply plugin: 'signing'
+//apply plugin: 'maven'
 //apply plugin: 'github-pages'
+apply plugin: 'maven-publish'
+
+
+ext {
+    // Password to publish on maven - specify via command line with -P
+    snapshotRepoPass = project.hasProperty('snapshotRepoPass') ? project.getProperty('snapshotRepoPass') : ''
+}
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
@@ -56,14 +63,13 @@ if (System.getProperty('php_exec') == null) {
 ant.importBuild 'build.xml'
 
 jar {
-    baseName artifactId
     manifest {
-    attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
+        attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
     }
 }
 
 war {
-  baseName artifactId
+  dependsOn jar
   //from 'src/rootContent' // could add a file-set to the root of the archive
 }
 
@@ -87,50 +93,98 @@ jacocoTestReport {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    baseName = artifactId
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    baseName = artifactId
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-artifacts {
-    archives jar, sourcesJar, javadocJar
+configure(rootProject) {
+
+    task wrapper(type: Wrapper) {
+        description = 'Generates gradlew and gradlew.bat scripts'
+        gradleVersion = '3.3'
+        //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
+    }
+
 }
 
+/**
+ * taken from
+ * http://blog.codefx.org/tools/snapshots-gradle-maven-publish-plugin/
+ */
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
-}
+            artifact sourcesJar
+            artifact javadocJar
 
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.project {
-                name = project.name
-                artifactId = artifactId
-                packaging 'jar'
-                url 'https://github.com/belgattitude/php-java-bridge'
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
+            tasks.withType(Jar) {
+                from(project.projectDir) {
+                    include 'LICENSE.md'
+                    into 'META-INF'
                 }
-                developers {
-                    developer {
-                        id = 'youraccount'
-                        name = 'Your Name'
-                        email = 'your.account@mail.com'
+            }
+
+            pom.withXml {
+                asNode().with {
+                    appendNode('packaging', 'jar')
+                    appendNode('name', 'PHP-Java-Bridge')
+                    appendNode('description', 'Soluble php-java-bridge server')
+                    appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
+                    appendNode('scm').with {
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
+                        appendNode('connection', 'scm:git:git://github.com/belgattitude/php-java-bridge.git')
+                    }
+                    appendNode('issueManagement').with {
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge/issues')
+                        appendNode('system', 'GitHub')
+                    }
+                    appendNode('licenses').with {
+                        appendNode('license').with {
+                            appendNode('name', 'The MIT License (MIT)')
+                            appendNode('url', 'https://opensource.org/licenses/MIT')
+                        }
+                    }
+                    appendNode('organization').with {
+                        appendNode('name', 'Soluble')
+                        appendNode('url', 'http://soluble.io')
+                    }
+                    appendNode('developers').with {
+                        appendNode('developer').with {
+                            appendNode('name', 'Sébastien Vanvelthem')
+                            appendNode('email', 'belgattitude@gmail.com')
+                            appendNode('organization', 'Soluble')
+                            appendNode('organizationUrl', 'https://github.com/belgattitude')
+                            appendNode('timezone', '1')
+                        }
+                        appendNode('developer').with {
+                            appendNode('name', 'Christian P. Lerch')
+                            //appendNode('email', 'christian.p.lerch@gmail.com')
+                            appendNode('organization', 'km-works.eu')
+                            appendNode('organizationUrl', 'https://github.com/km-works')
+                            appendNode('timezone', '1')
+                        }
+
                     }
                 }
             }
+        }
+    }
+    repositories {
+        maven {
+            /**
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            credentials {
+                username "belgattitude"
+                password project.snapshotRepoPass
+            }*/
+            mavenLocal()
         }
     }
 }
