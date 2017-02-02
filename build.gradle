@@ -56,6 +56,9 @@ dependencies {
     }
 }
 
+// When testing you can specify your local PHP executable as a system property with
+// -Dphp_exec=/path/to/php-executabale on the Gradle command line
+// Default value is "php" which should work both on Linux and Windows for most standard PHP installations.
 if (System.getProperty('php_exec') == null) {
     ant.properties['php_exec'] = 'php'
 }
@@ -165,7 +168,7 @@ publishing {
                         }
                         appendNode('developer').with {
                             appendNode('name', 'Christian P. Lerch')
-                            //appendNode('email', 'christian.p.lerch@gmail.com')
+                            appendNode('email', 'christian.p.lerch@gmail.com')
                             appendNode('organization', 'km-works.eu')
                             appendNode('organizationUrl', 'https://github.com/km-works')
                             appendNode('timezone', '1')
