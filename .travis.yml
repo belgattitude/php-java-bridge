@@ -18,12 +18,16 @@ before_script:
   - chmod +x gradlew
 
 script:
+  # Regular test suite
   - ./gradlew test
+  # Launch a server
   - ./gradlew clean tomcatRun
+  # Some debug to see if server has started
   - cat ./tomcat.log
   - sleep 10
   - cat ./tomcat.log
   - sudo netstat -nlp | grep :8090
+  # Launch the soluble-japha test suite
   - ./.travis/run_soluble_japha_phpunit_tests.sh
 
 after_failure:
