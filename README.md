@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/pjb-starter-gradle)
+[![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/php-java-bridge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Unofficial fork of the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) server.
