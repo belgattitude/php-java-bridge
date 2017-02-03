@@ -65,7 +65,9 @@ dependencies {
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
 
     def tomcatVersion = '7.0.59'
-    providedCompile('javax.servlet:servlet-api:2.5')
+
+    providedCompile('javax.servlet:javax.servlet-api:3.0.1')
+
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
             "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
