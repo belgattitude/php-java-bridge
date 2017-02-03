@@ -1,22 +1,207 @@
-group 'io.soluble.php-java-bridge'
-version '6.1.11-SNAPSHOT'
+// PROJECT_NAME is defined in settings.gradle
+group 'io.soluble.pjb'
+version '6.2.11-SNAPSHOT'
+description 'PHP/Java bridge server'
 
-ant.importBuild 'build.xml'
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        //classpath 'org.ajoberstar:gradle-git:1.6.0'
+    }
+}
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing purposes
+// required for publishing to MavenCentral
+//apply plugin: 'signing'
+//apply plugin: 'maven'
+//apply plugin: 'github-pages'
+apply plugin: 'maven-publish'
+
+
+ext {
+    // Password to publish on maven - specify via command line with -P
+    snapshotRepoPass = project.hasProperty('snapshotRepoPass') ? project.getProperty('snapshotRepoPass') : ''
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    providedCompile('javax.servlet:servlet-api:2.5')
+    runtime('log4j:log4j:1.2.17')
+    testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
+    
+    def tomcatVersion = '7.0.59'
+    tomcat(
+            "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+    )
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
 }
 
-clean {
-    dependsOn cleanBuild
+// When testing you can specify your local PHP executable as a system property with
+// -Dphp_exec=/path/to/php-executabale on the Gradle command line
+// Default value is "php" which should work both on Linux and Windows for most standard PHP installations.
+if (System.getProperty('php_exec') == null) {
+    ant.properties['php_exec'] = 'php'
 }
 
+ant.importBuild 'build.xml'
 
+jar {
+    manifest {
+        attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
+    }
+}
+
+war {
+  dependsOn jar
+  //from 'src/rootContent' // could add a file-set to the root of the archive
+}
+
+tomcatRun {
+    contextPath = '/'
+    httpPort = 8090;
+    outputFile = file('./tomcat.log')
+//    httpsPort = 8091
+//    enableSSL = true
+    daemon = true
+}
+
+jacocoTestReport {
+    group = 'Reporting'
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+        html.destination "${buildDir}/reports/coverage"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+configure(rootProject) {
+
+    task wrapper(type: Wrapper) {
+        description = 'Generates gradlew and gradlew.bat scripts'
+        gradleVersion = '3.3'
+        //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
+    }
+
+}
+
+/**
+ * taken from
+ * http://blog.codefx.org/tools/snapshots-gradle-maven-publish-plugin/
+ */
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            tasks.withType(Jar) {
+                from(project.projectDir) {
+                    include 'LICENSE.md'
+                    into 'META-INF'
+                }
+            }
+
+            pom.withXml {
+                asNode().with {
+                    appendNode('packaging', 'jar')
+                    appendNode('name', 'PHP-Java-Bridge')
+                    appendNode('description', 'Soluble php-java-bridge server')
+                    appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
+                    appendNode('scm').with {
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
+                        appendNode('connection', 'scm:git:git://github.com/belgattitude/php-java-bridge.git')
+                    }
+                    appendNode('issueManagement').with {
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge/issues')
+                        appendNode('system', 'GitHub')
+                    }
+                    appendNode('licenses').with {
+                        appendNode('license').with {
+                            appendNode('name', 'The MIT License (MIT)')
+                            appendNode('url', 'https://opensource.org/licenses/MIT')
+                        }
+                    }
+                    appendNode('organization').with {
+                        appendNode('name', 'Soluble')
+                        appendNode('url', 'http://soluble.io')
+                    }
+                    appendNode('developers').with {
+                        appendNode('developer').with {
+                            appendNode('name', 'Sébastien Vanvelthem')
+                            appendNode('email', 'belgattitude@gmail.com')
+                            appendNode('organization', 'Soluble')
+                            appendNode('organizationUrl', 'https://github.com/belgattitude')
+                            appendNode('timezone', '1')
+                        }
+                        appendNode('developer').with {
+                            appendNode('name', 'Christian P. Lerch')
+                            appendNode('email', 'christian.p.lerch@gmail.com')
+                            appendNode('organization', 'km-works.eu')
+                            appendNode('organizationUrl', 'https://github.com/km-works')
+                            appendNode('timezone', '1')
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            /**
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            credentials {
+                username "belgattitude"
+                password project.snapshotRepoPass
+            }*/
+            mavenLocal()
+        }
+    }
+}
+
+/*
+githubPages {
+    repoUri = 'git@github.com:belgattitude/php-java-bridge.git'
+
+    pages {
+        from(javadoc.outputs.files) {
+            into 'docs/javadoc'
+        }
+        from(groovydoc.outputs.files) {
+            into 'docs/groovydoc'
+        }
+    }
+}*/

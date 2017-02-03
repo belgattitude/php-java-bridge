@@ -1,9 +1,10 @@
 <?php
- 
-function createOutfile($name) {
-  $file = fopen("php/java/bridge/${name}.java", "wb") or die("fopen");
+
+function createOutfile($name, $path) {
+  $filePath = "${path}/${name}.java";
+  $file = fopen($filePath, "wb") or die("fopen");
   $str =<<<HEAD_OUTFILE
-package php.java.bridge;
+package io.soluble.pjb.bridge;
 public class ${name} {
   public static final byte[] bytes = new byte[]{
 
@@ -27,11 +28,11 @@ $names = array("LauncherWindows", "LauncherWindows2",
 $counter = 0;
 $linectr = 1;
 
-$file = fopen($argv[1], "rb") or die("fopen");
+$file = fopen($argv[2], "rb") or die("fopen");
 for ($byte=fread($file,1); !feof($file); $byte=fread($file, 1)) {
   if ($counter%FILE_LENGTH==0) {
     if(isset($outfile)) finishOutfile($outfile);
-    $outfile = createOutfile($names[(int)($counter/FILE_LENGTH)]);
+    $outfile = createOutfile($names[(int)($counter/FILE_LENGTH)], $argv[1]);
     $linectr = 1;
   }
   fprintf($outfile, "(byte)0%o,%s", ord($byte), $linectr%16?" ":"\n");

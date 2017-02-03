@@ -6,7 +6,7 @@ $s = preg_replace('/^.*$/m', '"${0}\\\\n"+', $s);
 $s.='""';
 
 $str=<<<EOF
-package php.java.bridge;
+package io.soluble.pjb.bridge;
 public class $argv[2] {
     private static final String data = ${s};
     public static final byte[] bytes = data.getBytes(); 

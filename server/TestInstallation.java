@@ -248,8 +248,8 @@ public class TestInstallation implements Runnable {
      */
     public static void main(String[] args) {
         try { // Hack for Unix: execute the standalone container using the default SUN VM
-            if (args.length == 0 && (new File("/usr/java/default/bin/java")).exists() && checkGNUVM() && (System.getProperty("php.java.bridge.exec_sun_vm", "true").equals("true"))) {
-                Process p = Runtime.getRuntime().exec(new String[]{"/usr/java/default/bin/java", "-Dphp.java.bridge.exec_sun_vm=false", "-classpath", System.getProperty("java.class.path"), "TestInstallation"});
+            if (args.length == 0 && (new File("/usr/java/default/bin/java")).exists() && checkGNUVM() && (System.getProperty("io.soluble.pjb.exec_sun_vm", "true").equals("true"))) {
+                Process p = Runtime.getRuntime().exec(new String[]{"/usr/java/default/bin/java", "-Dio.soluble.pjb.exec_sun_vm=false", "-classpath", System.getProperty("java.class.path"), "TestInstallation"});
                 (new Thread() {
                     InputStream in;
 

@@ -1,0 +1,40 @@
+dist: trusty
+sudo: required
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+#services:
+#  - mysql
+
+os:
+  - linux
+
+before_script:
+  # for debugging purposes
+  - php --version
+  - chmod +x gradlew
+
+script:
+  # Regular test suite
+  - ./gradlew test
+  # Launch a server
+  - ./gradlew clean tomcatRun
+  # Some debug to see if server has started
+  - cat ./tomcat.log
+  - sleep 10
+  - cat ./tomcat.log
+  - sudo netstat -nlp | grep :8090
+  # Launch the soluble-japha test suite
+  - ./.travis/run_soluble_japha_phpunit_tests.sh
+
+after_failure:
+  - cat ./tomcat.log
+
+after_success:
+  #- ./gradlew build jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash)
+
+

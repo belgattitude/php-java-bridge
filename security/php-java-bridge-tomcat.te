@@ -1,7 +1,0 @@
-#################################
-# php-java-bridge-tomcat.te
-# additional tomcat SELinux rules for the javabridge_t domain
-#
-# @see php-java-bridge.te
-
-allow httpd_t http_cache_port_t:tcp_socket name_connect;

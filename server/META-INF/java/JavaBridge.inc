@@ -174,10 +174,10 @@ if(!function_exists("java_get_base")) {
   function java_virtual($path, $return=false) {
 
 	$req = java_context()->getHttpServletRequest();
-	$req = new java("php.java.servlet.VoidInputHttpServletRequest", $req);
+	$req = new java("io.soluble.pjb.servlet.VoidInputHttpServletRequest", $req);
 
 	$res = java_context()->getHttpServletResponse();
-	$res = new java("php.java.servlet.RemoteHttpServletResponse", $res);
+	$res = new java("io.soluble.pjb.servlet.RemoteHttpServletResponse", $res);
 
 	$req->getRequestDispatcher($path)->include($req, $res);
 	if ($return) return $res->getBufferContents();
@@ -390,7 +390,7 @@ if(!function_exists("java_get_base")) {
    *		 ByteArrayOutputStream out;
    *		 OutputStreamWriter writer;
    *	     e.getContext().setWriter(writer=new OutputStreamWriter(out=new ByteArrayOutputStream()));
-   *         Object res=e.eval(new php.java.script.URLReader(new URL("http://localhost/calculateSales.php")));
+   *         Object res=e.eval(new io.soluble.pjb.script.URLReader(new URL("http://localhost/calculateSales.php")));
    *         System.err.println(((Invocable)e).invokeFunction("calculateSales", new Object[]{month}));
    *         ((Closeable)e).close();
    *         System.err.println("PHP exit() code:" + String.valueOf(res));
