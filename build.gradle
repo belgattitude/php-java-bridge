@@ -1,7 +1,25 @@
 // PROJECT_NAME is defined in settings.gradle
-group 'io.soluble.pjb'
-version '6.2.11-SNAPSHOT'
-description 'PHP/Java bridge server'
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing purposes
+apply plugin: 'signing'
+apply plugin: 'maven'
+
+group = "io.soluble.pjb"
+archivesBaseName = 'php-java-bridge'
+version = "6.2.11-SNAPSHOT"
+description = "PHPJavaBridge server (soluble fork)"
+
+
+ext {
+    // Password to publish on maven - specify via command line with -P
+    //snapshotRepoPass = project.hasProperty('snapshotRepoPass') ? project.getProperty('snapshotRepoPass') : ''
+    //pomFile = file("${project.buildDir}/generated-pom.xml")
+    //isReleaseVersion = !(project.version =~ /-SNAPSHOT$/)
+}
+
 
 buildscript {
     repositories {
@@ -10,29 +28,14 @@ buildscript {
 
     dependencies {
         classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
         //classpath 'org.ajoberstar:gradle-git:1.6.0'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'jacoco'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'   // provides embedded tomcat 7 for testing purposes
-// required for publishing to MavenCentral
-//apply plugin: 'signing'
-//apply plugin: 'maven'
-//apply plugin: 'github-pages'
-apply plugin: 'maven-publish'
-
-
-ext {
-    // Password to publish on maven - specify via command line with -P
-    snapshotRepoPass = project.hasProperty('snapshotRepoPass') ? project.getProperty('snapshotRepoPass') : ''
-}
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -66,15 +69,19 @@ if (System.getProperty('php_exec') == null) {
 ant.importBuild 'build.xml'
 
 jar {
+    //baseName = "${project.archivesBaseName}-standalone"
     manifest {
         attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
     }
 }
 
 war {
-  dependsOn jar
-  //from 'src/rootContent' // could add a file-set to the root of the archive
+    dependsOn jar
+    //baseName "${project.archivesBaseName}-template"
+    //from 'src/rootContent' // could add a file-set to the root of the archive
 }
+
+
 
 tomcatRun {
     contextPath = '/'
@@ -105,6 +112,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+artifacts {
+    archives javadocJar, sourcesJar, jar
+}
+
 configure(rootProject) {
 
     task wrapper(type: Wrapper) {
@@ -115,18 +126,186 @@ configure(rootProject) {
 
 }
 
-/**
- * taken from
- * http://blog.codefx.org/tools/snapshots-gradle-maven-publish-plugin/
- */
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            ossrhUsername = project.properties.ossrhUsername
+            ossrhPassword = project.properties.ossrhPassword
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+
+            pom.project {
+                name project.name
+                description project.description
+                packaging 'jar'
+                url 'https://github.com/belgattitude/php-java-bridge'
+
+                scm {
+                    connection 'scm:git:git://github.com/belgattitude/php-java-bridge.git'
+                    developerConnection 'scm:git:git://github.com/belgattitude/php-java-bridge.git'
+                    url 'https://github.com/belgattitude/php-java-bridge'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License (MIT)'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'belgattitude'
+                        name = 'Sébastien Vanvelthem'
+                        email = 'belgattitude@gmail.com'
+                    }
+                    developer {
+                        name = 'Christian P. Lerch'
+                        email = 'christian.p.lerch@gmail.com'
+                        organization = 'km-works.eu'
+                        organizationUrl = 'https://github.com/km-works'
+                    }
+
+                }
+            }
+
+
+        }
+    }
+}
+
+/*
+if (project.hasProperty('release')) {
+
+    subprojects {
+
+        task javadocJar(type: Jar) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        task sourcesJar(type: Jar) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        artifacts {
+            archives javadocJar, sourcesJar
+        }
+    }
+
+    allprojects {
+        apply plugin: 'signing'
+        apply plugin: 'maven'
+
+        // Signature of artifacts
+        signing {
+            sign configurations.archives
+        }
+
+        // OSSRH publication
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    // POM signature
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    // Target repository
+
+                    if (project.ext.isReleaseVersion) {
+                        url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                    } else {
+                        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+                    }
+
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: ossrhUser, password: ossrhPassword)
+                    }
+                    pom.project {
+                        name project.name
+                        description project.description
+                        packaging 'jar'
+                        url 'https://github.com/belgattitude/php-java-bridge'
+
+                        scm {
+                            connection 'scm:git:git://github.com/belgattitude/php-java-bridge.git'
+                            developerConnection 'scm:git:git://github.com/belgattitude/php-java-bridge.git'
+                            url 'https://github.com/belgattitude/php-java-bridge'
+                        }
+
+                        licenses {
+                            license {
+                                name 'The MIT License (MIT)'
+                                url 'http://opensource.org/licenses/MIT'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'belgattitude'
+                                name = 'Sébastien Vanvelthem'
+                                email = 'belgattitude@gmail.com'
+                            }
+                            developer {
+                                name = 'Christian P. Lerch'
+                                email = 'christian.p.lerch@gmail.com'
+                                organization = 'km-works.eu'
+                                organizationUrl = 'https://github.com/km-works'
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+nexusStaging {
+    username = ossrhUser
+    password = ossrhPassword
+}
+
+*/
+/*
 publishing {
+    repositories {
+        maven {
+            if (project.ext.isReleaseVersion) {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            } else {
+                url 'https://oss.sonatype.org/content/repositories/snapshots/'
+            }
+            credentials {
+                username = project.properties.ossrhUsername
+                password = project.properties.ossrhPassword
+            }
+        }
+    }
+
     publications {
         mavenJava(MavenPublication) {
+
             from components.java
 
+            // Add those artifacts to the publication
             artifact sourcesJar
             artifact javadocJar
 
+            // Add license
             tasks.withType(Jar) {
                 from(project.projectDir) {
                     include 'LICENSE.md'
@@ -134,11 +313,13 @@ publishing {
                 }
             }
 
+            // Define the library info (pom)
+            
             pom.withXml {
                 asNode().with {
                     appendNode('packaging', 'jar')
-                    appendNode('name', 'PHP-Java-Bridge')
-                    appendNode('description', 'Soluble php-java-bridge server')
+                    appendNode('name', 'PHPJavaBridge')
+                    appendNode('description', 'PHPJavaBridge server (soluble fork)')
                     appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
                     appendNode('scm').with {
                         appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
@@ -177,21 +358,44 @@ publishing {
                     }
                 }
             }
-        }
-    }
-    repositories {
-        maven {
-            /**
-            url 'https://oss.sonatype.org/content/repositories/snapshots/'
-            credentials {
-                username "belgattitude"
-                password project.snapshotRepoPass
-            }*/
-            mavenLocal()
+            
+            // Signing
+
+            if (signing.required) {
+                // Sign the pom.xml.
+                pom.withXml {
+                    writeTo(project.ext.pomFile)
+                    def pomAscFile = signing.sign(project.ext.pomFile).signatureFiles[0]
+                    artifact(pomAscFile) {
+                        classifier = null
+                        extension = 'pom.asc'
+                    }
+                    project.ext.pomFile.delete()
+                }
+
+                // Sign the artifacts.
+                project.tasks.signArchives.signatureFiles.each {
+                    artifact(it) {
+                        def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                        if (matcher.find()) {
+                            classifier = matcher.group(1)
+                        } else {
+                            classifier = null
+                        }
+                        extension = 'jar.asc'
+                    }
+                }
+            }
         }
     }
 }
 
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+}
+*/
 /*
 githubPages {
     repoUri = 'git@github.com:belgattitude/php-java-bridge.git'
