@@ -10,7 +10,7 @@ apply plugin: 'maven-publish'
 
 group = "io.soluble.pjb"
 archivesBaseName = 'php-java-bridge'
-version = "6.2.11-SNAPSHOT"
+version = "6.2.11-rc-1"
 description = "PHPJavaBridge server (soluble fork)"
 
 ext {
@@ -31,10 +31,9 @@ buildscript {
 }
 
 
-
-
 war {
     dependsOn jar
+    classifier 'tomcatRun'
     //baseName "${project.archivesBaseName}-template"
     //from 'src/rootContent' // could add a file-set to the root of the archive
 }
@@ -67,6 +66,7 @@ dependencies {
     def tomcatVersion = '7.0.59'
 
     providedCompile('javax.servlet:javax.servlet-api:3.0.1')
+    //compile('javax.servlet:javax.servlet-api:3.0.1')
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -87,8 +87,6 @@ if (System.getProperty('php_exec') == null) {
 ant.importBuild 'build.xml'
 
 jar {
-    //classifier 'server'
-    //baseName = "${project.archivesBaseName}-standalone"
     manifest {
         attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
     }
@@ -130,7 +128,7 @@ publishing {
     repositories {
         maven {
             if (project.ext.isReleaseVersion) {
-                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             } else {
                 url 'https://oss.sonatype.org/content/repositories/snapshots/'
             }
@@ -153,6 +151,7 @@ publishing {
             artifact javadocJar
 
             // Add license
+
             tasks.withType(Jar) {
                 from(project.projectDir) {
                     include 'LICENSE.md'
@@ -162,9 +161,8 @@ publishing {
 
             pom.withXml {
                 asNode().with {
-                    appendNode('packaging', 'jar')
                     appendNode('name', 'php-java-bridge')
-                    appendNode('description', project.description)
+                    appendNode('description', "PHPJavaBridge server (soluble fork)")
                     appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
                     appendNode('scm').with {
                         appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
@@ -186,7 +184,7 @@ publishing {
                     }
                     appendNode('developers').with {
                         appendNode('developer').with {
-                            appendNode('id', 'belgattitude')
+                            //appendNode('id', 'belgattitude')
                             appendNode('name', 'Sébastien Vanvelthem')
                             appendNode('email', 'belgattitude@gmail.com')
                             appendNode('organization', 'Soluble')
@@ -201,10 +199,12 @@ publishing {
 
                     }
                 }
+
             }
 
             // Sign the pom.xml and artifacts.
             if (signing.required) {
+
                 // Sign the pom.xml.
                 pom.withXml {
                     writeTo(project.ext.pomFile)
@@ -216,7 +216,14 @@ publishing {
                     project.ext.pomFile.delete()
                 }
 
-                // Sign the artifacts.
+                // Sign the artifacts. Not working
+                configurations.signatures.getArtifacts().each { sig ->
+                    println "adding signature to jars publication: $sig"
+                    artifact(sig) {
+                        extension "jar.asc"
+                    }
+                }
+                /*
                 project.tasks.signArchives.signatureFiles.each {
                     artifact(it) {
                         def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
@@ -227,7 +234,8 @@ publishing {
                         }
                         extension = 'jar.asc'
                     }
-                }
+                }*/
+
             }
         }
     }
@@ -241,6 +249,8 @@ model {
         dependsOn(project.tasks.signArchives)
     }
 }
+
+task install(dependsOn: publishToMavenLocal)
 
 configure(rootProject) {
 
