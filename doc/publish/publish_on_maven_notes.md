@@ -31,6 +31,14 @@ signing.secretKeyRingFile=/home/user/.gnupg/secring.gpg
 
 Gradle should be ready to sign.
 
+## Publish snapshot to mavenLocal
+
+```shell
+$ gradle clean build publishToMavenLocal
+```
+
+
+
 ## Publish snapshot to maven
 
 Be sure you have set your credentials in the `~/.gradle/gradle.properties` file.
@@ -42,7 +50,7 @@ ossrhPassword=<password>
  
 
 ```shell
-$ gradle clean build uploadArchives
+$ gradle clean build publish
 ```
 
 Then release the deployment manually http://central.sonatype.org/pages/releasing-the-deployment.html
