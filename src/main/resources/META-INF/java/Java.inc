@@ -124,7 +124,7 @@ return true;
 }
 return false;
 }
-define("JAVA_PEAR_VERSION","6.2.11");
+define("JAVA_PEAR_VERSION","");
 if(!defined("JAVA_SEND_SIZE"))
 define("JAVA_SEND_SIZE",8192);
 if(!defined("JAVA_RECV_SIZE"))
