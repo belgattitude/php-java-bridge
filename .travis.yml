@@ -16,6 +16,7 @@ before_script:
   # for debugging purposes
   - php --version
   - php-cgi --version
+  - which php-cgi
   - chmod +x gradlew
 
 script:
@@ -25,7 +26,7 @@ script:
   - ./gradlew clean tomcatRun
   # Some debug to see if server has started
   - cat ./tomcat.log
-  - sleep 10
+  - sleep 5
   - cat ./tomcat.log
   - sudo netstat -nlp | grep :8090
   # Launch the soluble-japha test suite

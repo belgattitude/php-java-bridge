@@ -116,7 +116,7 @@ See the `/build/libs` folder :
 | File          | Description   | Approx. size |
 | ------------- | ------------- | ------------ |
 | `php-java-bridge-<VERSION>.jar`  | JavaBridge library. | +/- 500k |
-| `php-java-bridge-<VERSION>.war`  | Ready to deploy war template file. | +/- 900k |
+| `php-java-bridge-<VERSION>-web.war`  | Ready to deploy war template file. | +/- 900k |
 | `php-java-bridge-<VERSION>-sources.jar`  | JavaBridge sources. | +/- 400k |
 | `php-java-bridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
        
@@ -157,10 +157,10 @@ $ sudo apt-get install php-cgi
 And copy the ready to run `JavaBridge-<VERSION>.war` in the tomcat webapps folder:
 
 ```shell
-$ cp build/libs/JavaBridge-<VERSION>.war /var/lib/tomcat8/webapps/JavaBridge.war
+$ sudo cp ./build/libs/php-java-bridge-<VERSION>-web.war /var/lib/tomcat8/webapps/JavaBridgeTemplate.war
 ```
 
-Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridge](http://localhost:8080/JavaBridge).
+Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate).
 
 Have a look to the error log if needed:
 
@@ -175,7 +175,7 @@ $ cat /var/log/tomcat8/catalina.out
 If you get OutOfMemory errors, you can increase the java heap tomcat:
 
 ```shell
-$ vi /etc/default/tomcat8
+$ sudo vi /etc/default/tomcat8
 ```
 
 Look for the Xmx default at 128m and increase 
