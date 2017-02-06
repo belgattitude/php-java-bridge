@@ -15,6 +15,7 @@ os:
 before_script:
   # for debugging purposes
   - php --version
+  - php-cgi --version
   - chmod +x gradlew
 
 script:
