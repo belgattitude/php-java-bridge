@@ -37,8 +37,6 @@ Gradle should be ready to sign.
 $ gradle clean build publishToMavenLocal
 ```
 
-
-
 ## Publish snapshot to maven
 
 Be sure you have set your credentials in the `~/.gradle/gradle.properties` file.
