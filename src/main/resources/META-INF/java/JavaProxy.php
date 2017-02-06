@@ -16,4 +16,4 @@ if ($java_script_orig = $java_script = java_getHeader("X_JAVABRIDGE_INCLUDE", $_
 
   java_call_with_continuation();
 }
-?>
+
