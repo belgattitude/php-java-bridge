@@ -1,9 +1,0 @@
-# list of script engine factories 
-#
-# php             => php.java.script.PhpScriptEngineFactory
-# php-invocable   => php.java.script.InvocablePhpScriptEngineFactory
-# php-interactive => php.java.script.InteractivePhpScriptEngineFactory
-
-php.java.script.PhpScriptEngineFactory
-php.java.script.InvocablePhpScriptEngineFactory
-php.java.script.InteractivePhpScriptEngineFactory

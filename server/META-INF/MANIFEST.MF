@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: php.java.bridge.Standalone
-Created-By: 1.5.0 (Sun Microsystems Inc.)
-Class-Path: php-script.jar script-api.jar log4j.jar
