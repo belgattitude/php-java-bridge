@@ -1,4 +1,4 @@
-package io.soluble.pjb.bridge;
+package php.java.bridge;
 public class JavaProxy {
     private static final String data = "<?php \n"+
 "/* wrapper for Java.inc */ \n"+

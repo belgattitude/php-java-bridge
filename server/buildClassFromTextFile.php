@@ -14,6 +14,8 @@ public class $argv[2] {
 
 EOF;
 
+echo $str;
+
 file_put_contents($argv[1], $str);
 
 

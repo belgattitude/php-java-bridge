@@ -1,4 +1,4 @@
-package io.soluble.pjb.bridge;
+package php.java.bridge;
 public class JavaInc {
     private static final String data = "<?php\n"+
 "# Java.inc -- The PHP/Java Bridge PHP library. Compiled from JavaBridge.inc.\n"+
@@ -72,9 +72,9 @@ public class JavaInc {
 "}\n"+
 "function java_virtual($path,$return=false) {\n"+
 "$req=java_context()->getHttpServletRequest();\n"+
-"$req=new java(\"io.soluble.pjb.servlet.VoidInputHttpServletRequest\",$req);\n"+
+"$req=new java(\"php.java.servlet.VoidInputHttpServletRequest\",$req);\n"+
 "$res=java_context()->getHttpServletResponse();\n"+
-"$res=new java(\"io.soluble.pjb.servlet.RemoteHttpServletResponse\",$res);\n"+
+"$res=new java(\"php.java.servlet.RemoteHttpServletResponse\",$res);\n"+
 "$req->getRequestDispatcher($path)->include($req,$res);\n"+
 "if ($return) return $res->getBufferContents();\n"+
 "echo $res->getBufferContents();\n"+
@@ -126,7 +126,7 @@ public class JavaInc {
 "}\n"+
 "return false;\n"+
 "}\n"+
-"define(\"JAVA_PEAR_VERSION\",\"\");\n"+
+"define(\"JAVA_PEAR_VERSION\",\"6.2.11\");\n"+
 "if(!defined(\"JAVA_SEND_SIZE\"))\n"+
 "define(\"JAVA_SEND_SIZE\",8192);\n"+
 "if(!defined(\"JAVA_RECV_SIZE\"))\n"+
@@ -1227,7 +1227,7 @@ public class JavaInc {
 "$java=file_exists(ini_get(\"extension_dir\").\"/JavaBridge.jar\")?ini_get(\"extension_dir\").\"/JavaBridge.jar\":(java_get_base().\"/JavaBridge.jar\");\n"+
 "if (!file_exists($java))\n"+
 "throw new java_IOException(\"Could not find $java in \".getcwd().\". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_\".JAVA_PEAR_VERSION.\"/exploded/JavaBridge.jar/download and try again.\");\n"+
-"$java_cmd=\"java -Dio.soluble.pjb.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
+"$java_cmd=\"java -Dphp.java.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
 "if (!$again)\n"+
 "throw new java_ConnectException(\"No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)\");\n"+
 "if (!java_checkCliSapi())\n"+
