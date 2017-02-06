@@ -33,7 +33,7 @@ buildscript {
 
 war {
     dependsOn jar
-    classifier 'tomcatRun'
+    classifier 'web'
     //baseName "${project.archivesBaseName}-template"
     //from 'src/rootContent' // could add a file-set to the root of the archive
 }
