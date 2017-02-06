@@ -7,10 +7,6 @@ The VM Bridge is a network protocol which can be used to connect a native
 script engine, for example PHP, with a Java VM. To get more information have a 
 look to those projects:
 
-- [soluble-japha](https://github.com/belgattitude/soluble-japha) PHP client to interact with the bridge.
-- [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle) Modern starter project to quickly configure and run PHPJavaBridge servers. 
-- [pjbserver-tools](https://github.com/belgattitude/pjbserver-tools) A standalone server for helping php unit tests on travis.
-
 ## Disclaimer
 
 > This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
@@ -33,8 +29,8 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [ ] License issue; MIT or GPL (website indicates MIT while CVS GPL) ? Try to contact original developers.
 - [ ] Remove dependency of php in build scripts (should be possible to build without php) 
 - [ ] Deprecate and remove completely the `Java.inc` client.
-- [ ] Publish on maven (need help - must be made after removal of php dependency)
-- [ ] Removal of obsolete code and resources.
+- [x] Publish on maven (need help - must be made after removal of php dependency)
+- [x] Removal of obsolete code and resources.
 - [ ] Security review and safe practices.
 - [ ] Write JUnit tests
 - [ ] Start refactorings and improve ;)
@@ -46,15 +42,49 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 Please **[participate in the discussion for future ideas here](https://github.com/belgattitude/php-java-bridge/issues/6)**. 
 
 ## Documentation
+
+Server API doc
    
 - [API doc](http://docs.soluble.io/php-java-bridge/api).
-- Older documentation can be found in the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) site
+
+For the PHP client part (*replaces Java.inc*), documentation is located on another project:
+
+- [soluble-japha](https://github.com/belgattitude/soluble-japha) PHP client to interact with the bridge.
+
+
+> Older documentation can be found in the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) site
+
 
 ## Releases
 
 - You can download pre-compiled [java bridge binaries](https://github.com/belgattitude/php-java-bridge/releases) on the releases page (jdk8). 
 - Alternatively you can build the project, first clone the project and follow the build steps.
-- [Gradle starter project](https://github.com/belgattitude/pjb-starter-gradle) on it's way !!! 
+
+> Note: Evaluate the [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle) if you like to
+> customize your php-java-bridge server build.  
+
+## Installation
+
+Major releases are published on [Maven central](https://search.maven.org/#search%7Cga%7C1%7Cio.soluble.pjb.php-java-bridge).
+
+With maven:
+
+```
+<dependency>
+    <groupId>io.soluble.pjb</groupId>
+    <artifactId>php-java-bridge</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
+
+or gradle
+
+```
+compile 'io.soluble.pjb:php-java-bridge:VERSION'
+```
+
+
+
 
 ## Build the project
 
@@ -88,10 +118,10 @@ See the `/build/libs` folder :
 
 | File          | Description   | Approx. size |
 | ------------- | ------------- | ------------ |
-| `JavaBridge-<VERSION>.jar`  | JavaBridge library. | +/- 500k |
-| `JavaBridge-<VERSION>.war`  | Ready to deploy war template file. | +/- 900k |
-| `JavaBridge-<VERSION>-sources.jar`  | JavaBridge sources. | +/- 400k |
-| `JavaBridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
+| `php-java-bridge-<VERSION>.jar`  | JavaBridge library. | +/- 500k |
+| `php-java-bridge-<VERSION>.war`  | Ready to deploy war template file. | +/- 900k |
+| `php-java-bridge-<VERSION>-sources.jar`  | JavaBridge sources. | +/- 400k |
+| `php-java-bridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
        
 
 ## Develop
@@ -102,8 +132,7 @@ See the `/build/libs` folder :
 $ gradle tomcatRun
 $ # gradle tomcatStop (to stop the server)
 ```
-                   
-                                     
+                                                        
 ## Usage
 
 ### Deploy
@@ -161,16 +190,19 @@ Feel free to fork and submit pull requests :)
 
 ## Credits
 
-See the [CREDITS.md](./CREDITS.md) for an updated list of contributions.
-
-* Java refactorings and modernizations made by [Christian P. Lerch](https://github.com/cplerch)
-* Fork initially made by [Sébastien Vanvelthem](https://github.com/belgattitude).
-
 Original developers:
 
+- Jost Boekemeier
 - Andre Felipe Machado, 
 - Sam Ruby, 
 - Kai Londenberg, 
 - Nandika Jayawardana, 
 - Sanka Samaranayake, 
-- Jost Boekemeier
+
+Forked version
+
+- [Christian P. Lerch](https://github.com/cplerch): Java refactorings and modernizations. 
+- [Sébastien Vanvelthem](https://github.com/belgattitude): Fork initiator.
+
+
+See the [CREDITS.md](./CREDITS.md) for an up to date of list of contributors.
