@@ -4,7 +4,7 @@
     <target name="genInit">
         <property name="srcDir" value="${basedir}/src"/>
         <property name="distDir" value="${basedir}/build"/>
-        <property name="serverDir" value="${basedir}/server"/>
+        <property name="serverDir" value="${basedir}/legacy/server"/>
         <property name="javaDir" value="${srcDir}/main/java"/>
         <property name="pkgDir" value="${javaDir}/io/soluble/pjb"/>
         <property name="resDir" value="${srcDir}/main/resources"/>

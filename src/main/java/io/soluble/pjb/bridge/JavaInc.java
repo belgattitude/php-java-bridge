@@ -126,7 +126,7 @@ public class JavaInc {
 "}\n"+
 "return false;\n"+
 "}\n"+
-"define(\"JAVA_PEAR_VERSION\",\"6.2.11\");\n"+
+"define(\"JAVA_PEAR_VERSION\",\"\");\n"+
 "if(!defined(\"JAVA_SEND_SIZE\"))\n"+
 "define(\"JAVA_SEND_SIZE\",8192);\n"+
 "if(!defined(\"JAVA_RECV_SIZE\"))\n"+

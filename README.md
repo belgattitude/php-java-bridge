@@ -83,9 +83,6 @@ or gradle
 compile 'io.soluble.pjb:php-java-bridge:VERSION'
 ```
 
-
-
-
 ## Build the project
 
 ### Requirements
@@ -124,14 +121,23 @@ See the `/build/libs` folder :
 | `php-java-bridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
        
 
-## Develop
-                                                         
-### Gradle tasks
+## Gradle tasks
+
+
+Tomcat embedded support
 
 ```shell
 $ gradle tomcatRun
 $ # gradle tomcatStop (to stop the server)
 ```
+
+For rebuilding the older Java.inc and launchers:
+
+```shell
+$ gradle genClean -Dphp_exec=php5.6
+$ gradle genAll -Dphp_exec=php5.6
+```
+                                                         
                                                         
 ## Usage
 
