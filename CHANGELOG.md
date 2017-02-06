@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Artifacts available on Maven central under io.soluble.pjb group.
+- Artifacts available on Maven central under io.soluble.pjb group. [#19](https://github.com/belgattitude/php-java-bridge/issues/19)
 - Build: Gradle support (still relying on ant build.xml for generating old php client - genAll and cleanGen tasks), see [#5](https://github.com/belgattitude/php-java-bridge/issues/5) and [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
 - Build: Jacoco coverage with 'jacocoTestReport' task, see P/R [#9](https://github.com/belgattitude/php-java-bridge/pull/9)
 - Test: Resurrect existing server unit tests
