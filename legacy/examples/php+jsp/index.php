@@ -95,7 +95,7 @@
 <tr VALIGN=TOP>
 <td WIDTH="25%">Calling a PHP function.</td>
 
-<td WIDTH="25%"><a href="jsp%2Bphp.jsp">Execute</a></td>
+<td WIDTH="25%"><a href="jsp+php.jsp">Execute</a></td>
 
 <td WIDTH="25%"><a href="source.php?source=jsp%2Bphp.jsp">Source</a></td>
 <td WIDTH="25%"></td>
@@ -104,7 +104,7 @@
 <tr VALIGN=TOP>
 <td WIDTH="25%">Calling a remote PHP script.</td>
 
-<td WIDTH="25%"><a href="jsp%2Bphp2.jsp">Execute</a></td>
+<td WIDTH="25%"><a href="jsp+php2.jsp">Execute</a></td>
 
 <td WIDTH="25%"><a href="source.php?source=jsp%2Bphp2.jsp">Source</a></td>
 <td WIDTH="25%"></td>

@@ -1,4 +1,3 @@
-import java.rmi.RemoteException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import java.util.*;
