@@ -3,9 +3,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>PhpJavaBridge Home</title>
+        <title>PhpJavaBridge</title>
     </head>
     <body>
-        <h1>PhpJavaBridge Home</h1>
+        <h1>PHPJavaBridge server running</h1>
     </body>
 </html>

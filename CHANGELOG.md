@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - Removed obsolete javax.script sources
+- Removed unsupported directory [#11](https://github.com/belgattitude/php-java-bridge/issues/11)
+- Removed PHPDebugger [#16](https://github.com/belgattitude/php-java-bridge/issues/16)
 
 ### Changed
 
