@@ -64,7 +64,7 @@ dependencies {
     runtime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
 
-    def tomcatVersion = '7.0.59'
+    def tomcatVersion = '7.0.73'
 
     providedCompile('javax.servlet:javax.servlet-api:3.0.1')
     //compile('javax.servlet:javax.servlet-api:3.0.1')
