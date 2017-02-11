@@ -20,24 +20,19 @@ look to those projects:
 
 Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here are some plans and statuses of the fork:  
 
-- [x] Migration from CVS to github
+- [x] Migration from sourceforge CVS to github.
 - [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
-- [x] Test and update of the build file, Tomcat8 and JDK8.
-- [x] Releasing a new version, with downloadable releases on Github (6.2.10)
-- [x] Prepare a starter project with servlet 3.0 spec support, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
-- [x] Preliminary support and conversion to gradle (with ant tasks).
-- [x] Regenerate and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
-- [ ] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
-- [ ] License issue; MIT or GPL (website indicates MIT while CVS GPL) ? Try to contact original developers.
-- [ ] Remove dependency of php in build scripts (should be possible to build without php) 
+- [x] Gradle support for project builds.
+- [x] Ensure support of Tomcat 8+, JDK 8.
+- [x] Prepare a starter project to customize builds, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
+- [x] Update namespace to `io.soluble.pjb` and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
+- [x] License to Apache 2.0 and drop GPL code, see [#10](https://github.com/belgattitude/php-java-bridge/issues/10)
+- [x] Artifact published and available on maven central. 
+- [x] Clean-up of obsolete code and unused resources.
+- [x] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
 - [ ] Deprecate and remove completely the `Java.inc` client.
-- [x] Publish on maven (need help - must be made after removal of php dependency)
-- [x] Removal of obsolete code and resources.
 - [ ] Security review and safe practices.
-- [ ] Write JUnit tests
-- [ ] Start refactorings and improve ;)
 - [ ] Documentation (always a wip)
-
 
 Please **[participate in the discussion for future ideas here](https://github.com/belgattitude/php-java-bridge/issues/6)**. 
 
@@ -137,8 +132,7 @@ For rebuilding the older Java.inc and launchers:
 $ gradle genClean -Dphp_exec=php5.6
 $ gradle genAll -Dphp_exec=php5.6
 ```
-                                                         
-                                                        
+                                                                                                                 
 ## Usage
 
 ### Deploy

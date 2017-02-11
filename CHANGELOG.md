@@ -3,7 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## UNRELEASED
+## 6.2.11-rc-2 TBD
+
+### Changed
+
+- License from MIT to Apache 2.0, see [#10](https://github.com/belgattitude/php-java-bridge/issues/10)
+
+### Removed
+
+- Removed PHPDebugger.inc, PHPDebugger.java, see [#23](https://github.com/belgattitude/php-java-bridge/issues/23) and [#16](https://github.com/belgattitude/php-java-bridge/issues/16)
+
 
 ## 6.2.11-rc-1 (2017-02-06)
 
