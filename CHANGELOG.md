@@ -3,7 +3,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 6.2.11-rc-2 TBD
+
+## 6.2.11-rc-2 (2017-02-11)
 
 ### Changed
 
@@ -12,6 +13,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Removed
 
 - Removed PHPDebugger.inc, PHPDebugger.java, see [#23](https://github.com/belgattitude/php-java-bridge/issues/23) and [#16](https://github.com/belgattitude/php-java-bridge/issues/16)
+- `maven publish` - removed dependency of log4j in pom.xml.
+ 
+
+### Fixed
+
+- `maven publish` - Fixed dependency scope of servlet-api to 'provided', see [#24](https://github.com/belgattitude/php-java-bridge/issues/24)
+- `maven publish` - Duplicate inclusion of servlet-api in pom dependencies (no side effect - cleanup doubles in gradle)
 
 
 ## 6.2.11-rc-1 (2017-02-06)
