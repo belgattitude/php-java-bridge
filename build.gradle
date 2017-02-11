@@ -115,12 +115,16 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
 signing {
     required { signatory != null && project.ext.isReleaseVersion }
     sign configurations.archives
 }
-
-
 
 publishing {
     repositories {
