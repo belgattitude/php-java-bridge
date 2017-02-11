@@ -32,12 +32,6 @@ buildscript {
 }
 
 
-war {
-    dependsOn jar
-    classifier 'web'
-    //baseName "${project.archivesBaseName}-template"
-    //from 'src/rootContent' // could add a file-set to the root of the archive
-}
 
 tomcatRun {
     contextPath = '/'
@@ -92,6 +86,17 @@ jar {
         attributes('Main-Class': 'io.soluble.pjb.bridge.Standalone')
     }
 }
+
+
+war {
+    dependsOn jar
+    classifier 'web'
+    archiveName = "JavaBridgeTemplate.war"
+    //version = null
+    //baseName "${project.archivesBaseName}-template"
+    //from 'src/rootContent' // could add a file-set to the root of the archive
+}
+
 
 
 jacocoTestReport {

@@ -83,63 +83,52 @@ compile 'io.soluble.pjb:php-java-bridge:VERSION'
 ### Requirements
 
  - Oracle JDK 7,8
- - Gradle and Ant installed
- - PHP CLI >= 5.3, < 7.0, [see #4](https://github.com/belgattitude/php-java-bridge/issues/4) 
+ - Optionally gradle (gradlew provided) and ant for old Java.inc generation
  
-### Clone the project
+### Get the sources
 
-Run the `git clone` command clone in a directory:
+You can either clone the project with:
 
 ```shell
 $ git clone https://github.com/belgattitude/php-java-bridge.git
+```
+
+or download a sip tarball from the github page.
+
+### Gradle build 
+
+Build the project with the provided gradle wrapper:
+
+```shell
 $ cd php-java-bridge
+$ ./gradlew build 
 ```
 
-### Build 
+The generated files are available in the  `/build/libs` folder:
 
-> Building the project requires a php interpreter (5.3 - 5.6) installed. By default
-> it will use the `php` found in system path, but you can specify another location through the `-Dphp_exec=` argument.  
+| File          | Description   | 
+| ------------- | ------------- | 
+| `php-java-bridge-<VERSION>.jar`  | JavaBridge library (servlet and standalone). | 
+| `php-java-bridge-<VERSION>-sources.jar`  | Source code. | 
+| `php-java-bridge-<VERSION>-javadoc.jar`  | Generated api doc. |
 
-```
-$ gradle build 
-```
+Additionally a generic template file is automatically generated: 
 
-### Generated files
-
-See the `/build/libs` folder :
-
-| File          | Description   | Approx. size |
-| ------------- | ------------- | ------------ |
-| `php-java-bridge-<VERSION>.jar`  | JavaBridge library. | +/- 500k |
-| `php-java-bridge-<VERSION>-web.war`  | Ready to deploy war template file. | +/- 900k |
-| `php-java-bridge-<VERSION>-sources.jar`  | JavaBridge sources. | +/- 400k |
-| `php-java-bridge-<VERSION>-javadoc.jar`  | Generated API documentation. | +/- 600k |
-       
-
-## Gradle tasks
-
-
-Tomcat embedded support
-
-```shell
-$ gradle tomcatRun
-$ # gradle tomcatStop (to stop the server)
-```
-
-For rebuilding the older Java.inc and launchers:
-
-```shell
-$ gradle genClean -Dphp_exec=php5.6
-$ gradle genAll -Dphp_exec=php5.6
-```
+| File          | Description   | 
+| -------------| ------------- | 
+| `JavaBridgeTemplate.war`  | A ready to deploy war example file. |
+ 
                                                                                                                  
 ## Usage
 
-### Deploy
-
 > Currently only tested on Tomcat 7/8, should be running on any servlet 2.5 compatible container.
 
-#### Deploy on Tomcat8 
+### Servlet registration
+
+You can have a look to the [web.xml](https://github.com/belgattitude/php-java-bridge/blob/master/src/main/webapp/WEB-INF/web.xml) default configuration
+for the servlet configuration settings. 
+
+### Deploy
 
 Ensure you have tomcat installed and a php-cgi
 
@@ -148,10 +137,10 @@ $ sudo apt-get install tomcat8 tomcat8-admin
 $ sudo apt-get install php-cgi
 ```
 
-And copy the ready to run `JavaBridge-<VERSION>.war` in the tomcat webapps folder:
+And copy the ready to run `JavaBridgeTemplate.war` in the tomcat webapps folder:
 
 ```shell
-$ sudo cp ./build/libs/php-java-bridge-<VERSION>-web.war /var/lib/tomcat8/webapps/JavaBridgeTemplate.war
+$ sudo cp ./build/libs/JavaBridgeTemplate.war /var/lib/tomcat8/webapps/JavaBridgeTemplate.war
 ```
 
 Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate).
@@ -161,6 +150,13 @@ Have a look to the error log if needed:
 ```shell
 $ cat /var/log/tomcat8/catalina.out
 ```
+
+## Develop
+
+For development, the use of the `./gradlew tomcatRun` and `./gradlew tomcatStop` allows testing 
+without the need of deployment.
+
+Dependencies can be added in the `build.gradle` file.   
 
 ## FAQ
 
