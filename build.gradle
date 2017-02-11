@@ -10,8 +10,8 @@ apply plugin: 'maven-publish'
 
 group = "io.soluble.pjb"
 archivesBaseName = 'php-java-bridge'
-//version = "6.2.11-rc-1"
-version = "6.2.11-SNAPSHOT"
+version = "6.2.11-rc-2"
+//version = "6.2.11-SNAPSHOT"
 description = "PHPJavaBridge server (soluble fork)"
 
 ext {
@@ -61,13 +61,12 @@ repositories {
 
 dependencies {
 
-    runtime('log4j:log4j:1.2.17')
+    testRuntime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
 
     def tomcatVersion = '7.0.73'
 
     providedCompile('javax.servlet:javax.servlet-api:3.0.1')
-    //compile('javax.servlet:javax.servlet-api:3.0.1')
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -77,6 +76,7 @@ dependencies {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
 }
+
 
 // When testing you can specify your local PHP executable as a system property with
 // -Dphp_exec=/path/to/php-executabale on the Gradle command line
@@ -113,6 +113,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
 
 artifacts {
     archives jar
@@ -175,20 +176,20 @@ publishing {
                     }
                     appendNode('licenses').with {
                         appendNode('license').with {
-                            appendNode('name', 'The MIT License (MIT)')
-                            appendNode('url', 'https://opensource.org/licenses/MIT')
+                            appendNode('name', 'The Apache Software License, Version 2.0')
+                            appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
                         }
                     }
                     appendNode('organization').with {
-                        appendNode('name', 'Soluble')
-                        appendNode('url', 'http://soluble.io')
+                        appendNode('name', 'php-java-bridge')
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
                     }
                     appendNode('developers').with {
                         appendNode('developer').with {
                             //appendNode('id', 'belgattitude')
                             appendNode('name', 'Sébastien Vanvelthem')
                             appendNode('email', 'belgattitude@gmail.com')
-                            appendNode('organization', 'Soluble')
+                            appendNode('organization', 'soluble.io')
                             appendNode('organizationUrl', 'https://github.com/belgattitude')
                         }
                         appendNode('developer').with {
@@ -199,6 +200,35 @@ publishing {
                         }
 
                     }
+                }
+
+            }
+
+            //
+            pom.withXml {
+
+                Node pomNode = asNode()
+
+                // Fix the providedCompile('javax.servlet:javax.servlet-api:3.0.1') that
+                // was resolved as 'runtime' - instead put it as provided
+                // And add optional to true, as the standalone server is still supported
+                pomNode.dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime'  && project.configurations.providedCompile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'provided'
+                    it.appendNode('optional', true)
+                }
+
+                // Fix the duplicate inclusion og
+                // providedCompile('javax.servlet:javax.servlet-api:3.0.1') dep
+                int i = 0;
+                Collection servletApiDeps = pomNode.dependencies.'*'.findAll() {
+                    it.artifactId.text() == 'javax.servlet-api' && i > 1
+                    i++;
+                }.each() {
+                    it.parent().remove(it)
                 }
 
             }
