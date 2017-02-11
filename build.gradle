@@ -175,20 +175,20 @@ publishing {
                     }
                     appendNode('licenses').with {
                         appendNode('license').with {
-                            appendNode('name', 'The MIT License (MIT)')
-                            appendNode('url', 'https://opensource.org/licenses/MIT')
+                            appendNode('name', 'The Apache Software License, Version 2.0')
+                            appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
                         }
                     }
                     appendNode('organization').with {
-                        appendNode('name', 'Soluble')
-                        appendNode('url', 'http://soluble.io')
+                        appendNode('name', 'php-java-bridge')
+                        appendNode('url', 'https://github.com/belgattitude/php-java-bridge')
                     }
                     appendNode('developers').with {
                         appendNode('developer').with {
                             //appendNode('id', 'belgattitude')
                             appendNode('name', 'Sébastien Vanvelthem')
                             appendNode('email', 'belgattitude@gmail.com')
-                            appendNode('organization', 'Soluble')
+                            appendNode('organization', 'soluble.io')
                             appendNode('organizationUrl', 'https://github.com/belgattitude')
                         }
                         appendNode('developer').with {
