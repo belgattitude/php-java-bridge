@@ -31,7 +31,7 @@ The source code for soluble php-java-bridge is available at:
 
 ## MIT License
 
-Several parts of the source code is distributed under the MIT
+Several parts of the source code are distributed under the MIT
 license, which is reproduced below:
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
