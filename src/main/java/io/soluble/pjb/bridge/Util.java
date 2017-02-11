@@ -80,10 +80,6 @@ public final class Util {
      */
     public static Class JAVA_INC;
     /**
-     * The java/Java.inc code
-     */
-    public static Class PHPDEBUGGER_PHP;
-    /**
      * The java/JavaProxy.php code
      */
     public static Class JAVA_PROXY;
@@ -307,9 +303,6 @@ public final class Util {
 
         try {
             JAVA_INC = Class.forName("io.soluble.pjb.bridge.JavaInc");
-        } catch (ClassNotFoundException e) {/*ignore*/}
-        try {
-            PHPDEBUGGER_PHP = Class.forName("io.soluble.pjb.bridge.PhpDebuggerPHP");
         } catch (ClassNotFoundException e) {/*ignore*/}
         try {
             JAVA_PROXY = Class.forName("io.soluble.pjb.bridge.JavaProxy");
