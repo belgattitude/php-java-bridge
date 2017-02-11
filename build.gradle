@@ -10,8 +10,8 @@ apply plugin: 'maven-publish'
 
 group = "io.soluble.pjb"
 archivesBaseName = 'php-java-bridge'
-//version = "6.2.11-rc-2"
-version = "6.2.11-SNAPSHOT"
+version = "6.2.11-rc-2"
+//version = "6.2.11-SNAPSHOT"
 description = "PHPJavaBridge server (soluble fork)"
 
 ext {
@@ -201,6 +201,17 @@ publishing {
                     }
                 }
 
+            }
+
+            // providedCompile -> provided scope
+            pom.withXml {
+                asNode().dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime'  && project.configurations.providedCompile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'provided'
+                }
             }
 
             // Sign the pom.xml and artifacts.
