@@ -61,13 +61,12 @@ repositories {
 
 dependencies {
 
-    runtime('log4j:log4j:1.2.17')
+    testRuntime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
 
     def tomcatVersion = '7.0.73'
 
     providedCompile('javax.servlet:javax.servlet-api:3.0.1')
-    //compile('javax.servlet:javax.servlet-api:3.0.1')
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -77,6 +76,7 @@ dependencies {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
 }
+
 
 // When testing you can specify your local PHP executable as a system property with
 // -Dphp_exec=/path/to/php-executabale on the Gradle command line
@@ -114,16 +114,13 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
 
 signing {
     required { signatory != null && project.ext.isReleaseVersion }
     sign configurations.archives
 }
+
+
 
 publishing {
     repositories {
@@ -203,15 +200,33 @@ publishing {
 
             }
 
-            // providedCompile -> provided scope
+            //
             pom.withXml {
-                asNode().dependencies.'*'.findAll() {
+
+                Node pomNode = asNode()
+
+                // Fix the providedCompile('javax.servlet:javax.servlet-api:3.0.1') that
+                // was resolved as 'runtime' - instead put it as provided
+                // And add optional to true, as the standalone server is still supported
+                pomNode.dependencies.'*'.findAll() {
                     it.scope.text() == 'runtime'  && project.configurations.providedCompile.allDependencies.find { dep ->
                         dep.name == it.artifactId.text()
                     }
                 }.each() {
                     it.scope*.value = 'provided'
+                    it.appendNode('optional', true)
                 }
+
+                // Fix the duplicate inclusion og
+                // providedCompile('javax.servlet:javax.servlet-api:3.0.1') dep
+                int i = 0;
+                Collection servletApiDeps = pomNode.dependencies.'*'.findAll() {
+                    it.artifactId.text() == 'javax.servlet-api' && i > 1
+                    i++;
+                }.each() {
+                    it.parent().remove(it)
+                }
+
             }
 
             // Sign the pom.xml and artifacts.
