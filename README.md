@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/php-java-bridge)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge/badge.svg?style=plastic])](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/belgattitude/php-java-bridge/blob/master/LICENSE.md)
 (develop branch: 
 [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=develop)](https://travis-ci.org/belgattitude/php-java-bridge))
