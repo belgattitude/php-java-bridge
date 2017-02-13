@@ -71,14 +71,14 @@ With maven:
 <dependency>
     <groupId>io.soluble.pjb</groupId>
     <artifactId>php-java-bridge</artifactId>
-    <version>VERSION</version>
+    <version>x.y.z</version>
 </dependency>
 ```
 
 or gradle
 
 ```
-compile 'io.soluble.pjb:php-java-bridge:VERSION'
+compile 'io.soluble.pjb:php-java-bridge:x.y.z'
 ```
 
 ## Build the project
