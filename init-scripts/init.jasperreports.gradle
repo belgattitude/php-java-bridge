@@ -1,0 +1,30 @@
+/*
+Gradle init script to add jasperreports dependencies to the build
+*/
+
+
+initscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/'
+        }
+        maven {
+            url 'http://jasperreports.sourceforge.net/maven2'
+        }
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime ('net.sf.jasperreports:jasperreports:6.+') {
+            exclude group: 'com.lowagie' // better to use latest com.itextpdf instead
+            exclude group: 'org.olap4j' // Generally don't need this
+        }
+        runtime 'com.itextpdf:itextpdf:5.5.+'
+        runtime 'com.itextpdf:itext-pdfa:5.5.+'
+    }
+}

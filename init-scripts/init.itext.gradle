@@ -1,0 +1,19 @@
+/*
+Gradle init script to add iText dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime 'com.itextpdf:itextpdf:5.5.+'
+        runtime 'com.itextpdf:itext-pdfa:5.5.+'
+    }
+}
