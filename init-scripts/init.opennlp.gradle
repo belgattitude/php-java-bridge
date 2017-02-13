@@ -1,0 +1,21 @@
+/*
+Gradle init script to add opennlp dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime 'org.apache.opennlp:opennlp-tools:1.+'
+        runtime 'org.apache.opennlp:opennlp-uima:1.+'
+        runtime 'org.apache.opennlp:opennlp-morfologik-addon:1.+'
+        runtime 'org.apache.opennlp:opennlp-brat-annotator:1.+'
+    }
+}

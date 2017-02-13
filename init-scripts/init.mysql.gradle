@@ -1,0 +1,18 @@
+/*
+Gradle init script to add mysql jdbc connector dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime 'mysql:mysql-connector-java:6+'
+    }
+}
