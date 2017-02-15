@@ -4,89 +4,58 @@
 (develop branch: 
 [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=develop)](https://travis-ci.org/belgattitude/php-java-bridge))
 
+The soluble PHPJavaBridge server fork allows PHP/JVM interoperability through a local network protocol between both runtimes.
 
+> Disclaimer: This fork is based on the robust and mature [sourceforge](https://sourceforge.net/p/php-java-bridge/code/) version made by Jost Boekemeier and 
+> was refactored to ease installation process, promote contributions and embrace more modern practices found in 
+> the Java ecosystem. To keep a track of differences, you can refer to the [fork status](./doc/notes_fork_status.md) page.   
 
-# Unofficial fork of the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) server.
+## Installation
 
-The VM Bridge is a network protocol which can be used to connect a native 
-script engine, for example PHP, with a Java VM. To get more information have a 
-look to those projects:
+This repository can be used to develop, test and and build the JavaBridge server. 
+If you're looking for an easy setup of the PHPJavaBridge, consider using the 
 
-## Disclaimer
+- Spring boot starter project: [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot) 
 
-> This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
-> is based on the latest official release (6.2.1) excluding all previous versions and history (cleanup from the CVS repo).
-> See the [CHANGELOG.md](https://github.com/belgattitude/php-java-bridge/blob/master/CHANGELOG.md) or have a look to the [CHANGESET](https://github.com/belgattitude/php-java-bridge/compare/Original-6.2.1...master).
-> A copy of the original 6.2.1 release is available on a [separate branch](https://github.com/belgattitude/php-java-bridge/tree/Original-6.2.1). All new changes are currently made on the master branch, releases starting at 6.2.10.
-
-## Status
-
-Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here are some plans and statuses of the fork:  
-
-- [x] Migration from sourceforge CVS to github.
-- [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
-- [x] Gradle support for project builds.
-- [x] Ensure support of Tomcat 8+, JDK 8.
-- [x] Prepare a starter project to customize builds, see [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot).
-- [x] Update namespace to `io.soluble.pjb` and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
-- [x] License to Apache 2.0 and drop GPL code, see [#10](https://github.com/belgattitude/php-java-bridge/issues/10)
-- [x] Artifact published and available on maven central. 
-- [x] Clean-up of obsolete code and unused resources.
-- [x] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
-- [ ] Deprecate and remove completely the `Java.inc` client.
-- [ ] Security review and safe practices.
-- [ ] Documentation (always a wip)
-
-Please **[participate in the discussion for future ideas here](https://github.com/belgattitude/php-java-bridge/issues/6)**. 
-
+And use the [soluble-japha](https://github.com/belgattitude/soluble-japha) client to start in PHP (replaces `Java.inc`) 
+ 
 ## Documentation
 
-Server API doc
-   
-- [API doc](http://docs.soluble.io/php-java-bridge/api).
-
-For the PHP client part (*replaces Java.inc*), documentation is located on another project:
-
-- [soluble-japha](https://github.com/belgattitude/soluble-japha) PHP client to interact with the bridge.
-
+- Soluble PHPJavaBridge server [API doc](http://docs.soluble.io/php-java-bridge/api).
+- PHP `soluble-japha` client [documentation]((https://github.com/belgattitude/soluble-japha)  
 
 > Older documentation can be found in the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) site
-
 
 ## Releases
 
 - You can download pre-compiled [java bridge binaries](https://github.com/belgattitude/php-java-bridge/releases) on the releases page (jdk8). 
-- Alternatively you can build the project, first clone the project and follow the build steps.
+- Major releases are published on [Maven central](https://search.maven.org/#search%7Cga%7C1%7Cio.soluble.pjb.php-java-bridge).
 
-> Note: Evaluate the [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot) if you like to
-> customize your php-java-bridge server build.  
+  With maven:
+    
+  ```
+  <dependency>
+     <groupId>io.soluble.pjb</groupId>
+      <artifactId>php-java-bridge</artifactId>
+     <version>x.y.z</version>
+  </dependency>
+  ```
+    
+  or gradle
+    
+  ```
+  compile 'io.soluble.pjb:php-java-bridge:x.y.z'
+  ```
 
-## Installation
+To register the PHPJavaServlet, you can have a look to the example [web.xml](https://github.com/belgattitude/php-java-bridge/blob/master/src/main/webapp/WEB-INF/web.xml) file.
 
-Major releases are published on [Maven central](https://search.maven.org/#search%7Cga%7C1%7Cio.soluble.pjb.php-java-bridge).
-
-With maven:
-
-```
-<dependency>
-    <groupId>io.soluble.pjb</groupId>
-    <artifactId>php-java-bridge</artifactId>
-    <version>x.y.z</version>
-</dependency>
-```
-
-or gradle
-
-```
-compile 'io.soluble.pjb:php-java-bridge:x.y.z'
-```
 
 ## Build the project
 
 ### Requirements
 
  - Oracle JDK 7,8
- - Optionally gradle (gradlew provided) and ant for old Java.inc generation
+ - Optionally `ant` for old Java.inc generation
  
 ### Get the sources
 
@@ -96,7 +65,7 @@ You can either clone the project with:
 $ git clone https://github.com/belgattitude/php-java-bridge.git
 ```
 
-or download a sip tarball from the github page.
+or download a zip tarball from the github page.
 
 ### Gradle build 
 
@@ -120,7 +89,13 @@ Additionally a generic template file is automatically generated:
 | File          | Description   | 
 | -------------| ------------- | 
 | `JavaBridgeTemplate.war`  | A ready to deploy war example file. |
+
  
+### Adding deps to the builded '.war'
+ 
+Instead of modifying directly the main `build.gradle` file, you should consider using 
+init-scripts. Examples can be found on the [init-scripts doc](./init-scripts/README.md). 
+
                                                                                                                  
 ## Usage
 
@@ -133,12 +108,7 @@ for the servlet configuration settings.
 
 ### Deploy
 
-Ensure you have tomcat installed and a php-cgi
-
-```shell
-$ sudo apt-get install tomcat8 tomcat8-admin
-$ sudo apt-get install php-cgi
-```
+Ensure you have a [Tomcat server](./docs/install/install_tomcat.md) installed.
 
 And copy the ready to run `JavaBridgeTemplate.war` in the tomcat webapps folder:
 
@@ -201,7 +171,6 @@ Original developers:
 Forked version
 
 - [Christian P. Lerch](https://github.com/cplerch): Java refactorings and modernizations. 
-- [Sébastien Vanvelthem](https://github.com/belgattitude): Fork initiator.
-
+- [Sébastien Vanvelthem](https://github.com/belgattitude): Fork initiator and maintainer.
 
 See the [CREDITS.md](./CREDITS.md) for an up to date of list of contributors.
