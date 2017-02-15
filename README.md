@@ -27,7 +27,7 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
 - [x] Gradle support for project builds.
 - [x] Ensure support of Tomcat 8+, JDK 8.
-- [x] Prepare a starter project to customize builds, see [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle).
+- [x] Prepare a starter project to customize builds, see [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot).
 - [x] Update namespace to `io.soluble.pjb` and host [Java API doc](http://docs.soluble.io/php-java-bridge/api)
 - [x] License to Apache 2.0 and drop GPL code, see [#10](https://github.com/belgattitude/php-java-bridge/issues/10)
 - [x] Artifact published and available on maven central. 
@@ -58,7 +58,7 @@ For the PHP client part (*replaces Java.inc*), documentation is located on anoth
 - You can download pre-compiled [java bridge binaries](https://github.com/belgattitude/php-java-bridge/releases) on the releases page (jdk8). 
 - Alternatively you can build the project, first clone the project and follow the build steps.
 
-> Note: Evaluate the [pjb-starter-gradle](https://github.com/belgattitude/pjb-starter-gradle) if you like to
+> Note: Evaluate the [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot) if you like to
 > customize your php-java-bridge server build.  
 
 ## Installation
