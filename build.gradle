@@ -55,12 +55,11 @@ repositories {
 
 dependencies {
 
-    testRuntime('log4j:log4j:1.2.17')
     testCompile('junit:junit:3.8.2')    // the test code still uses this junit API
 
     def tomcatVersion = '7.0.73'
 
-    providedCompile('javax.servlet:javax.servlet-api:3.0.1')
+    providedCompile('javax.servlet:servlet-api:2.5')
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -69,6 +68,8 @@ dependencies {
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
+
+    runtime('log4j:log4j:1.2.17')
 }
 
 
@@ -214,7 +215,7 @@ publishing {
 
                 Node pomNode = asNode()
 
-                // Fix the providedCompile('javax.servlet:javax.servlet-api:3.0.1') that
+                // Fix the providedCompile('javax.servlet:servlet-api:2.5') that
                 // was resolved as 'runtime' - instead put it as provided
                 // And add optional to true, as the standalone server is still supported
                 pomNode.dependencies.'*'.findAll() {
@@ -226,12 +227,11 @@ publishing {
                     it.appendNode('optional', true)
                 }
 
-                // Fix the duplicate inclusion og
-                // providedCompile('javax.servlet:javax.servlet-api:3.0.1') dep
+                // Fix the duplicate inclusion of
+                // providedCompile('javax.servlet:servlet-api:2.5') dep
                 int i = 0;
                 Collection servletApiDeps = pomNode.dependencies.'*'.findAll() {
-                    it.artifactId.text() == 'javax.servlet-api' && i > 1
-                    i++;
+                    it.artifactId.text() == 'servlet-api' && ++i > 1
                 }.each() {
                     it.parent().remove(it)
                 }

@@ -1,0 +1,21 @@
+/*
+Gradle init script to add Standford coreNLP models dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // Trained models for english (big size: 900Mb)
+        runtime 'edu.stanford.nlp:stanford-corenlp:3.+:models-english'
+        // The English (KBP) models jar contains extra resources needed to run relation extraction and entity linking. 500M
+        runtime 'edu.stanford.nlp:stanford-corenlp:3.+:models-english-kbp'
+    }
+}

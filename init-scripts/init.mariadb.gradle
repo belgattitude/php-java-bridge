@@ -1,0 +1,19 @@
+/*
+Gradle init script to add mariadb jdbc connector dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+        runtime 'org.mariadb.jdbc:mariadb-java-client:1.+'
+    }
+}

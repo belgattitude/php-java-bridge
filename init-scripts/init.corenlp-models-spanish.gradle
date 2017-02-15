@@ -1,0 +1,19 @@
+/*
+Gradle init script to add Standford coreNLP models dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // Trained models for spanish (big size: 199Mb)
+        runtime 'edu.stanford.nlp:stanford-corenlp:3.+:models-spanish'
+    }
+}
