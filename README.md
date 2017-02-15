@@ -22,7 +22,7 @@ And use the [soluble-japha](https://github.com/belgattitude/soluble-japha) clien
 ## Documentation
 
 - Soluble PHPJavaBridge server [API doc](http://docs.soluble.io/php-java-bridge/api).
-- PHP `soluble-japha` client [documentation]((https://github.com/belgattitude/soluble-japha)  
+- PHP `soluble-japha` client [documentation](https://github.com/belgattitude/soluble-japha)  
 
 > Older documentation can be found in the [PHP/Java bridge](http://php-java-bridge.sourceforge.net/pjb/) site
 
