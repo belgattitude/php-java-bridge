@@ -1,0 +1,19 @@
+/*
+Gradle init script to add postgresql jdbc connector dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // https://mvnrepository.com/artifact/org.postgresql/postgresql
+        runtime group: 'org.postgresql', name: 'postgresql', version: '9.4.+'
+    }
+}

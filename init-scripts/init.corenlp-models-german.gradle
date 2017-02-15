@@ -1,0 +1,19 @@
+/*
+Gradle init script to add Standford coreNLP german modle dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // Trained models for german (big size: 120Mb)
+        runtime 'edu.stanford.nlp:stanford-corenlp:3.+:models-german'
+    }
+}

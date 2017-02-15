@@ -1,0 +1,20 @@
+/*
+Gradle init script to add joda time dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // https://mvnrepository.com/artifact/joda-time/joda-time
+        runtime group: 'joda-time', name: 'joda-time', version: '2.+'
+
+    }
+}

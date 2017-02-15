@@ -1,0 +1,21 @@
+/*
+Gradle init script to add flyingsaucer dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        // https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-core
+        runtime group: 'org.xhtmlrenderer', name: 'flying-saucer-core', version: '9.+'
+        runtime group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf', version: '9.+'
+        runtime group: 'org.xhtmlrenderer', name: 'flying-saucer-log4j', version: '9+'
+    }
+}

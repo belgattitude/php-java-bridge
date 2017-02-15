@@ -15,7 +15,8 @@ allprojects {
     dependencies {
         runtime 'org.apache.opennlp:opennlp-tools:1.+'
         runtime 'org.apache.opennlp:opennlp-uima:1.+'
-        runtime 'org.apache.opennlp:opennlp-morfologik-addon:1.+'
         runtime 'org.apache.opennlp:opennlp-brat-annotator:1.+'
+        runtime 'org.apache.opennlp:opennlp-morfologik-addon:1.+'
+        runtime 'org.carrot2:morfologik-tools:2.+'
     }
 }

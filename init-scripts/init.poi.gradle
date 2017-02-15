@@ -1,0 +1,18 @@
+/*
+Gradle init script to add Apache POI dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime 'org.apache.poi:poi:3.+'
+    }
+}
