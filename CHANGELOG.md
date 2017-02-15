@@ -5,11 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## 6.2.11 (UNRELEASED)
 
-## Changed
+### Changed
 
 - `pom` downgraded provided compile `javax.servlet:javax.servlet-api:2.5`, 3.0.1 works but 2.5 kept for compatibility  
 
-## Fixed
+### Fixed
 
 - `pom` Log4j 1.2.17 re-introduced as runtime dependency 
 
