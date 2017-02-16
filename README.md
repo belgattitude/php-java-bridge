@@ -116,7 +116,11 @@ And copy the ready to run `JavaBridgeTemplate.war` in the tomcat webapps folder:
 $ sudo cp ./build/libs/JavaBridgeTemplate.war /var/lib/tomcat8/webapps/JavaBridgeTemplate.war
 ```
 
-Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate).
+Wait few seconds for deployment and point your browser to [http://localhost:8080/JavaBridgeTemplate](http://localhost:8080/JavaBridgeTemplate), you should see the
+bridge landing page :
+
+![](./doc/images/bridge_landing.png "Landing screenshot")
+
 
 Have a look to the error log if needed:
 
