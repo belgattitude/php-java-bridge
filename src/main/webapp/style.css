@@ -1,0 +1,528 @@
+/**
+  Taken https://github.com/philipwalton/solved-by-flexbox
+ */
+
+/* normalize.css */
+html {
+    font-family: sans-serif;
+    line-height: 1.15;
+}
+body {
+    margin: 0;
+}
+article, aside, footer, header, nav, section {
+    display: block;
+}
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+figcaption, figure, main {
+    display: block;
+}
+figure {
+    margin: 1em 40px;
+}
+hr {
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+}
+pre {
+    font-family: monospace;
+    font-size: 1em;
+}
+a {
+    background-color: transparent;
+}
+a:active, a:hover {
+    outline-width: 0;
+}
+abbr[title] {
+    border-bottom: medium none;
+    text-decoration: underline dotted;
+}
+b, strong {
+    font-weight: bolder;
+}
+code, kbd, samp {
+    font-family: monospace;
+    font-size: 1em;
+}
+dfn {
+    font-style: italic;
+}
+mark {
+    background-color: #ff0;
+    color: #000;
+}
+small {
+    font-size: 80%;
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sub {
+    bottom: -0.25em;
+}
+sup {
+    top: -0.5em;
+}
+audio, video {
+    display: inline-block;
+}
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+img {
+    border-style: none;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+button, input, optgroup, select, textarea {
+    font-family: sans-serif;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+button, input {
+    overflow: visible;
+}
+button, select {
+    text-transform: none;
+}
+[type="reset"], [type="submit"], button, html [type="button"] {
+}
+[type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner, button::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+[type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring, button:-moz-focusring {
+    outline: 1px dotted buttontext;
+}
+fieldset {
+    border: 1px solid silver;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+legend {
+    box-sizing: border-box;
+    color: inherit;
+    display: table;
+    max-width: 100%;
+    padding: 0;
+    white-space: normal;
+}
+progress {
+    display: inline-block;
+    vertical-align: baseline;
+}
+textarea {
+    overflow: auto;
+}
+[type="checkbox"], [type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+[type="search"] {
+    outline-offset: -2px;
+}
+details, menu {
+    display: block;
+}
+summary {
+    display: list-item;
+}
+canvas {
+    display: inline-block;
+}
+[hidden], template {
+    display: none;
+}
+
+/* end of normalize*/
+
+html {
+    color: #404040;
+    font: 400 1em/1.4 "Open Sans","Verdana", sans-serif;
+    height: 100%;
+    text-rendering: optimizelegibility;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    margin: 0.25em 0 0.75em;
+}
+h2 {
+    font-size: 1.333em;
+    margin: 0 0 1.12528em;
+}
+h2, h3 {
+    font-weight: 600;
+}
+h3 {
+    font-size: 1em;
+}
+h3, p, pre {
+    margin: 0 0 1.5em;
+}
+a {
+    border-bottom: 1px dashed rgba(70, 185, 128, 0.5);
+    color: #46b980;
+    text-decoration: none;
+}
+a:focus, a:hover {
+    border-bottom: 1px solid #46b980;
+}
+ol, ul {
+    list-style: outside none square;
+    margin: 0 0 1.5em;
+    padding: 0 0 0 1.5em;
+}
+li {
+    margin-bottom: 0.333em;
+}
+figure {
+    margin: 0;
+}
+strong {
+    font-weight: 600;
+}
+.Aligner {
+    -moz-box-align: center;
+    -moz-box-pack: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    /*min-height: 24em;*/
+    background: #1f8dd6 none repeat scroll 0 0;
+}
+.Aligner-item {
+    -moz-box-flex: 1;
+    flex: 1 1 0;
+}
+.Aligner-item--top {
+    align-self: flex-start;
+}
+.Aligner-item--bottom {
+    align-self: flex-end;
+}
+.Aligner-item--fixed {
+    -moz-box-flex: 0;
+    flex: 0 0 auto;
+    max-width: 50%;
+}
+.Browser {
+    font-size: 0.8em;
+    text-align: center;
+}
+.Browser-image {
+    /*background: rgba(0, 0, 0, 0) url("images/browser-logos.jpg") no-repeat scroll 0 0 / auto 100%;*/
+    height: 4pc;
+    margin: 0 0.5em 0.5em;
+    width: 4pc;
+}
+.Browser--chrome > .Browser-image {
+    background-position: 0 0;
+}
+.Browser--opera > .Browser-image {
+    background-position: -4pc 0;
+}
+.Browser--firefox > .Browser-image {
+    background-position: -8pc 0;
+}
+.Browser--safari > .Browser-image {
+    background-position: -2in 0;
+}
+.Browser--ie > .Browser-image {
+    background-position: -16pc 0;
+}
+.Browser--edge > .Browser-image {
+    background-position: -20pc 0;
+}
+.Button {
+    background: hsla(31, 15%, 50%, 0.15) none repeat scroll 0 0;
+    border: 0 none;
+    border-radius: 2px;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8125em;
+    font-weight: 300;
+    line-height: normal;
+    padding: 0.6em 1em;
+    text-decoration: none;
+    transition: background-color 0.2s ease 0s;
+    white-space: nowrap;
+}
+.Button:focus {
+    outline: thin dotted #666;
+    text-decoration: none;
+}
+.Button:active, .Button:focus, .Button:hover {
+    background: hsla(31, 15%, 50%, 0.25) none repeat scroll 0 0;
+    border: 0 none;
+    text-decoration: none;
+}
+.Button--action {
+    background-color: #46b980;
+    color: #fff;
+}
+.Button--action:active, .Button--action:focus, .Button--action:hover {
+    background-color: #389466;
+}
+.Button--wide {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+.Container {
+    margin: 0 auto;
+    max-width: 80em;
+}
+.Landing {
+    color: white;
+    /*border: 2px solid white;*/
+    border-radius: 5px;
+    text-align: center;
+    border-radius: 3px;
+    margin: 5em 0em 5em 0em;
+    padding: 0.2em 0.2em 0;
+    width: 100%;
+}
+.Landing::after {
+    content: " ";
+    display: block;
+    height: 0;
+    margin-top: 1em;
+    visibility: hidden;
+}
+.Landing--spaced {
+    margin-bottom: 1.5em;
+}
+.Error {
+    background: #c00 none repeat scroll 0 0;
+    color: #fff;
+    font-weight: 700;
+    padding: 1em 1.5em;
+    text-align: center;
+}
+
+.Header {
+    background-color: #2d3e50;
+    padding: 1.5em;
+    text-align: center;
+}
+@media (min-width: 768px) {
+    .Header {
+        padding: 3em 1.5em;
+    }
+}
+.Header-title {
+    color: #EEEEEE;
+    font-size: 1.8em;
+    font-weight: 600;
+    line-height: 1;
+    margin: 0 0 0.15em;
+    word-spacing: 0.08em;
+}
+.Header-title i {
+    font-family: serif;
+    font-style: italic;
+    font-weight: 400;
+}
+.Header-title a {
+    border: 0 none;
+    color: inherit;
+    font-weight: inherit;
+}
+.Header-title a:active, .Header-title a:focus, .Header-title a:hover {
+    text-decoration: none;
+}
+@media (min-width: 768px) {
+    .Header-title {
+        font-size: 4em;
+    }
+}
+.Header-subTitle {
+    color: #AAAAAA;
+    font-size: 0.8em;
+    font-weight: 300;
+    margin: 0 0 1.5em;
+    white-space: nowrap;
+}
+@media (min-width: 768px) {
+    .Header-subTitle {
+        font-size: 1.1em;
+        margin: 1em 0 1.75em;
+    }
+}
+.Header-actions {
+    -moz-box-align: stretch;
+    -moz-box-direction: normal;
+    -moz-box-orient: vertical;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9em;
+}
+@media (min-width: 384px) {
+    .Header-actions {
+        -moz-box-align: center;
+        -moz-box-direction: normal;
+        -moz-box-orient: horizontal;
+        -moz-box-pack: center;
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+@media (min-width: 768px) {
+    .Header-actions {
+        font-size: 1.1em;
+    }
+}
+.Header-button:first-child {
+    margin: 0 0 1em;
+}
+@media (min-width: 384px) {
+    .Header-button:first-child {
+        margin: 0 1em 0 0;
+    }
+}
+@media (min-width: 768px) {
+    .Header--cozy {
+        -moz-box-align: center;
+        align-items: center;
+        padding: 1.5em;
+    }
+    .Header--cozy, .Header--cozy .Header-titles {
+        display: flex;
+    }
+    .Header--cozy .Header-titles {
+        -moz-box-align: baseline;
+        align-items: baseline;
+    }
+    .Header--cozy .Header-title {
+        color: #EEEEEE;
+        font-size: 1.5em;
+    }
+    .Header--cozy .Header-subTitle {
+
+        font-size: 0.8em;
+        font-weight: 300;
+        margin: 0 0 0 1em;
+    }
+    .Header--cozy .Header-actions {
+        -moz-box-flex: 1;
+        -moz-box-pack: end;
+        flex: 1 1 0;
+        font-size: 0.9em;
+        justify-content: flex-end;
+    }
+}
+.HolyGrail {
+    -moz-box-direction: normal;
+    -moz-box-orient: vertical;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.HolyGrail-footer, .HolyGrail-header {
+    -moz-box-flex: 0;
+    flex: 0 0 auto;
+}
+.HolyGrail-body {
+    -moz-box-direction: normal;
+    -moz-box-flex: 1;
+    -moz-box-orient: vertical;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    padding: 1.5em;
+}
+.HolyGrail-content {
+    margin-top: 1.5em;
+}
+.HolyGrail-nav {
+    -moz-box-ordinal-group: 0;
+    order: -1;
+}
+.HolyGrail-ads, .HolyGrail-nav {
+    background: hsla(31, 15%, 50%, 0.1) none repeat scroll 0 0;
+    border-radius: 3px;
+    padding: 1em;
+}
+@media (min-width: 768px) {
+    .HolyGrail-body {
+        -moz-box-direction: normal;
+        -moz-box-orient: horizontal;
+        flex-direction: row;
+    }
+    .HolyGrail-content {
+        -moz-box-flex: 1;
+        flex: 1 1 0;
+        margin: 0;
+        padding: 0 2em;
+    }
+    .HolyGrail-ads, .HolyGrail-nav {
+        -moz-box-flex: 0;
+        flex: 0 0 12em;
+    }
+}
+.Site {
+    -moz-box-direction: normal;
+    -moz-box-orient: vertical;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.Site-footer, .Site-header {
+    -moz-box-flex: 0;
+    flex: 0 0 auto;
+}
+.Site-content {
+    -moz-box-flex: 1;
+    flex: 1 0 auto;
+    padding: 0em 0em 0;
+    width: 100%;
+}
+.Site-content::after {
+    content: " ";
+    display: block;
+    height: 0;
+    margin-top: 0em;
+    visibility: hidden;
+}
+@media (min-width: 768px) {
+    .Site-content {
+        padding-top: 0em;
+    }
+    .Site-content::after {
+        margin-top: 0em;
+    }
+}
+.Site-content--full {
+    padding: 0;
+}
+.Site-content--full::after {
+    content: none;
+}
+
+
+table {
+    background-color: black;
+    color: white;
+}
+
+table tr {
+    text-align: left;
+}
+
