@@ -3,7 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 6.2.11 (UNRELEASED)
+## 6.2.12 (UNRELEASED)
+
+
+## 6.2.11 (2017-02-17)
+
+### Added
+
+- Landing page added
 
 ### Changed
 
