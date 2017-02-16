@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- Landing page added
+- Landing page added, see [#33](https://github.com/belgattitude/php-java-bridge/issues/33)
 
 ### Changed
 
