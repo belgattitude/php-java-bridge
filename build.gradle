@@ -10,8 +10,8 @@ apply plugin: 'maven-publish'
 
 group = "io.soluble.pjb"
 archivesBaseName = 'php-java-bridge'
-version = "6.2.11-rc-2"
-//version = "6.2.11-SNAPSHOT"
+//version = "6.2.11"
+version = "6.2.12-SNAPSHOT"
 description = "PHPJavaBridge server (soluble fork)"
 
 ext {
