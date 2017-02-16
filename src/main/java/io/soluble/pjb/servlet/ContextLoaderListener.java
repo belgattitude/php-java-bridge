@@ -308,8 +308,8 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
         if (!preferSystemPhp) return false;
 
         // check default locations for preferred system php
-        for (int i = 0; i < Util.DEFAULT_CGI_LOCATIONS.length; i++) {
-            File location = new File(Util.DEFAULT_CGI_LOCATIONS[i]);
+        for (String loc : Util.DEFAULT_CGI_LOCATIONS) {
+            File location = new File(loc);
             if (location.exists()) return true;
         }
 
@@ -348,9 +348,9 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                 if (!javaIncFile.exists()) {
                     Field f = Util.JAVA_INC.getField("bytes");
                     byte[] buf = (byte[]) f.get(Util.JAVA_INC);
-                    OutputStream out = new FileOutputStream(javaIncFile);
-                    out.write(buf);
-                    out.close();
+                    try (OutputStream out = new FileOutputStream(javaIncFile)) {
+                        out.write(buf);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -360,9 +360,9 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                 if (!javaProxyFile.exists()) {
                     Field f = Util.JAVA_PROXY.getField("bytes");
                     byte[] buf = (byte[]) f.get(Util.JAVA_PROXY);
-                    OutputStream out = new FileOutputStream(javaProxyFile);
-                    out.write(buf);
-                    out.close();
+                    try (OutputStream out = new FileOutputStream(javaProxyFile)) {
+                        out.write(buf);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -414,9 +414,9 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                 if (!javaIncFile.exists()) {
                     Field f = Util.LAUNCHER_UNIX.getField("bytes");
                     byte[] buf = (byte[]) f.get(Util.LAUNCHER_UNIX);
-                    OutputStream out = new FileOutputStream(javaIncFile);
-                    out.write(buf);
-                    out.close();
+                    try (OutputStream out = new FileOutputStream(javaIncFile)) {
+                        out.write(buf);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -434,12 +434,12 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                     byte[] buf2 = (byte[]) f2.get(Util.LAUNCHER_WINDOWS2);
                     byte[] buf3 = (byte[]) f3.get(Util.LAUNCHER_WINDOWS3);
                     byte[] buf4 = (byte[]) f4.get(Util.LAUNCHER_WINDOWS4);
-                    OutputStream out = new FileOutputStream(javaProxyFile);
-                    out.write(buf);
-                    out.write(buf2);
-                    out.write(buf3);
-                    out.write(buf4);
-                    out.close();
+                    try (OutputStream out = new FileOutputStream(javaProxyFile)) {
+                        out.write(buf);
+                        out.write(buf2);
+                        out.write(buf3);
+                        out.write(buf4);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -455,9 +455,9 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                     if (!wrapper.exists()) {
                         byte[] data = ("#!/bin/sh\nchmod +x ./" + Util.osArch + "-" + Util.osName + "/php-cgi\n" +
                                 "exec ./" + Util.osArch + "-" + Util.osName + "/php-cgi -c ./" + Util.osArch + "-" + Util.osName + "/php-cgi.ini \"$@\"").getBytes();
-                        OutputStream out = new FileOutputStream(wrapper);
-                        out.write(data);
-                        out.close();
+                        try (OutputStream out = new FileOutputStream(wrapper)) {
+                            out.write(data);
+                        }
                     }
                     File ini = new File(cgiOsDir, "php-cgi.ini");
                     if (!ini.exists()) {
@@ -467,18 +467,18 @@ public class ContextLoaderListener implements javax.servlet.ServletContextListen
                                 ";; PHP extensions go to " + ext + ". Please see phpinfo() for ABI version details.\n" +
                                 "extension_dir=\"" + ext + "\"\n" +
                                 "include_path=\"" + pearDir + ":/usr/share/pear:.\"\n").getBytes();
-                        OutputStream out = new FileOutputStream(ini);
-                        out.write(data);
-                        out.close();
+                        try (OutputStream out = new FileOutputStream(ini)) {
+                            out.write(data);
+                        }
                     }
                 } else {
                     exeExists = false;
                     File readme = new File(cgiOsDir, "php-cgi.MISSING.README.txt");
                     if (!readme.exists()) {
                         byte[] data = ("You can add \"php-cgi\" to this directory and re-deploy your web application.\n").getBytes();
-                        OutputStream out = new FileOutputStream(readme);
-                        out.write(data);
-                        out.close();
+                        try (OutputStream out = new FileOutputStream(readme)) {
+                            out.write(data);
+                        }
                     }
                 }
             } catch (Exception e) {
