@@ -211,7 +211,7 @@ publishing {
             //
             pom.withXml {
 
-                Node pomNode = asNode()
+                groovy.util.Node pomNode = asNode()
 
                 // Fix the providedCompile('javax.servlet:servlet-api:2.5') that
                 // was resolved as 'runtime' - instead put it as provided

@@ -1,5 +1,5 @@
 /*
-Gradle init script to add Standford coreNLP libraries dependencies to the build
+Gradle init script to add iText dependencies to the build
 */
 
 initscript {
@@ -13,7 +13,6 @@ initscript {
 allprojects {
     apply plugin: 'java'
     dependencies {
-        runtime 'edu.stanford.nlp:stanford-corenlp:3.+'
         runtime 'com.google.guava:guava:21+'
     }
 }
