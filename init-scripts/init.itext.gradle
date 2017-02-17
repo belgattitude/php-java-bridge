@@ -13,6 +13,12 @@ initscript {
 allprojects {
     apply plugin: 'java'
     dependencies {
+
+        // WARNING, you need a commercial license for iText or
+        // agree with the terms of iText AGLP license
+        // @see https://github.com/itext/itextpdf/blob/master/LICENSE.md
+        // an LGPL similar build is available from lowagie
+
         runtime 'com.itextpdf:itextpdf:5.5.+'
         runtime 'com.itextpdf:itext-pdfa:5.5.+'
     }
