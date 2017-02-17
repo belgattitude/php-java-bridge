@@ -41,13 +41,34 @@
                     </div>
                 </div>
                 <div>
-
+                    <%
+                        final String libsPath = "/WEB-INF/lib/";
+                        final Set<String> libs = application.getResourcePaths(libsPath);
+                        if (libs != null) {
+                    %>
+                    <h2>Included Libraries</h2>
+                    <table>
+                        <tbody>
+                            <%
+                                for (String lib: libs) {
+                            %>
+                            <tr>
+                                <td><%= lib.substring(libsPath.length()) %></td>
+                            </tr>
+                            <%
+                                }
+                            %>
+                        </tbody>
+                    </table>
+                    <%
+                        }
+                    %>
+                    <h2>Java System Properties</h2>
                     <table>
                         <thead>
                             <tr>
-                                <th>Java system property</th>
+                                <th>Property name</th>
                                 <th>Property value</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -64,8 +85,6 @@
                             %>
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </main>
