@@ -31,9 +31,8 @@ buildscript {
     }
 }
 
-
-
 tomcatRun {
+    dependsOn war, tomcatStop
     contextPath = '/'
     httpPort = 8090;
     outputFile = file('./tomcat.log')
