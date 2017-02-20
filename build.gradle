@@ -31,9 +31,8 @@ buildscript {
     }
 }
 
-
-
 tomcatRun {
+    dependsOn war, tomcatStop
     contextPath = '/'
     httpPort = 8090;
     outputFile = file('./tomcat.log')
@@ -112,6 +111,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
+
+javadoc {
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+}
+
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'

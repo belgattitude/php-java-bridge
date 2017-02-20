@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## 6.2.12 (UNRELEASED)
 
+### Added
+
+- Landing page additions: listing of registered libraries
 
 ## 6.2.11 (2017-02-17)
 
