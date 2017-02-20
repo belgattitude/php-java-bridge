@@ -285,7 +285,7 @@ strong {
 }
 .Container {
     margin: 0 auto;
-    max-width: 80em;
+    max-width: 100%;
 }
 .Landing {
     color: white;
