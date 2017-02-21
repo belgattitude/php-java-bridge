@@ -3,11 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 6.2.12 (UNRELEASED)
+## 6.2.12 (2017-02-21)
 
 ### Added
 
-- Landing page additions: listing of registered libraries
+- Landing page additions: listing of registered libraries and improved debug variables
 
 ## 6.2.11 (2017-02-17)
 
