@@ -15,8 +15,8 @@
         <header class="Site-header">
             <div class="Header Header--cozy" role="banner">
                 <div class="Header-titles">
-                    <h1 class="Header-title"><a href="#">Javabridge</a></h1>
-                    <h2 class="Header-subTitle">PHPJavaBridge server.</h2>
+                    <h1 class="Header-title"><a href="#">PHP/Javabridge</a></h1>
+
                 </div>
                 <div class="Header-actions">
                     <a class="Header-button Button Button--action Button--wide"
@@ -32,7 +32,7 @@
                     <div class="Aligner">
                         <div class="Aligner-item Aligner-item--fixed">
                             <div class="Landing">
-                                <h1>Server running</h1>
+
                                 <p>
                                     The PHPJavabridge server is successfully running and listening for connections.
                                 </p>
@@ -43,7 +43,7 @@
 
 
                 </div>
-                <div>
+                <div class="Info">
 
                     <div class="System-info">
                         <h3>JVM info</h3>
