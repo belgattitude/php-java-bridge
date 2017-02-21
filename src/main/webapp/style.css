@@ -203,7 +203,7 @@ strong {
     display: flex;
     justify-content: center;
     /*min-height: 24em;*/
-    background: #1f8dd6 none repeat scroll 0 0;
+    background: #2196F3  none repeat scroll 0 0;
 }
 .Aligner-item {
     -moz-box-flex: 1;
@@ -273,11 +273,11 @@ strong {
     text-decoration: none;
 }
 .Button--action {
-    background-color: #46b980;
+    background-color: #00BCD4;
     color: #fff;
 }
 .Button--action:active, .Button--action:focus, .Button--action:hover {
-    background-color: #389466;
+    background-color: #00BAD9;
 }
 .Button--wide {
     padding-left: 1.5em;
@@ -293,7 +293,7 @@ strong {
     border-radius: 5px;
     text-align: center;
     border-radius: 3px;
-    margin: 5em 0em 5em 0em;
+    margin: 1em 0em 1em 0em;
     padding: 0.2em 0.2em 0;
     width: 100%;
 }
@@ -316,7 +316,8 @@ strong {
 }
 
 .Header {
-    background-color: #2d3e50;
+    /*background-color: #0288D1;*/
+    background-color: #1976D2;
     padding: 1.5em;
     text-align: center;
 }
@@ -493,6 +494,8 @@ strong {
     flex: 1 0 auto;
     padding: 0em 0em 0;
     width: 100%;
+    /*background-color: #BDBDBD;*/
+    background-color: white;
 }
 .Site-content::after {
     content: " ";
@@ -500,6 +503,12 @@ strong {
     height: 0;
     margin-top: 0em;
     visibility: hidden;
+}
+.Info {
+    padding: 1em 1em;
+    border-right: 2em solid #2196f3;
+    border-left: 2em solid #2196f3;
+    border-bottom: 2em solid #2196f3;
 }
 @media (min-width: 768px) {
     .Site-content {
