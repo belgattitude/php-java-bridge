@@ -11,7 +11,7 @@ apply plugin: 'maven-publish'
 group = "io.soluble.pjb"
 archivesBaseName = 'php-java-bridge'
 //version = "6.2.11"
-version = "6.2.12-SNAPSHOT"
+version = "6.2.13-SNAPSHOT"
 description = "PHPJavaBridge server (soluble fork)"
 
 ext {
@@ -294,7 +294,7 @@ configure(rootProject) {
 
     task wrapper(type: Wrapper) {
         description = 'Generates gradlew and gradlew.bat scripts'
-        gradleVersion = '3.3'
+        gradleVersion = '3.4'
         //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
     }
 
