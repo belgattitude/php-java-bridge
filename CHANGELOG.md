@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## 6.2.13 (TBD)
+
+### Updated
+
+- gradlew updated to v3.4.0 
+
+
 ## 6.2.12 (2017-02-21)
 
 ### Added

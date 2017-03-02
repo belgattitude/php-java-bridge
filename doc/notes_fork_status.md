@@ -1,7 +1,9 @@
 # Fork status notes
 
-> This fork have been made on the *no-longer maintained* sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
+> This fork have been made on the sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
 > is based on the latest official release (6.2.1) excluding all previous versions and history (cleanup from the CVS repo).
+> Since the fork the original maintainer has released new versions of the official release, see [changelog](http://php-java-bridge.cvs.sourceforge.net/viewvc/php-java-bridge/php-java-bridge/ChangeLog?view=log),
+> started a discussion [here](https://github.com/belgattitude/php-java-bridge/issues/47) to evaluate possibilities. 
 
 ## Status
 
