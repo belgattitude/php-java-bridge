@@ -14,7 +14,7 @@ The soluble PHPJavaBridge server fork allows PHP/JVM interoperability through a 
 
 This repository can be used to develop, test and and build the JavaBridge server. 
 
-Be sure to consult the [soluble-japha](https://github.com/belgattitude/soluble-japha) website 
+Be sure to consult the [soluble-japha](http://docs.soluble.io/soluble-japha/) website 
 where you'll find more information relative to php/java integration.  
 
  
