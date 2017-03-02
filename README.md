@@ -13,11 +13,10 @@ The soluble PHPJavaBridge server fork allows PHP/JVM interoperability through a 
 ## Installation
 
 This repository can be used to develop, test and and build the JavaBridge server. 
-If you're looking for an easy setup of the PHPJavaBridge, consider using the 
 
-- Spring boot starter project: [pjb-starter-springboot](https://github.com/belgattitude/pjb-starter-springboot) 
+Be sure to consult the [soluble-japha](https://github.com/belgattitude/soluble-japha) website 
+where you'll find more information relative to php/jaba integration.  
 
-And use the [soluble-japha](https://github.com/belgattitude/soluble-japha) client to start in PHP (replaces `Java.inc`) 
  
 ## Documentation
 
