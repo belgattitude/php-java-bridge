@@ -3,11 +3,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 6.2.13 (TBD)
+## 7.0.0 (TBD)
+
+This release includes merges from the upstream php-java-bridge 7.0.1, 
+mostly bugfix and deprecated client updates for PHP7. 
+And exlusion to debugger 
+ 
+
+### Bugfix
+
+- Fix bug in WriterOutputStream.java.
 
 ### Updated
 
-- gradlew updated to v3.4.0 
+- Legacy Java.inc updated with upstream support for PHP7 (kept for upstream compat, should not be used -> soluble-japha instead)
+ 
 
 
 ## 6.2.12 (2017-02-21)

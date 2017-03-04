@@ -70,9 +70,9 @@ trigger_error('Please use <a href="http://php-java-bridge.sourceforge.net/pjb/we
 }
 function java_virtual($path,$return=false) {
 $req=java_context()->getHttpServletRequest();
-$req=new java("io.soluble.pjb.servlet.VoidInputHttpServletRequest",$req);
+$req=new java("php.java.servlet.VoidInputHttpServletRequest",$req);
 $res=java_context()->getHttpServletResponse();
-$res=new java("io.soluble.pjb.servlet.RemoteHttpServletResponse",$res);
+$res=new java("php.java.servlet.RemoteHttpServletResponse",$res);
 $req->getRequestDispatcher($path)->include($req,$res);
 if ($return) return $res->getBufferContents();
 echo $res->getBufferContents();
@@ -147,7 +147,7 @@ if ($java_ini=get_cfg_var("java.prefer_values")) define("JAVA_PREFER_VALUES",$ja
 else define("JAVA_PREFER_VALUES",0);
 class java_SimpleFactory {
 public $client;
-function java_SimpleFactory($client) {
+function __construct($client) {
 $this->client=$client;
 }
 function getProxy($result,$signature,$exception,$wrap) {
@@ -206,7 +206,7 @@ trigger_error("Unchecked exception detected: ".java_truncate($result->__toString
 class java_CacheEntry {
 public $fmt,$signature,$factory,$java;
 public $resultVoid;
-function java_CacheEntry($fmt,$signature,$factory,$resultVoid) {
+function __construct($fmt,$signature,$factory,$resultVoid) {
 $this->fmt=$fmt;
 $this->signature=$signature;
 $this->factory=$factory;
@@ -218,7 +218,7 @@ public $client;
 public $exception;
 public $factory,$val;
 public $signature;
-function java_Arg($client) {
+function __construct($client) {
 $this->client=$client;
 $this->factory=$client->simpleFactory;
 }
@@ -264,8 +264,8 @@ public $parentArg;
 public $idx;
 public $type;
 public $counter;
-function java_CompositeArg($client,$type) {
-parent::java_Arg($client);
+function __construct($client,$type) {
+parent::__construct($client);
 $this->type=$type;
 $this->val=array();
 $this->counter=0;
@@ -286,8 +286,8 @@ $this->factory=$this->client->simpleFactory;
 }
 class java_ApplyArg extends java_CompositeArg {
 public $m,$p,$v,$n;
-function java_ApplyArg($client,$type,$m,$p,$v,$n) {
-parent::java_CompositeArg($client,$type);
+function __construct($client,$type,$m,$p,$v,$n) {
+parent::__construct($client,$type);
 $this->m=$m;
 $this->p=$p;
 $this->v=$v;
@@ -303,7 +303,7 @@ public $simpleFactory,
 $proxyFactory,$iteratorProxyFacroty,
 $arrayProxyFactory,$exceptionProxyFactory,$throwExceptionProxyFactory;
 public $arg;
-public $asyncCtx,$cancelProxyCreationCounter;
+public $asyncCtx,$cancelProxyCreationTag;
 public $globalRef;
 public $stack;
 public $defaultCache=array(),$asyncCache=array(),$methodCache;
@@ -312,7 +312,7 @@ public $currentCacheKey,$currentArgumentsFormat;
 public $cachedJavaPrototype;
 public $sendBuffer,$preparedToSendBuffer;
 public $inArgs;
-function java_Client() {
+function __construct() {
 $this->RUNTIME=array();
 $this->RUNTIME["NOTICE"]='***USE echo java_inspect(jVal) OR print_r(java_values(jVal)) TO SEE THE CONTENTS OF THIS JAVA OBJECT!***';
 $this->parser=new java_Parser($this);
@@ -326,7 +326,7 @@ $this->throwExceptionProxyFactory=new java_ThrowExceptionProxyFactory($this);
 $this->cachedJavaPrototype=new java_JavaProxyProxy($this);
 $this->simpleArg=new java_Arg($this);
 $this->globalRef=new java_GlobalRef();
-$this->asyncCtx=$this->cancelProxyCreationCounter=0;
+$this->asyncCtx=$this->cancelProxyCreationTag=0;
 $this->methodCache=$this->defaultCache;
 $this->inArgs=false;
 }
@@ -647,7 +647,7 @@ $client->protocol->keepAlive();
 register_shutdown_function("java_shutdown");
 class java_GlobalRef {
 public $map;
-function java_GlobalRef() {
+function __construct() {
 $this->map=array();
 }
 function add($object) {
@@ -663,7 +663,7 @@ class java_NativeParser {
 public $parser,$handler;
 public $level,$event;
 public $buf;
-function java_NativeParser($handler) {
+function __construct($handler) {
 $this->handler=$handler;
 $this->parser=xml_parser_create();
 xml_parser_set_option($this->parser,XML_OPTION_CASE_FOLDING,0);
@@ -709,7 +709,7 @@ sprintf("protocol error: %s. Check the back end log for details.",$this->buf));
 }
 class java_Parser {
 public $parser;
-function java_Parser($handler) {
+function __construct($handler) {
 if(function_exists("xml_parser_create")) {
 $this->parser=new java_NativeParser($handler);
 $handler->RUNTIME["PARSER"]="NATIVE";
@@ -753,7 +753,7 @@ return $compatibility;
 class java_EmptyChannel {
 protected $handler;
 private $res;
-function java_EmptyChannel($handler) {
+function __construct($handler) {
 $this->handler=$handler;
 }
 function shutdownBrokenConnection () {}
@@ -806,7 +806,7 @@ $this->checkE();
 }
 abstract class java_SocketChannel extends java_EmptyChannel {
 public $peer,$host;
-function java_SocketChannel($peer,$host) {
+function __construct($peer,$host) {
 $this->peer=$peer;
 $this->host=$host;
 }
@@ -845,7 +845,7 @@ function keepAlive() { $this->keepAliveSC(); $this->checkE(); fclose ($this->pee
 }
 class java_SocketHandler {
 public $protocol,$channel;
-function java_SocketHandler($protocol,$channel) {
+function __construct($protocol,$channel) {
 $this->protocol=$protocol;
 $this->channel=$channel;
 }
@@ -896,7 +896,7 @@ $this->protocol->client->sendBuffer=null;
 $this->protocol->handler->read(1)
 or $this->protocol->handler->shutdownBrokenConnection("Broken local connection handle");
 }
-function java_SimpleHttpHandler($protocol,$ssl,$host,$port) {
+function __construct($protocol,$ssl,$host,$port) {
 $this->cookies=array();
 $this->protocol=$protocol;
 $this->ssl=$ssl;
@@ -1018,8 +1018,8 @@ fgets($this->socket,JAVA_RECV_SIZE);
 fgets($this->socket,3);
 fclose($this->socket);
 }
-function java_SimpleHttpTunnelHandler($protocol,$ssl,$host,$port) {
-parent::java_SimpleHttpHandler($protocol,$ssl,$host,$port);
+function __construct($protocol,$ssl,$host,$port) {
+parent::__construct($protocol,$ssl,$host,$port);
 $this->open();
 }
 function read($size) {
@@ -1225,7 +1225,7 @@ if (!$peer) {
 $java=file_exists(ini_get("extension_dir")."/JavaBridge.jar")?ini_get("extension_dir")."/JavaBridge.jar":(java_get_base()."/JavaBridge.jar");
 if (!file_exists($java))
 throw new java_IOException("Could not find $java in ".getcwd().". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_".JAVA_PEAR_VERSION."/exploded/JavaBridge.jar/download and try again.");
-$java_cmd="java -Dio.soluble.pjb.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0";
+$java_cmd="java -Dphp.java.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0";
 if (!$again)
 throw new java_ConnectException("No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)");
 if (!java_checkCliSapi())
@@ -1252,7 +1252,7 @@ return $this->createSimpleHandler($defaultChannel);
 return $this->createHttpHandler();
 }
 }
-function java_Protocol ($client) {
+function __construct ($client) {
 $this->client=$client;
 $this->handler=$this->createHandler();
 }
@@ -1420,7 +1420,7 @@ return substr($this->string,$this->off,$this->length);
 }
 class java_ParserTag {
 public $n,$strings;
-function java_ParserTag() {
+function __construct() {
 $this->strings=array();
 $this->n=0;
 }
@@ -1430,7 +1430,7 @@ public $SLEN=256;
 public $handler;
 public $tag,$buf,$len,$s;
 public $type;
-function java_SimpleParser($handler) {
+function __construct($handler) {
 $this->handler=$handler;
 $this->tag=array(new java_ParserTag(),new java_ParserTag(),new java_ParserTag());
 $this->len=$this->SLEN;
@@ -1716,7 +1716,7 @@ public $__serialID,$__java;
 public $__signature;
 public $__client;
 public $__tempGlobalRef;
-function java_JavaProxy($java,$signature){
+function __construct($java,$signature){
 $this->__java=$java;
 $this->__signature=$signature;
 $this->__client=__javaproxy_Client_getClient();
@@ -1762,7 +1762,7 @@ return "";
 }
 class java_objectIterator implements Iterator {
 private $var;
-function java_ObjectIterator($javaProxy) {
+function __construct($javaProxy) {
 $this->var=java_cast ($javaProxy,"A");
 }
 function rewind() {
@@ -1881,7 +1881,7 @@ $args=func_get_args(); return $this->__call("offsetUnset",$args);
 }
 }
 class Java extends java_AbstractJava {
-function Java() {
+function __construct() {
 $client=$this->__client=__javaproxy_Client_getClient();
 $args=func_get_args();
 $name=array_shift($args);
@@ -2002,7 +2002,7 @@ return $retval;
 }
 }
 class java_InternalJava extends Java {
-function java_InternalJava($proxy) {
+function __construct($proxy) {
 $this->__delegate=$proxy;
 $this->__java=$proxy->__java;
 $this->__signature=$proxy->__signature;
@@ -2010,7 +2010,7 @@ $this->__client=$proxy->__client;
 }
 }
 class java_class extends Java {
-function java_class() {
+function __construct() {
 $this->__client=__javaproxy_Client_getClient();
 $args=func_get_args();
 $name=array_shift($args);
@@ -2026,7 +2026,7 @@ public $__serialID,$__java,$__client;
 public $__delegate;
 public $__signature;
 public $__hasDeclaredExceptions;
-function java_exception() {
+function __construct() {
 $this->__client=__javaproxy_Client_getClient();
 $args=func_get_args();
 $name=array_shift($args);
@@ -2067,7 +2067,7 @@ return $this->__delegate->__toExceptionString($this->getTraceAsString());
 }
 class JavaException extends java_exception {}
 class java_InternalException extends JavaException {
-function java_InternalException($proxy,$exception) {
+function __construct($proxy,$exception) {
 $this->__delegate=$proxy;
 $this->__java=$proxy->__java;
 $this->__signature=$proxy->__signature;
@@ -2076,7 +2076,7 @@ $this->__hasDeclaredExceptions=$exception;
 }
 }
 class java_JavaProxyProxy extends Java {
-function java_JavaProxyProxy($client) {
+function __construct($client) {
 $this->__client=$client;
 }
 }

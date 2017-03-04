@@ -3,6 +3,23 @@ php-java-bridge NEWS -- history of user-visible changes.
 Please send bug reports, questions and suggestions to
 <php-java-bridge-users@lists.sourceforge.net>.
 
+Version 7.0.0
+
+* Fixed a bug in Java.inc and Client.inc
+
+* PHPDebugger.php now uses the latest protocol and is now part of the PHP/Java Bridge. It can be switched off by addint the following line to WEB-INF/web.xml:
+  <context-param><param-name>php_include_debugger</param-name><param-value>Off</param-value></context-param>
+
+
+Version 6.2.3
+
+* Fixed a bug in WriterOutputStream.
+
+
+Version 6.2.2
+
+* Changed old constructor to __construct
+
 Version 6.2.1
 
 * java_session(null, false) now returns false if a session does not exist.

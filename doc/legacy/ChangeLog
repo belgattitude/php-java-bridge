@@ -1,3 +1,22 @@
+2017-02-25  <jostb@intern>
+
+    * PhpDebugger.inc: Removed
+
+	* Client.inc: Warning fixed.
+
+	* PHPDebugger.php: Rewritten to use latest protocol
+
+	* Util.java, FCGIConnectionFactory.java, IFCGIProcessFactory.java, NPChannelFactory.java, SocketChannelFactory.java, CGIRunner.java, FCGIProcess.java, FastCGIProxy.java, ContextLoaderListener.java, FCGIProcess.java, FastCGIServlet.java: Use PHPDebuger.php
+
+2017-02-01  <jostb@intern>
+
+    * WriterOutputStream.java: Fixed crash.
+
+
+2017-01-30  <jostb@intern>
+
+    * Protocol.inc, PHPDebugger.php, PHPDebugger.inc, Parser.inc, Options.inc, NativeParser.inc, JavaProxy.inc, JavaBridge.inc, GlobalRef.inc, Client.inc: Changed constructor
+
 2010-06-01  <jostb@intern>
 
     * php/java/script/servlet/EngineFactory.java
