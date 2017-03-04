@@ -63,6 +63,8 @@ public class JavaBridgeRunner extends HttpServer {
 
     protected static JavaBridgeRunner runner;
     protected final ContextServer contextServer;
+    private boolean directoryIndexEnabled = false;
+    
 
     protected JavaBridgeRunner(String serverPort, boolean isSecure) throws IOException {
         super(serverPort, isSecure);
@@ -165,6 +167,19 @@ public class JavaBridgeRunner extends HttpServer {
         return runner;
     }
 
+    /**
+     * Enable listing of directory index, if a directory is served.
+     */
+    public void enableDirectoryIndex() {
+        directoryIndexEnabled = true;
+    }
+
+    /**
+     * Disable listing of directory index, if a directory is served.
+     */
+    public void disableDirectoryIndex() {
+        directoryIndexEnabled = false;
+    }
 
     /**
      * Create a server socket.
@@ -248,7 +263,7 @@ public class JavaBridgeRunner extends HttpServer {
      * @throws IOException
      */
     protected boolean showDirectory(String fullName, File f, int length, HttpRequest req, HttpResponse res) throws IOException {
-        if (!f.isDirectory()) return false;
+        // assert f.isDirectory()
         ByteArrayOutputStream xout = new ByteArrayOutputStream();
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(xout, Util.UTF8)))) {
             out.println("<html>");
@@ -370,7 +385,7 @@ public class JavaBridgeRunner extends HttpServer {
     }
 
     /**
-     * Display a simple text file
+     * Display a simple text file.
      *
      * @param name
      * @param f      The full name as a file
@@ -446,10 +461,21 @@ public class JavaBridgeRunner extends HttpServer {
             long l = f.length();
             if (l >= Integer.MAX_VALUE) throw new IOException("file " + name + " too large");
             int length = (int) l;
-            if (showDirectory(name, f, length, req, res)) return;
-            if (handleScriptContent(name, params, f, length, req, res)) return;
-            showTextFile(name, params, f, length, req, res, (!name.endsWith(".html")) || "show".equals(params));
-            return;
+            if (f.isDirectory()) {
+                if (directoryIndexEnabled) {
+                    showDirectory(name, f, length, req, res);
+                } else {
+                    // TODO: What now? 404? 403? setStatus is not implemented in the HttpResponse object
+                    // of this internal http server
+                }
+                return;
+            } else { // assert !f.isDirectory()
+                // TODO: Here comes a BUG: handleScriptContent(...) does nothing but return true, 
+                // hence showTextFile(...) is never called; will comment it out for now
+                // if (handleScriptContent(name, params, f, length, req, res)) return; 
+                showTextFile(name, params, f, length, req, res, (!name.endsWith(".html")) || "show".equals(params));
+                return;
+            }
         }
         if (cache != null && name.endsWith("Java.inc")) {
             res.setContentLength(cache.length);
@@ -466,7 +492,7 @@ public class JavaBridgeRunner extends HttpServer {
                 out.write(buf);
                 return;
             } catch (SecurityException e) {/*ignore*/
-            } catch (Exception e) {
+            } catch (IOException | IllegalAccessException | IllegalArgumentException | NoSuchFieldException e) {
                 Util.printStackTrace(e);
             }
         }
