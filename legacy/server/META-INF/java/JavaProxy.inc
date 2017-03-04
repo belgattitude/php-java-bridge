@@ -621,7 +621,7 @@ class java_JavaProxy implements java_JavaType {
   public $__client;
   public $__tempGlobalRef;
 
-  function java_JavaProxy($java, $signature){ 
+  function __construct($java, $signature){ 
 	$this->__java=$java;
 	$this->__signature=$signature;
 	$this->__client = __javaproxy_Client_getClient();
@@ -674,7 +674,7 @@ class java_JavaProxy implements java_JavaType {
 class java_objectIterator implements Iterator {
   private $var;
 
-  function java_ObjectIterator($javaProxy) {
+  function __construct($javaProxy) {
 	$this->var = java_cast ($javaProxy, "A");
   }
   function rewind() {
@@ -885,7 +885,7 @@ class Java extends java_AbstractJava {
    * @see function Java
    * @see function java_values
    */
-  function Java() {
+  function __construct() {
 	$client = $this->__client = __javaproxy_Client_getClient();
 	
 	$args = func_get_args();
@@ -1050,7 +1050,7 @@ class Java extends java_AbstractJava {
  * @access private
  */
 class java_InternalJava extends Java {
-  function java_InternalJava($proxy) {
+  function __construct($proxy) {
 	$this->__delegate = $proxy;
 	$this->__java = $proxy->__java;
 	$this->__signature = $proxy->__signature;
@@ -1062,7 +1062,7 @@ class java_InternalJava extends Java {
  * @access private
  */
 class java_class extends Java {
-  function java_class() {
+  function __construct() {
 	$this->__client = __javaproxy_Client_getClient();
 
 	$args = func_get_args();
@@ -1107,7 +1107,7 @@ class java_exception extends Exception implements java_JavaType {
    * throw $ex;
    * </code>
    */
-  function java_exception() {
+  function __construct() {
 	$this->__client = __javaproxy_Client_getClient();
 
 	$args = func_get_args();
@@ -1192,7 +1192,7 @@ class JavaException extends java_exception {}
  * @access private
  */
 class java_InternalException extends JavaException {
-  function java_InternalException($proxy, $exception) {
+  function __construct($proxy, $exception) {
 	$this->__delegate = $proxy;
 	$this->__java = $proxy->__java;
 	$this->__signature = $proxy->__signature;
@@ -1205,7 +1205,7 @@ class java_InternalException extends JavaException {
  * @access private
  */
 class java_JavaProxyProxy extends Java {
-  function java_JavaProxyProxy($client) {
+  function __construct($client) {
 	$this->__client = $client;
   }
 }
