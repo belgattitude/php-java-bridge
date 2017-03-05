@@ -72,9 +72,9 @@ public class JavaInc {
 "}\n"+
 "function java_virtual($path,$return=false) {\n"+
 "$req=java_context()->getHttpServletRequest();\n"+
-"$req=new java(\"io.soluble.pjb.servlet.VoidInputHttpServletRequest\",$req);\n"+
+"$req=new java(\"php.java.servlet.VoidInputHttpServletRequest\",$req);\n"+
 "$res=java_context()->getHttpServletResponse();\n"+
-"$res=new java(\"io.soluble.pjb.servlet.RemoteHttpServletResponse\",$res);\n"+
+"$res=new java(\"php.java.servlet.RemoteHttpServletResponse\",$res);\n"+
 "$req->getRequestDispatcher($path)->include($req,$res);\n"+
 "if ($return) return $res->getBufferContents();\n"+
 "echo $res->getBufferContents();\n"+
@@ -149,7 +149,7 @@ public class JavaInc {
 "else define(\"JAVA_PREFER_VALUES\",0);\n"+
 "class java_SimpleFactory {\n"+
 "public $client;\n"+
-"function java_SimpleFactory($client) {\n"+
+"function __construct($client) {\n"+
 "$this->client=$client;\n"+
 "}\n"+
 "function getProxy($result,$signature,$exception,$wrap) {\n"+
@@ -208,7 +208,7 @@ public class JavaInc {
 "class java_CacheEntry {\n"+
 "public $fmt,$signature,$factory,$java;\n"+
 "public $resultVoid;\n"+
-"function java_CacheEntry($fmt,$signature,$factory,$resultVoid) {\n"+
+"function __construct($fmt,$signature,$factory,$resultVoid) {\n"+
 "$this->fmt=$fmt;\n"+
 "$this->signature=$signature;\n"+
 "$this->factory=$factory;\n"+
@@ -220,7 +220,7 @@ public class JavaInc {
 "public $exception;\n"+
 "public $factory,$val;\n"+
 "public $signature;\n"+
-"function java_Arg($client) {\n"+
+"function __construct($client) {\n"+
 "$this->client=$client;\n"+
 "$this->factory=$client->simpleFactory;\n"+
 "}\n"+
@@ -266,8 +266,8 @@ public class JavaInc {
 "public $idx;\n"+
 "public $type;\n"+
 "public $counter;\n"+
-"function java_CompositeArg($client,$type) {\n"+
-"parent::java_Arg($client);\n"+
+"function __construct($client,$type) {\n"+
+"parent::__construct($client);\n"+
 "$this->type=$type;\n"+
 "$this->val=array();\n"+
 "$this->counter=0;\n"+
@@ -288,8 +288,8 @@ public class JavaInc {
 "}\n"+
 "class java_ApplyArg extends java_CompositeArg {\n"+
 "public $m,$p,$v,$n;\n"+
-"function java_ApplyArg($client,$type,$m,$p,$v,$n) {\n"+
-"parent::java_CompositeArg($client,$type);\n"+
+"function __construct($client,$type,$m,$p,$v,$n) {\n"+
+"parent::__construct($client,$type);\n"+
 "$this->m=$m;\n"+
 "$this->p=$p;\n"+
 "$this->v=$v;\n"+
@@ -305,7 +305,7 @@ public class JavaInc {
 "$proxyFactory,$iteratorProxyFacroty,\n"+
 "$arrayProxyFactory,$exceptionProxyFactory,$throwExceptionProxyFactory;\n"+
 "public $arg;\n"+
-"public $asyncCtx,$cancelProxyCreationCounter;\n"+
+"public $asyncCtx,$cancelProxyCreationTag;\n"+
 "public $globalRef;\n"+
 "public $stack;\n"+
 "public $defaultCache=array(),$asyncCache=array(),$methodCache;\n"+
@@ -314,7 +314,7 @@ public class JavaInc {
 "public $cachedJavaPrototype;\n"+
 "public $sendBuffer,$preparedToSendBuffer;\n"+
 "public $inArgs;\n"+
-"function java_Client() {\n"+
+"function __construct() {\n"+
 "$this->RUNTIME=array();\n"+
 "$this->RUNTIME[\"NOTICE\"]='***USE echo java_inspect(jVal) OR print_r(java_values(jVal)) TO SEE THE CONTENTS OF THIS JAVA OBJECT!***';\n"+
 "$this->parser=new java_Parser($this);\n"+
@@ -328,7 +328,7 @@ public class JavaInc {
 "$this->cachedJavaPrototype=new java_JavaProxyProxy($this);\n"+
 "$this->simpleArg=new java_Arg($this);\n"+
 "$this->globalRef=new java_GlobalRef();\n"+
-"$this->asyncCtx=$this->cancelProxyCreationCounter=0;\n"+
+"$this->asyncCtx=$this->cancelProxyCreationTag=0;\n"+
 "$this->methodCache=$this->defaultCache;\n"+
 "$this->inArgs=false;\n"+
 "}\n"+
@@ -649,7 +649,7 @@ public class JavaInc {
 "register_shutdown_function(\"java_shutdown\");\n"+
 "class java_GlobalRef {\n"+
 "public $map;\n"+
-"function java_GlobalRef() {\n"+
+"function __construct() {\n"+
 "$this->map=array();\n"+
 "}\n"+
 "function add($object) {\n"+
@@ -665,7 +665,7 @@ public class JavaInc {
 "public $parser,$handler;\n"+
 "public $level,$event;\n"+
 "public $buf;\n"+
-"function java_NativeParser($handler) {\n"+
+"function __construct($handler) {\n"+
 "$this->handler=$handler;\n"+
 "$this->parser=xml_parser_create();\n"+
 "xml_parser_set_option($this->parser,XML_OPTION_CASE_FOLDING,0);\n"+
@@ -711,7 +711,7 @@ public class JavaInc {
 "}\n"+
 "class java_Parser {\n"+
 "public $parser;\n"+
-"function java_Parser($handler) {\n"+
+"function __construct($handler) {\n"+
 "if(function_exists(\"xml_parser_create\")) {\n"+
 "$this->parser=new java_NativeParser($handler);\n"+
 "$handler->RUNTIME[\"PARSER\"]=\"NATIVE\";\n"+
@@ -755,7 +755,7 @@ public class JavaInc {
 "class java_EmptyChannel {\n"+
 "protected $handler;\n"+
 "private $res;\n"+
-"function java_EmptyChannel($handler) {\n"+
+"function __construct($handler) {\n"+
 "$this->handler=$handler;\n"+
 "}\n"+
 "function shutdownBrokenConnection () {}\n"+
@@ -808,7 +808,7 @@ public class JavaInc {
 "}\n"+
 "abstract class java_SocketChannel extends java_EmptyChannel {\n"+
 "public $peer,$host;\n"+
-"function java_SocketChannel($peer,$host) {\n"+
+"function __construct($peer,$host) {\n"+
 "$this->peer=$peer;\n"+
 "$this->host=$host;\n"+
 "}\n"+
@@ -847,7 +847,7 @@ public class JavaInc {
 "}\n"+
 "class java_SocketHandler {\n"+
 "public $protocol,$channel;\n"+
-"function java_SocketHandler($protocol,$channel) {\n"+
+"function __construct($protocol,$channel) {\n"+
 "$this->protocol=$protocol;\n"+
 "$this->channel=$channel;\n"+
 "}\n"+
@@ -898,7 +898,7 @@ public class JavaInc {
 "$this->protocol->handler->read(1)\n"+
 "or $this->protocol->handler->shutdownBrokenConnection(\"Broken local connection handle\");\n"+
 "}\n"+
-"function java_SimpleHttpHandler($protocol,$ssl,$host,$port) {\n"+
+"function __construct($protocol,$ssl,$host,$port) {\n"+
 "$this->cookies=array();\n"+
 "$this->protocol=$protocol;\n"+
 "$this->ssl=$ssl;\n"+
@@ -1020,8 +1020,8 @@ public class JavaInc {
 "fgets($this->socket,3);\n"+
 "fclose($this->socket);\n"+
 "}\n"+
-"function java_SimpleHttpTunnelHandler($protocol,$ssl,$host,$port) {\n"+
-"parent::java_SimpleHttpHandler($protocol,$ssl,$host,$port);\n"+
+"function __construct($protocol,$ssl,$host,$port) {\n"+
+"parent::__construct($protocol,$ssl,$host,$port);\n"+
 "$this->open();\n"+
 "}\n"+
 "function read($size) {\n"+
@@ -1227,7 +1227,7 @@ public class JavaInc {
 "$java=file_exists(ini_get(\"extension_dir\").\"/JavaBridge.jar\")?ini_get(\"extension_dir\").\"/JavaBridge.jar\":(java_get_base().\"/JavaBridge.jar\");\n"+
 "if (!file_exists($java))\n"+
 "throw new java_IOException(\"Could not find $java in \".getcwd().\". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_\".JAVA_PEAR_VERSION.\"/exploded/JavaBridge.jar/download and try again.\");\n"+
-"$java_cmd=\"java -Dio.soluble.pjb.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
+"$java_cmd=\"java -Dphp.java.bridge.daemon=true -jar \\\"${java}\\\" INET_LOCAL:$channelName 0\";\n"+
 "if (!$again)\n"+
 "throw new java_ConnectException(\"No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)\");\n"+
 "if (!java_checkCliSapi())\n"+
@@ -1254,7 +1254,7 @@ public class JavaInc {
 "return $this->createHttpHandler();\n"+
 "}\n"+
 "}\n"+
-"function java_Protocol ($client) {\n"+
+"function __construct ($client) {\n"+
 "$this->client=$client;\n"+
 "$this->handler=$this->createHandler();\n"+
 "}\n"+
@@ -1352,7 +1352,7 @@ public class JavaInc {
 "}\n"+
 "function writeString($name) {\n"+
 "$this->client->currentArgumentsFormat.=$format=\"<S v=\\\"%s\\\"/>\";\n"+
-"$this->write(sprintf($format,htmlspecialchars($name,ENT_COMPAT)));\n"+
+"$this->write(sprintf($format,htmlspecialchars($name,ENT_COMPAT,\"ISO-8859-1\")));\n"+
 "}\n"+
 "function writeBoolean($boolean) {\n"+
 "$this->client->currentArgumentsFormat.=$format=\"<T v=\\\"%s\\\"/>\";\n"+
@@ -1379,7 +1379,7 @@ public class JavaInc {
 "$this->write(sprintf($format,$object));\n"+
 "}\n"+
 "function writeException($object,$str) {\n"+
-"$this->write(sprintf(\"<E v=\\\"%x\\\" m=\\\"%s\\\"/>\",$object,htmlspecialchars($str,ENT_COMPAT)));\n"+
+"$this->write(sprintf(\"<E v=\\\"%x\\\" m=\\\"%s\\\"/>\",$object,htmlspecialchars($str,ENT_COMPAT,\"ISO-8859-1\")));\n"+
 "}\n"+
 "function writeCompositeBegin_a() {\n"+
 "$this->write(\"<X t=\\\"A\\\">\");\n"+
@@ -1391,7 +1391,7 @@ public class JavaInc {
 "$this->write(\"</X>\");\n"+
 "}\n"+
 "function writePairBegin_s($key) {\n"+
-"$this->write(sprintf(\"<P t=\\\"S\\\" v=\\\"%s\\\">\",htmlspecialchars($key,ENT_COMPAT)));\n"+
+"$this->write(sprintf(\"<P t=\\\"S\\\" v=\\\"%s\\\">\",htmlspecialchars($key,ENT_COMPAT,\"ISO-8859-1\")));\n"+
 "}\n"+
 "function writePairBegin_n($key) {\n"+
 "$this->write(sprintf(\"<P t=\\\"N\\\" v=\\\"%x\\\">\",$key));\n"+
@@ -1422,7 +1422,7 @@ public class JavaInc {
 "}\n"+
 "class java_ParserTag {\n"+
 "public $n,$strings;\n"+
-"function java_ParserTag() {\n"+
+"function __construct() {\n"+
 "$this->strings=array();\n"+
 "$this->n=0;\n"+
 "}\n"+
@@ -1432,7 +1432,7 @@ public class JavaInc {
 "public $handler;\n"+
 "public $tag,$buf,$len,$s;\n"+
 "public $type;\n"+
-"function java_SimpleParser($handler) {\n"+
+"function __construct($handler) {\n"+
 "$this->handler=$handler;\n"+
 "$this->tag=array(new java_ParserTag(),new java_ParserTag(),new java_ParserTag());\n"+
 "$this->len=$this->SLEN;\n"+
@@ -1609,6 +1609,10 @@ public class JavaInc {
 "function java_values($object) {\n"+
 "return java_values_internal($object);\n"+
 "}\n"+
+"function java_reset() {\n"+
+"$client=__javaproxy_Client_getClient();\n"+
+"return $client->invokeMethod(0,\"reset\",array());\n"+
+"}\n"+
 "function java_inspect_internal($object) {\n"+
 "if(!$object instanceof java_JavaType) throw new java_IllegalArgumentException($object);\n"+
 "$client=__javaproxy_Client_getClient();\n"+
@@ -1656,6 +1660,9 @@ public class JavaInc {
 "}\n"+
 "function java_require($arg) {\n"+
 "trigger_error('java_require() not supported anymore. Please use <a href=\"http://php-java-bridge.sourceforge.net/pjb/webapp.php>tomcat or jee hot deployment</a> instead',E_USER_WARNING);\n"+
+"$client=__javaproxy_Client_getClient();\n"+
+"return $client->invokeMethod(0,\"updateJarLibraryPath\",\n"+
+"array($arg,ini_get(\"extension_dir\")));\n"+
 "}\n"+
 "function java_get_lifetime ()\n"+
 "{\n"+
@@ -1718,7 +1725,7 @@ public class JavaInc {
 "public $__signature;\n"+
 "public $__client;\n"+
 "public $__tempGlobalRef;\n"+
-"function java_JavaProxy($java,$signature){\n"+
+"function __construct($java,$signature){\n"+
 "$this->__java=$java;\n"+
 "$this->__signature=$signature;\n"+
 "$this->__client=__javaproxy_Client_getClient();\n"+
@@ -1764,7 +1771,7 @@ public class JavaInc {
 "}\n"+
 "class java_objectIterator implements Iterator {\n"+
 "private $var;\n"+
-"function java_ObjectIterator($javaProxy) {\n"+
+"function __construct($javaProxy) {\n"+
 "$this->var=java_cast ($javaProxy,\"A\");\n"+
 "}\n"+
 "function rewind() {\n"+
@@ -1883,7 +1890,7 @@ public class JavaInc {
 "}\n"+
 "}\n"+
 "class Java extends java_AbstractJava {\n"+
-"function Java() {\n"+
+"function __construct() {\n"+
 "$client=$this->__client=__javaproxy_Client_getClient();\n"+
 "$args=func_get_args();\n"+
 "$name=array_shift($args);\n"+
@@ -1896,7 +1903,7 @@ public class JavaInc {
 "case 'boolean': array_push($args2,$val); $sig.='@b'; break;\n"+
 "case 'integer': array_push($args2,$val); $sig.='@i'; break;\n"+
 "case 'double': array_push($args2,$val); $sig.='@d'; break;\n"+
-"case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT)); $sig.='@s'; break;\n"+
+"case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT,\"ISO-8859-1\")); $sig.='@s'; break;\n"+
 "case 'array':$sig=\"~INVALID\"; break;\n"+
 "case 'object':\n"+
 "if($val instanceof java_JavaType) {\n"+
@@ -1959,7 +1966,7 @@ public class JavaInc {
 "case 'boolean': array_push($args2,$val); $sig.='@b'; break;\n"+
 "case 'integer': array_push($args2,$val); $sig.='@i'; break;\n"+
 "case 'double': array_push($args2,$val); $sig.='@d'; break;\n"+
-"case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT)); $sig.='@s'; break;\n"+
+"case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT,\"ISO-8859-1\")); $sig.='@s'; break;\n"+
 "case 'array':$sig=\"~INVALID\"; break;\n"+
 "case 'object':\n"+
 "if($val instanceof java_JavaType) {\n"+
@@ -2004,7 +2011,7 @@ public class JavaInc {
 "}\n"+
 "}\n"+
 "class java_InternalJava extends Java {\n"+
-"function java_InternalJava($proxy) {\n"+
+"function __construct($proxy) {\n"+
 "$this->__delegate=$proxy;\n"+
 "$this->__java=$proxy->__java;\n"+
 "$this->__signature=$proxy->__signature;\n"+
@@ -2012,7 +2019,7 @@ public class JavaInc {
 "}\n"+
 "}\n"+
 "class java_class extends Java {\n"+
-"function java_class() {\n"+
+"function __construct() {\n"+
 "$this->__client=__javaproxy_Client_getClient();\n"+
 "$args=func_get_args();\n"+
 "$name=array_shift($args);\n"+
@@ -2028,7 +2035,7 @@ public class JavaInc {
 "public $__delegate;\n"+
 "public $__signature;\n"+
 "public $__hasDeclaredExceptions;\n"+
-"function java_exception() {\n"+
+"function __construct() {\n"+
 "$this->__client=__javaproxy_Client_getClient();\n"+
 "$args=func_get_args();\n"+
 "$name=array_shift($args);\n"+
@@ -2069,7 +2076,7 @@ public class JavaInc {
 "}\n"+
 "class JavaException extends java_exception {}\n"+
 "class java_InternalException extends JavaException {\n"+
-"function java_InternalException($proxy,$exception) {\n"+
+"function __construct($proxy,$exception) {\n"+
 "$this->__delegate=$proxy;\n"+
 "$this->__java=$proxy->__java;\n"+
 "$this->__signature=$proxy->__signature;\n"+
@@ -2078,7 +2085,7 @@ public class JavaInc {
 "}\n"+
 "}\n"+
 "class java_JavaProxyProxy extends Java {\n"+
-"function java_JavaProxyProxy($client) {\n"+
+"function __construct($client) {\n"+
 "$this->__client=$client;\n"+
 "}\n"+
 "}\n"+

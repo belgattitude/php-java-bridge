@@ -216,6 +216,14 @@ function java_values($object) {
   return java_values_internal($object);
 }
 /**
+ * Only for internal use.
+ * @access private
+ */
+function java_reset() {
+  $client=__javaproxy_Client_getClient();
+  return $client->invokeMethod(0, "reset", array());
+}
+/**
  * Only for internal use
  * @access private
  */
@@ -348,6 +356,9 @@ function java_cast($object, $type) {
  */
 function java_require($arg) {
 	trigger_error('java_require() not supported anymore. Please use <a href="http://php-java-bridge.sourceforge.net/pjb/webapp.php>tomcat or jee hot deployment</a> instead', E_USER_WARNING);
+  $client=__javaproxy_Client_getClient();
+  return $client->invokeMethod(0, "updateJarLibraryPath", 
+						array($arg, ini_get("extension_dir")));
 }
 /**
  * @access private
@@ -904,7 +915,7 @@ class Java extends java_AbstractJava {
       case 'boolean': array_push($args2, $val); $sig.='@b'; break; 
       case 'integer': array_push($args2, $val); $sig.='@i'; break; 
       case 'double': array_push($args2, $val); $sig.='@d'; break; 
-      case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break; 
+      case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT,"ISO-8859-1")); $sig.='@s'; break; 
       case 'array':$sig="~INVALID"; break; 
       case 'object':
 		if($val instanceof java_JavaType) {
@@ -996,7 +1007,7 @@ class Java extends java_AbstractJava {
       case 'boolean': array_push($args2, $val); $sig.='@b'; break; 
       case 'integer': array_push($args2, $val); $sig.='@i'; break; 
       case 'double': array_push($args2, $val); $sig.='@d'; break; 
-      case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT)); $sig.='@s'; break; 
+      case 'string': array_push($args2, htmlspecialchars($val, ENT_COMPAT,"ISO-8859-1")); $sig.='@s'; break; 
       case 'array':$sig="~INVALID"; break; 
       case 'object':
 		if($val instanceof java_JavaType) {

@@ -851,7 +851,7 @@ class java_Protocol {
   }
   function writeString($name) {
     $this->client->currentArgumentsFormat.=$format="<S v=\"%s\"/>";
-    $this->write(sprintf($format, htmlspecialchars($name, ENT_COMPAT)));
+    $this->write(sprintf($format, htmlspecialchars($name, ENT_COMPAT,"ISO-8859-1")));
 
   }
   function writeBoolean($boolean) {
@@ -881,7 +881,7 @@ class java_Protocol {
 
   /* the following routines are not cached */
   function writeException($object, $str) {
-	$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object, htmlspecialchars($str, ENT_COMPAT)));
+	$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object, htmlspecialchars($str, ENT_COMPAT,"ISO-8859-1")));
   }
   function writeCompositeBegin_a() {
     $this->write("<X t=\"A\">");
@@ -893,7 +893,7 @@ class java_Protocol {
     $this->write("</X>");
   }
   function writePairBegin_s($key) {
-    $this->write(sprintf("<P t=\"S\" v=\"%s\">", htmlspecialchars($key, ENT_COMPAT)));
+    $this->write(sprintf("<P t=\"S\" v=\"%s\">", htmlspecialchars($key, ENT_COMPAT,"ISO-8859-1")));
   }
   function writePairBegin_n($key) {
     $this->write(sprintf("<P t=\"N\" v=\"%x\">",$key));

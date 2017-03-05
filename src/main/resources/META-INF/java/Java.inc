@@ -1350,7 +1350,7 @@ $this->flush();
 }
 function writeString($name) {
 $this->client->currentArgumentsFormat.=$format="<S v=\"%s\"/>";
-$this->write(sprintf($format,htmlspecialchars($name,ENT_COMPAT)));
+$this->write(sprintf($format,htmlspecialchars($name,ENT_COMPAT,"ISO-8859-1")));
 }
 function writeBoolean($boolean) {
 $this->client->currentArgumentsFormat.=$format="<T v=\"%s\"/>";
@@ -1377,7 +1377,7 @@ $this->client->currentArgumentsFormat.=$format="<O v=\"%x\"/>";
 $this->write(sprintf($format,$object));
 }
 function writeException($object,$str) {
-$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object,htmlspecialchars($str,ENT_COMPAT)));
+$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object,htmlspecialchars($str,ENT_COMPAT,"ISO-8859-1")));
 }
 function writeCompositeBegin_a() {
 $this->write("<X t=\"A\">");
@@ -1389,7 +1389,7 @@ function writeCompositeEnd() {
 $this->write("</X>");
 }
 function writePairBegin_s($key) {
-$this->write(sprintf("<P t=\"S\" v=\"%s\">",htmlspecialchars($key,ENT_COMPAT)));
+$this->write(sprintf("<P t=\"S\" v=\"%s\">",htmlspecialchars($key,ENT_COMPAT,"ISO-8859-1")));
 }
 function writePairBegin_n($key) {
 $this->write(sprintf("<P t=\"N\" v=\"%x\">",$key));
@@ -1607,6 +1607,10 @@ return $client->globalRef->get($client->invokeMethod(0,"unwrapClosure",array($ob
 function java_values($object) {
 return java_values_internal($object);
 }
+function java_reset() {
+$client=__javaproxy_Client_getClient();
+return $client->invokeMethod(0,"reset",array());
+}
 function java_inspect_internal($object) {
 if(!$object instanceof java_JavaType) throw new java_IllegalArgumentException($object);
 $client=__javaproxy_Client_getClient();
@@ -1654,6 +1658,9 @@ return java_cast_internal($object,$type);
 }
 function java_require($arg) {
 trigger_error('java_require() not supported anymore. Please use <a href="http://php-java-bridge.sourceforge.net/pjb/webapp.php>tomcat or jee hot deployment</a> instead',E_USER_WARNING);
+$client=__javaproxy_Client_getClient();
+return $client->invokeMethod(0,"updateJarLibraryPath",
+array($arg,ini_get("extension_dir")));
 }
 function java_get_lifetime ()
 {
@@ -1894,7 +1901,7 @@ switch(gettype($val=$args[$i])) {
 case 'boolean': array_push($args2,$val); $sig.='@b'; break;
 case 'integer': array_push($args2,$val); $sig.='@i'; break;
 case 'double': array_push($args2,$val); $sig.='@d'; break;
-case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT)); $sig.='@s'; break;
+case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT,"ISO-8859-1")); $sig.='@s'; break;
 case 'array':$sig="~INVALID"; break;
 case 'object':
 if($val instanceof java_JavaType) {
@@ -1957,7 +1964,7 @@ switch(gettype($val=$args[$i])) {
 case 'boolean': array_push($args2,$val); $sig.='@b'; break;
 case 'integer': array_push($args2,$val); $sig.='@i'; break;
 case 'double': array_push($args2,$val); $sig.='@d'; break;
-case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT)); $sig.='@s'; break;
+case 'string': array_push($args2,htmlspecialchars($val,ENT_COMPAT,"ISO-8859-1")); $sig.='@s'; break;
 case 'array':$sig="~INVALID"; break;
 case 'object':
 if($val instanceof java_JavaType) {
