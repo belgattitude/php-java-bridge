@@ -16,6 +16,7 @@
             <div class="Header Header--cozy" role="banner">
                 <div class="Header-titles">
                     <h1 class="Header-title"><a href="#">PHP/Javabridge</a></h1>
+                    <h1 class="Header-subTitle">(soluble fork)</h1>
 
                 </div>
                 <div class="Header-actions">

@@ -353,9 +353,9 @@ strong {
     }
 }
 .Header-subTitle {
-    color: #AAAAAA;
-    font-size: 0.8em;
-    font-weight: 300;
+    color: #CCCCCC;
+    font-size: 1.0em;
+    font-weight: 400;
     margin: 0 0 1.5em;
     white-space: nowrap;
 }
