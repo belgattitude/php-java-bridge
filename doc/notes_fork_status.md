@@ -21,6 +21,7 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [x] Travis CI support with soluble-japha client suite [tests](https://github.com/belgattitude/php-java-bridge/blob/master/.travis/run_soluble_japha_phpunit_tests.sh)
 - [x] Clean-up of obsolete code and unused resources.
 - [x] Releases starting at 6.2.10 
+- [x] Merged upstream changes for 7.0.1 (without GPL debugger). See [#49](https://github.com/belgattitude/php-java-bridge/issues/49)
 - [ ] Deprecate and remove completely the `Java.inc` client.
 - [ ] Security review and safe practices.
 - [ ] Documentation (always a wip)
