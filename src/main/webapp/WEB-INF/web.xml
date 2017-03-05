@@ -18,6 +18,16 @@
     <context-param>
         <param-name>php_exec</param-name>
         <param-value>php-cgi</param-value>
+        <!-- could be -->
+        <!--
+        <param-value>/usr/bin/php-cgi5.6</param-value>
+        <param-value>/usr/bin/php-cgi7.0</param-value>
+        -->
+    </context-param>
+
+    <context-param>
+        <param-name>php_include_debugger</param-name>
+        <param-value>Off</param-value>
     </context-param>
 
     <!-- Handle PHP urls which cannot be expressed using a standard servlet spec 2.2 url-pattern, 

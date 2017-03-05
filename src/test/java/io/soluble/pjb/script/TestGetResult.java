@@ -39,11 +39,14 @@ public class TestGetResult extends TestCase {
             e.getContext().setErrorWriter(w);
             Object o = e.eval("<?php exit(7+9); ?>");
             result = String.valueOf(o); // note that this releases the engine, the next invoke will implicitly call eval() with an empty script
-            ((Invocable) e).invokeFunction("phpinfo", new Object[]{});
-            if (!result.equals("16")) throw new ScriptException("test failed");
-            if (out.toString().length() == 0) throw new ScriptException("test failed");
+            ((Invocable)e).invokeFunction("phpinfo", new Object[]{});
+            if (!result.equals("16"))
+                throw new ScriptException("test failed");
+            if (out.toString().length() == 0)
+                throw new ScriptException("test failed");
         } catch (Exception e1) {
             fail(String.valueOf(e1));
         }
     }
+
 }

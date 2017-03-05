@@ -53,7 +53,7 @@ class java_NativeParser {
 
   public $buf;
 
-  function java_NativeParser($handler) {
+  function __construct($handler) {
 	$this->handler = $handler;
 	$this->parser = xml_parser_create();
 	xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
