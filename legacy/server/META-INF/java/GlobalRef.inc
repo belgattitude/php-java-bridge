@@ -53,7 +53,7 @@
 class java_GlobalRef {
   public $map;
 
-  function java_GlobalRef() {
+  function __construct() {
     $this->map = array();
   }
 

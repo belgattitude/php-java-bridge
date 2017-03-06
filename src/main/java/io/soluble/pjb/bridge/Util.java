@@ -176,15 +176,17 @@ public final class Util {
      * Useful if you have non-pure java libraries (=libraries which
      * use the Java Native Interface to load native dll's or shared
      * libraries).
+     * LEGACY-CODE: no usages
      */
+    @Deprecated
     public static final String DEFAULT_EXT_DIRS[] = {"/usr/share/java/ext", "/usr/java/packages/lib/ext"};
-    //TODO: platform neutrality
 
     /**
      * Set to true if the VM is gcj, false otherwise
+     * LEGACY-CODE: no usages
      */
-    public static final boolean IS_GNU_JAVA = checkVM();
-    //TODO: drop GNU Java support
+    @Deprecated
+    public static final boolean IS_GNU_JAVA = false;   //- checkVM();
 
     /**
      * The name of the extension, usually "JavaBridge" or "MonoBridge"

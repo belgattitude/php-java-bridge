@@ -90,7 +90,7 @@ class java_EmptyChannel {
   protected $handler;
   private $res;
 
-  function java_EmptyChannel($handler) {
+  function __construct($handler) {
     $this->handler = $handler;
   }
   function shutdownBrokenConnection () {}
@@ -158,7 +158,7 @@ class java_EmptyChannel {
 abstract class java_SocketChannel extends java_EmptyChannel {
   public $peer, $host;
 
-  function java_SocketChannel($peer, $host) {
+  function __construct($peer, $host) {
 	$this->peer = $peer;
 	$this->host = $host;
   }
@@ -218,7 +218,7 @@ class java_ChunkedSocketChannel extends java_SocketChannel {
 class java_SocketHandler {
   public $protocol, $channel;
 
-  function java_SocketHandler($protocol, $channel) {
+  function __construct($protocol, $channel) {
 	$this->protocol = $protocol;
 	$this->channel = $channel;
   }
@@ -293,7 +293,7 @@ class java_SimpleHttpHandler extends java_SocketHandler {
 		or $this->protocol->handler->shutdownBrokenConnection("Broken local connection handle");
   }
 
-  function java_SimpleHttpHandler($protocol, $ssl, $host, $port) {
+  function __construct($protocol, $ssl, $host, $port) {
 	$this->cookies = array();
 	$this->protocol = $protocol;
 	$this->ssl = $ssl;
@@ -453,8 +453,8 @@ class java_SimpleHttpTunnelHandler extends java_SimpleHttpHandler  {
 	fgets($this->socket, 3); // \r\n
     fclose($this->socket);
   }
-  function java_SimpleHttpTunnelHandler($protocol, $ssl, $host, $port) {
-	parent::java_SimpleHttpHandler($protocol, $ssl, $host, $port);
+  function __construct($protocol, $ssl, $host, $port) {
+	parent::__construct($protocol, $ssl, $host, $port);
 	$this->open();
   }
   function read($size) {
@@ -705,7 +705,7 @@ class java_Protocol {
 	  $java=file_exists(ini_get("extension_dir")."/JavaBridge.jar")?ini_get("extension_dir")."/JavaBridge.jar":(java_get_base()."/JavaBridge.jar");
 	  if (!file_exists($java)) 
 		throw new java_IOException("Could not find $java in ".getcwd().". Download it from http://sf.net/projects/php-java-bridge/files/Binary%20package/php-java-bridge_".JAVA_PEAR_VERSION."/exploded/JavaBridge.jar/download and try again.");
-	  $java_cmd = "java -Dio.soluble.pjb.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0"; 
+	  $java_cmd = "java -Dphp.java.bridge.daemon=true -jar \"${java}\" INET_LOCAL:$channelName 0"; 
 
 	  if (!$again) 
 	     throw new java_ConnectException("No Java back end! Please run it with: $java_cmd. Error message: $errstr ($errno)");
@@ -738,7 +738,7 @@ class java_Protocol {
       return $this->createHttpHandler();
     }
   }
-  function java_Protocol ($client) {
+  function __construct ($client) {
     $this->client = $client;
 	$this->handler = $this->createHandler();
   }
@@ -851,7 +851,7 @@ class java_Protocol {
   }
   function writeString($name) {
     $this->client->currentArgumentsFormat.=$format="<S v=\"%s\"/>";
-    $this->write(sprintf($format, htmlspecialchars($name, ENT_COMPAT)));
+    $this->write(sprintf($format, htmlspecialchars($name, ENT_COMPAT,"ISO-8859-1")));
 
   }
   function writeBoolean($boolean) {
@@ -881,7 +881,7 @@ class java_Protocol {
 
   /* the following routines are not cached */
   function writeException($object, $str) {
-	$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object, htmlspecialchars($str, ENT_COMPAT)));
+	$this->write(sprintf("<E v=\"%x\" m=\"%s\"/>",$object, htmlspecialchars($str, ENT_COMPAT,"ISO-8859-1")));
   }
   function writeCompositeBegin_a() {
     $this->write("<X t=\"A\">");
@@ -893,7 +893,7 @@ class java_Protocol {
     $this->write("</X>");
   }
   function writePairBegin_s($key) {
-    $this->write(sprintf("<P t=\"S\" v=\"%s\">", htmlspecialchars($key, ENT_COMPAT)));
+    $this->write(sprintf("<P t=\"S\" v=\"%s\">", htmlspecialchars($key, ENT_COMPAT,"ISO-8859-1")));
   }
   function writePairBegin_n($key) {
     $this->write(sprintf("<P t=\"N\" v=\"%x\">",$key));

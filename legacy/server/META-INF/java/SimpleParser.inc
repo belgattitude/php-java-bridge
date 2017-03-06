@@ -62,7 +62,7 @@ class java_ParserString {
  */
 class java_ParserTag {
   public $n, $strings;
-  function java_ParserTag() {
+  function __construct() {
 	$this->strings = array();
 	$this->n = 0;
   }
@@ -78,7 +78,7 @@ class java_SimpleParser {
   public $tag, $buf, $len, $s;
   public $type;
 
-  function java_SimpleParser($handler) {
+  function __construct($handler) {
     $this->handler = $handler;
     $this->tag = array(new java_ParserTag(), new java_ParserTag(), new java_ParserTag());
 	$this->len = $this->SLEN;

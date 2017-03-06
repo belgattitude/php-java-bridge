@@ -53,7 +53,7 @@ require_once(java_get_base()."/NativeParser.inc");
 class java_Parser {
   public $parser;
 
-  function java_Parser($handler) {
+  function __construct($handler) {
     if(function_exists("xml_parser_create")) {
       $this->parser = new java_NativeParser($handler);
 	  $handler->RUNTIME["PARSER"]="NATIVE";

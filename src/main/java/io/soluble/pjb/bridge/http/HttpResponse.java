@@ -41,7 +41,7 @@ import io.soluble.pjb.bridge.Util;
  */
 public class HttpResponse {
 
-    private HashMap headers;
+    private final HashMap headers;
     private OutputStream outputStream;
 
     private boolean headersWritten;
@@ -56,6 +56,7 @@ public class HttpResponse {
         this.headers = new HashMap();
 
         this.outputStream = new BufferedOutputStream(outputStream) {
+            @Override
             public void write(byte buf[], int pos, int len) throws IOException {
                 if (!headersWritten) {
                     headersWritten = true;

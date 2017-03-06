@@ -53,7 +53,7 @@ require_once(java_get_base()."/GlobalRef.inc");
  */
 class java_SimpleFactory {
   public $client;
-  function java_SimpleFactory($client) {
+  function __construct($client) {
 	$this->client = $client;
   }
   function getProxy($result, $signature, $exception, $wrap) {
@@ -138,7 +138,7 @@ class java_CacheEntry {
   public $fmt, $signature, $factory, $java;
   public $resultVoid;
 
-  function java_CacheEntry($fmt, $signature, $factory, $resultVoid) {
+  function __construct($fmt, $signature, $factory, $resultVoid) {
 	$this->fmt = $fmt;
 	$this->signature = $signature;
 	$this->factory = $factory;
@@ -155,7 +155,7 @@ class java_Arg {
   public $factory, $val;
   public $signature; // class type
   
-  function java_Arg($client) {
+  function __construct($client) {
 	$this->client = $client;
 	$this->factory = $client->simpleFactory;
   }
@@ -211,8 +211,8 @@ class java_CompositeArg extends java_Arg {
   public $type;					// for A and X
   public $counter;
 
-  function java_CompositeArg($client, $type) {
-	parent::java_Arg($client);
+  function __construct($client, $type) {
+	parent::__construct($client);
 	$this->type = $type;
 	$this->val = array();
 	$this->counter = 0;
@@ -237,8 +237,8 @@ class java_CompositeArg extends java_Arg {
 class java_ApplyArg extends java_CompositeArg {
   public $m, $p, $v, $n; 			// see PROTOCOL.TXT
 
-  function java_ApplyArg($client, $type, $m, $p, $v, $n) {
-	parent::java_CompositeArg($client, $type);
+  function __construct($client, $type, $m, $p, $v, $n) {
+	parent::__construct($client, $type);
 	$this->m = $m;
 	$this->p = $p;
 	$this->v = $v;
@@ -261,7 +261,7 @@ class java_Client /* implements IDocHandler */ {
 	$arrayProxyFactory, $exceptionProxyFactory, $throwExceptionProxyFactory;
   
   public $arg;
-  public $asyncCtx, $cancelProxyCreationCounter;
+  public $asyncCtx, $cancelProxyCreationTag;
   public $globalRef;
 
   public $stack;
@@ -279,7 +279,7 @@ class java_Client /* implements IDocHandler */ {
   // do not finish protocol if ags construction fails due to PHP OutOfMemory error
   public $inArgs;
   
-  function java_Client() {
+  function __construct() {
 	$this->RUNTIME = array();
 	$this->RUNTIME["NOTICE"]='***USE echo java_inspect(jVal) OR print_r(java_values(jVal)) TO SEE THE CONTENTS OF THIS JAVA OBJECT!***';
 
@@ -299,7 +299,7 @@ class java_Client /* implements IDocHandler */ {
 
 	$this->globalRef = new java_GlobalRef();
 
-	$this->asyncCtx = $this->cancelProxyCreationCounter = 0;
+	$this->asyncCtx = $this->cancelProxyCreationTag = 0;
 	
 	$this->methodCache = $this->defaultCache;
 	

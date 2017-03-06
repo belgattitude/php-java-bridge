@@ -20,6 +20,7 @@
         <delete file="${serverDir}/META-INF/java/JavaProxy.php"/>
         <delete file="${pkgDir}/bridge/JavaInc.java"/>
         <delete file="${pkgDir}/bridge/JavaProxy.java"/>
+        <delete file="${pkgDir}/bridge/PhpDebuggerPHP.java" />
         <delete file="${pkgDir}/bridge/LauncherUnix.java"/>
         <delete file="${pkgDir}/bridge/LauncherWindows.java"/>
         <delete file="${pkgDir}/bridge/LauncherWindows2.java"/>
@@ -85,6 +86,21 @@
             <arg value="JavaProxy"/>
             <fileset dir="${resDir}">
                 <include name="META-INF/java/JavaProxy.php"/>
+            </fileset>
+        </apply>
+    </target>
+    <!--
+    WARNING if you build the genPHPDebuggerPHPJava... License is GPL (GPL+classpath exception)
+    if you distribute... The PHPDebugger is needed only for tests and should not
+    be included in the build.
+    -->
+    <target name="genPhpDebuggerPHPJava" depends="genInit">
+        <apply executable="${phpExec}" failonerror = "true" dir="${serverDir}" parallel="true">
+            <arg value="buildClassFromTextFile.php" />
+            <arg value="${pkgDir}/bridge/PhpDebuggerPHP.java" />
+            <arg value="PhpDebuggerPHP" />
+            <fileset dir="${resDir}" >
+                <include name="META-INF/java/PHPDebugger.php" />
             </fileset>
         </apply>
     </target>
