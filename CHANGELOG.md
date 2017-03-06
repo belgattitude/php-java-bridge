@@ -5,19 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## 7.0.0 (TBD)
 
-This release includes merges from the upstream php-java-bridge 7.0.1, 
-mostly bugfix and deprecated client updates for PHP7. 
-And exlusion to debugger 
+This release includes merges from the upstream original php-java-bridge 7.0.1, 
+Due to license restrictions, the PHPDebugger.java additions have **not** been merged
+in the 7.0.0 version. See [#49](https://github.com/belgattitude/php-java-bridge/issues/49) 
  
+
+### Changed
+ 
+- Added configuration `enableDirectoryIndex()` in `JavaBridgeRunner` and changed its
+  value to `true`, set it to `false` to prevent directory listing. See [#43](https://github.com/belgattitude/php-java-bridge/issues/43).
+    
 
 ### Bugfix
 
-- Fix bug in WriterOutputStream.java.
+- **Upstream-7.0.1:** Bugfix in `WriterOutputStream.java`.
 
 ### Updated
 
-- Legacy Java.inc updated with upstream support for PHP7 (kept for upstream compat, should not be used -> soluble-japha instead)
- 
+- **Upstream-7.0.1:** Legacy Java.inc updated with upstream support for PHP7
+  and rebuilt of javainc.java, proxy... *(Note that Java.inc is kept for upstream 
+  compat, but have been deprecated in the fork in favour of soluble-japha instead)* 
 
 
 ## 6.2.12 (2017-02-21)
