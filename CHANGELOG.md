@@ -3,7 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 7.0.0 (TBD)
+## 7.0.1 (TBD)
+
+## 7.0.0 (2017-03-06)
 
 This release includes merges from the upstream original php-java-bridge 7.0.1, 
 Due to license restrictions, the PHPDebugger.java additions have **not** been merged
