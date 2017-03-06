@@ -61,8 +61,9 @@ deprecated in favour of embedded Tomcat, Jetty... adopted more widely.
 
 ### Jetty
 
-*There look
+> The doPut() method Seems buggy right now. See [#43](https://github.com/belgattitude/php-java-bridge/issues/43) 
 
 ### Undertow
 
+(todo)
 
