@@ -14,8 +14,8 @@ in the 7.0.0 version. See [#49](https://github.com/belgattitude/php-java-bridge/
  
 - Added configuration `enableDirectoryIndex()` in `JavaBridgeRunner` and changed its
   value to `true`, set it to `false` to prevent directory listing. See [#43](https://github.com/belgattitude/php-java-bridge/issues/43).
+- Documentation: added embedding recipes (wip, see [#51](https://github.com/belgattitude/php-java-bridge/issues/51) for progress)
     
-
 ### Bugfix
 
 - **Upstream-7.0.1:** Bugfix in `WriterOutputStream.java`.
