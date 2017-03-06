@@ -63,7 +63,7 @@ public class JavaBridgeRunner extends HttpServer {
 
     protected static JavaBridgeRunner runner;
     protected final ContextServer contextServer;
-    private boolean directoryIndexEnabled = false;
+    private boolean directoryIndexEnabled = true;
     
 
     protected JavaBridgeRunner(String serverPort, boolean isSecure) throws IOException {
