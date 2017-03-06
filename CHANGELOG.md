@@ -10,7 +10,7 @@ Due to license restrictions, the PHPDebugger.java additions have **not** been me
 in the 7.0.0 version. See [#49](https://github.com/belgattitude/php-java-bridge/issues/49) 
  
 
-### Changed
+### Added
  
 - Added configuration `enableDirectoryIndex()` in `JavaBridgeRunner` and changed its
   value to `true`, set it to `false` to prevent directory listing. See [#43](https://github.com/belgattitude/php-java-bridge/issues/43).
