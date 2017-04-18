@@ -3,7 +3,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 7.0.1 (TBD)
+## 7.1.0 (TBD)
+
+This release will include mergers from the original php-java-bridge 7.1.3
+when stabilized.
+
+### Added
+
+
+### Changed
+
+
+### Updated
+
+- Gradle wrapper updated to 3.5.0 
+
 
 ## 7.0.0 (2017-03-06)
 
