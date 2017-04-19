@@ -1,0 +1,18 @@
+/*
+Gradle init script to add json-io dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime group: 'com.cedarsoftware', name:'json-io', version:'4.+'
+    }
+}
