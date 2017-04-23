@@ -3,35 +3,43 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-    <!-- support for JEE cluster, remove this line if you want to put non-serializable objects into the java_session() 
+    <!--
+        support for JEE cluster, remove this line if you want to put non-serializable objects into the java_session()
     -->
     <distributable/>
 
-    <!-- Prefer a system PHP executable, if available. Otherwise use the PHP from the .war file. Default is Off -->
+    <!-- Prefer a system PHP executable, if available.
+         Otherwise use the PHP from the .war file. Default is On
+    -->
     <context-param>
         <param-name>prefer_system_php_exec</param-name>
         <param-value>On</param-value>
     </context-param>
-    <!-- Your system PHP executable. Default is /usr/bin/php-cgi or c:/Program Files/PHP/php-cgi.exe 
-         If exported (Linux) or on the path (Windows) you can use 'php-cgi' as a platform independant pointer to the executable
+
+    <!-- Location of your system PHP executable. Default is /usr/bin/php-cgi or c:/Program Files/PHP/php-cgi.exe
+         If exported (Linux) or on the path (Windows) you can use 'php-cgi' as a platform
+         independent pointer to the executable
     -->
     <context-param>
         <param-name>php_exec</param-name>
         <param-value>php-cgi</param-value>
-        <!-- could be -->
-        <!--
-        <param-value>/usr/bin/php-cgi5.6</param-value>
-        <param-value>/usr/bin/php-cgi7.0</param-value>
+        <!-- As an example, the param value
+             of the php-cgi executable could be:
+                <param-value>/usr/bin/php-cgi5.6</param-value>
+                <param-value>/usr/bin/php-cgi7.0</param-value>
+                <param-value>c:/Program Files/PHP/php-cgi.exe</param-value>
         -->
     </context-param>
 
-    <context-param>
-        <param-name>php_include_debugger</param-name>
-        <param-value>Off</param-value>
-    </context-param>
 
+    <!--
+    ######################################################################
+    # Servlet filter registrations                                       #
+    ######################################################################
+    -->
     <!-- Handle PHP urls which cannot be expressed using a standard servlet spec 2.2 url-pattern, 
-         e.g.: *.php/delete/from?what=that You may remove this and the filter-mapping below -->
+         e.g.: *.php/delete/from?what=that You may remove this and the filter-mapping below
+    -->
     <filter>
         <filter-name>PhpCGIFilter</filter-name>
         <filter-class>io.soluble.pjb.servlet.PhpCGIFilter</filter-class>
@@ -46,7 +54,12 @@
         <listener-class>io.soluble.pjb.servlet.ContextLoaderListener</listener-class>
     </listener>
 
-    <!-- PHP Servlet: back-end for Apache or IIS -->
+
+    <!--
+    ######################################################################
+    # Servlet registrations                                              #
+    ######################################################################
+    -->
     <servlet>
         <servlet-name>PhpJavaServlet</servlet-name>
         <servlet-class>io.soluble.pjb.servlet.PhpJavaServlet</servlet-class>
@@ -69,6 +82,13 @@
         <servlet-name>PhpCGIServlet</servlet-name>
         <url-pattern>*.php</url-pattern>
     </servlet-mapping>
+
+    <!-- Only for debugging purposes, let it off  -->
+    <context-param>
+        <param-name>php_include_debugger</param-name>
+        <param-value>Off</param-value>
+    </context-param>
+
 
     <!-- Welcome files -->
     <welcome-file-list>
