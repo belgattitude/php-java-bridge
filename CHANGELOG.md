@@ -3,18 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 7.1.0 (TBD)
+## 7.1.3 (TBD)
 
 This release will include mergers from the original php-java-bridge 7.1.3
-when stabilized.
+when stabilized. Only changes regarding php->java have been merged (not java->php).
 
 ### Added
 
 - `Client->setExitCode()`, `Protocol->setExitCode()` from upstream.
-
-
-### Changed
-
 
 ### Updated
 
