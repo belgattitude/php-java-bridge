@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Cache [Entry(byte[], enc) -> String].  No
+ * Cache [Entry(byte[], enc) - String].  No
  * synchronization, so use this class per thread or per request
  * only.
  */
