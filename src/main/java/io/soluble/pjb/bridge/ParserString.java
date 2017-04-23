@@ -29,7 +29,7 @@ package io.soluble.pjb.bridge;
  *
  * @author jostb
  */
-final class ParserString {
+public final class ParserString {
     protected byte[] string;
     protected int off;
     protected int length;

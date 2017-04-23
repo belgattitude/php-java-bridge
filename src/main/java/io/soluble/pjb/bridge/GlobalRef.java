@@ -34,7 +34,7 @@ package io.soluble.pjb.bridge;
  * n+1. This can be used to avoid round-trips by "guessing" the next
  * object ID, see java_begin_document()/java_end_document().
  */
-class GlobalRef {
+public class GlobalRef {
 
     /**
      * The default size (prime).

@@ -21,6 +21,8 @@
  */
 package io.soluble.pjb.bridge;
 
+import io.soluble.pjb.bridge.http.IContext;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -61,13 +63,13 @@ public final class JavaBridge implements Runnable {
     static final int DISPLAY_MAX_CHARS = 80;
     static final String PHPSESSION = "PHPSESSION";
     static final String INTERNAL_PHPSESSION = "INTERNAL_PHPSESSION";
-    static final HashMap SESSION_HASH = new HashMap();
+    private static HashMap sessionHash = new HashMap();
 
-    private final MethodCache methodCache = new MethodCache();
-    private final ConstructorCache constructorCache = new ConstructorCache();
+    public final MethodCache methodCache = new MethodCache();
+    public final ConstructorCache constructorCache = new ConstructorCache();
 
     boolean canModifySecurityPermission = true; // false if we detect that setAccessible is not possible
-    StringCache stringCache = new StringCache(this);
+    public StringCache stringCache = new StringCache(this);
     Options options;
     
     /**
@@ -77,7 +79,7 @@ public final class JavaBridge implements Runnable {
     Throwable lastAsyncException; // reported by end_document()
 
     // array of objects in use in the current script
-    GlobalRef globalRef = new GlobalRef();
+    public GlobalRef globalRef = new GlobalRef();
 
     /**
      * For internal use only. The input stream for the current channel.
@@ -204,6 +206,11 @@ public final class JavaBridge implements Runnable {
     public Options getOptions() {
         return options;
     }
+
+    public void setOptions(Options options) {
+        this.options = options;
+    }
+
 
     /**
      * Communication with client in a new thread
@@ -1804,17 +1811,15 @@ public final class JavaBridge implements Runnable {
         return castToString(buf.toString());
     }
 
-    private Object contextCache = null;
+    private IContext contextCache = null;
+
 
     /**
      * Returns the JSR223 context.
-     *
      * @return The JSR223 context.
      */
-    public Object getContext() {
-        if (contextCache != null) {
-            return contextCache;
-        }
+    public IContext getContext() {
+        if(contextCache!=null) return contextCache;
         return contextCache = sessionFactory.getContext();
     }
 
@@ -2353,6 +2358,35 @@ public final class JavaBridge implements Runnable {
      */
     public void clearLastException() {
         lastException = lastAsyncException = null;
+    }
+
+
+    public GlobalRef getGlobalRef() {
+        return globalRef;
+    }
+
+    public void setGlobalRef(GlobalRef globalRef) {
+        this.globalRef = globalRef;
+    }
+
+    public Throwable getLastAsyncException() {
+        return lastAsyncException;
+    }
+
+    public static HashMap getSessionHash() {
+        return sessionHash;
+    }
+
+    public static void setSessionHash(HashMap sessionHash) {
+        JavaBridge.sessionHash = sessionHash;
+    }
+
+    public StringCache getStringCache() {
+        return stringCache;
+    }
+
+    public void setStringCache(StringCache stringCache) {
+        this.stringCache = stringCache;
     }
 
 }

@@ -260,4 +260,8 @@ public interface IContext {
      * @return the socket name
      */
     public String getSocketName();
+
+    public void setExitCode(int intValue);
+
+    public int getExitCode();
 }

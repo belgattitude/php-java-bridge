@@ -562,6 +562,9 @@ public class JavaInc {
 "$val=$this->getResult();\n"+
 "return $val;\n"+
 "}\n"+
+"function setExitCode($code) {\n"+
+"if (isset($this->protocol)) $this->protocol->writeExitCode($code);\n"+
+"}\n"+
 "function unref($object) {\n"+
 "if (isset($this->protocol)) $this->protocol->writeUnref($object);\n"+
 "}\n"+
@@ -1406,6 +1409,11 @@ public class JavaInc {
 "$this->client->sendBuffer.=$this->client->preparedToSendBuffer;\n"+
 "$this->client->preparedToSendBuffer=null;\n"+
 "$this->write(sprintf(\"<U v=\\\"%x\\\"/>\",$object));\n"+
+"}\n"+
+"function writeExitCode($code) {\n"+
+"$this->client->sendBuffer.=$this->client->preparedToSendBuffer;\n"+
+"$this->client->preparedToSendBuffer=null;\n"+
+"$this->write(sprintf(\"<Z v=\\\"%x\\\"/>\",0xffffffff&$code));\n"+
 "}\n"+
 "function getServerName() {\n"+
 "return $this->serverName;\n"+

@@ -79,9 +79,9 @@ class Session implements ISession {
 
     public void destroy() {
         sessionCount--;
-        synchronized (JavaBridge.SESSION_HASH) {
-            if (JavaBridge.SESSION_HASH != null)
-                JavaBridge.SESSION_HASH.remove(name);
+        synchronized (JavaBridge.getSessionHash()) {
+            if (JavaBridge.getSessionHash() != null)
+                JavaBridge.getSessionHash().remove(name);
         }
     }
 
@@ -107,9 +107,9 @@ class Session implements ISession {
      * see #CHECK_SESSION_TIMEOUT
      */
     static synchronized void expire() {
-        if (JavaBridge.SESSION_HASH == null) return;
-        synchronized (JavaBridge.SESSION_HASH) {
-            for (Iterator e = JavaBridge.SESSION_HASH.values().iterator(); e.hasNext(); ) {
+        if (JavaBridge.getSessionHash() == null) return;
+        synchronized (JavaBridge.getSessionHash()) {
+            for (Iterator e = JavaBridge.getSessionHash().values().iterator(); e.hasNext(); ) {
                 Session ref = (Session) e.next();
                 if ((ref.timeout > 0) && (ref.lastAccessedTime + ref.timeout <= System.currentTimeMillis())) {
                     sessionCount--;
@@ -124,9 +124,9 @@ class Session implements ISession {
      * Expires all sessions immediately.
      */
     public static void reset() {
-        if (JavaBridge.SESSION_HASH == null) return;
-        synchronized (JavaBridge.SESSION_HASH) {
-            for (Iterator e = JavaBridge.SESSION_HASH.values().iterator(); e.hasNext(); ) {
+        if (JavaBridge.getSessionHash() == null) return;
+        synchronized (JavaBridge.getSessionHash()) {
+            for (Iterator e = JavaBridge.getSessionHash().values().iterator(); e.hasNext(); ) {
                 Session ref = (Session) e.next();
                 sessionCount--;
                 e.remove();

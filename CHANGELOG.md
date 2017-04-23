@@ -10,6 +10,8 @@ when stabilized.
 
 ### Added
 
+- `Client->setExitCode()`, `Protocol->setExitCode()` from upstream.
+
 
 ### Changed
 

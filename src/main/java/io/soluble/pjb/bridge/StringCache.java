@@ -33,7 +33,7 @@ import java.util.Map;
  * synchronization, so use this class per thread or per request
  * only.
  */
-final class StringCache {
+public final class StringCache {
     private Map map;
     private JavaBridge bridge;
 

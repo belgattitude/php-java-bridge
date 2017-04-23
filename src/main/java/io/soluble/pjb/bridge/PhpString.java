@@ -26,7 +26,7 @@ package io.soluble.pjb.bridge;
 /**
  * A php string is a UTF-8 coded byte array.
  */
-abstract class PhpString {
+public abstract class PhpString {
     /**
      * Get the encoded string representation
      *
