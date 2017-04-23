@@ -25,7 +25,6 @@ This release includes merges from the upstream original php-java-bridge 7.0.1,
 Due to license restrictions, the PHPDebugger.java additions have **not** been merged
 in the 7.0.0 version. See [#49](https://github.com/belgattitude/php-java-bridge/issues/49) 
  
-
 ### Added
  
 - Added configuration `enableDirectoryIndex()` in `JavaBridgeRunner` and changed its

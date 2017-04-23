@@ -39,6 +39,8 @@ Here's a list of some example libraries ready to use when you `./gradlew`
 | JDBC       | [./init.mysql.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.mysql.gradle) | [MySQL JDBC connector](http://dev.mysql.com) |
 | JDBC       | [./init.mariadb.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.mariadb.gradle) | [MariaDB JDBC connector](http://mariadb.org) |
 | JDBC       | [./init.postgresql.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.postgresql.gradle) | [PostgreSQL JDBC connector](https://jdbc.postgresql.org/) |
+| JSON       | [./init.gson.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.gson.gradle) | [GSON](https://github.com/google/gson) Json serializer |
+| JSON       | [./init.json-io.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.json-io.gradle) | [Json-io](https://github.com/jdereg/json-io) Json serializer |
 | NLP        | [./init.opennlp.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.opennlp.gradle) | [OpenNLP](https://opennlp.apache.org/) natural language processing |
 | NLP        | [./init.corenlp.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.corenlp.gradle) | [Standford CoreNLP](http://stanfordnlp.github.io/CoreNLP) - POSTagger, NER, ... |
 | NLP        | [./init.corenlp-models.gradle](https://github.com/belgattitude/php-java-bridge/blob/master/init-scripts/init.corenlp-models.gradle) | [Standford CoreNLP](http://stanfordnlp.github.io/CoreNLP) Trained core models - 400Mb |

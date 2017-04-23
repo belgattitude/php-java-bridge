@@ -1,0 +1,18 @@
+/*
+Gradle init script to add google gson dependencies to the build
+*/
+
+initscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    dependencies {
+        runtime group: 'com.google.code.gson', name: 'gson', version: '2.+'
+    }
+}
