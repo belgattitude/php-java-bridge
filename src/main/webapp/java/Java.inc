@@ -560,6 +560,9 @@ $this->protocol->invokeEnd();
 $val=$this->getResult();
 return $val;
 }
+function setExitCode($code) {
+if (isset($this->protocol)) $this->protocol->writeExitCode($code);
+}
 function unref($object) {
 if (isset($this->protocol)) $this->protocol->writeUnref($object);
 }
@@ -1404,6 +1407,11 @@ function writeUnref($object) {
 $this->client->sendBuffer.=$this->client->preparedToSendBuffer;
 $this->client->preparedToSendBuffer=null;
 $this->write(sprintf("<U v=\"%x\"/>",$object));
+}
+function writeExitCode($code) {
+$this->client->sendBuffer.=$this->client->preparedToSendBuffer;
+$this->client->preparedToSendBuffer=null;
+$this->write(sprintf("<Z v=\"%x\"/>",0xffffffff&$code));
 }
 function getServerName() {
 return $this->serverName;

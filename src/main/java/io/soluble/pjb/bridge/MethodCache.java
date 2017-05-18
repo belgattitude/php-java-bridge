@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Cache [Entry(object, method, parameters) -> Method].  No
+ * Cache [Entry(object, method, parameters) - Method].  No
  * synchronization, so use this class per thread or per request
  * only.
  */
-final class MethodCache {
+public final class MethodCache {
     Map map;
     static final Entry noCache = new NoCache();
 

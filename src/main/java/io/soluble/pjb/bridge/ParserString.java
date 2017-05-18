@@ -29,7 +29,7 @@ package io.soluble.pjb.bridge;
  *
  * @author jostb
  */
-final class ParserString {
+public final class ParserString {
     protected byte[] string;
     protected int off;
     protected int length;
@@ -80,7 +80,6 @@ final class ParserString {
      * Returns the string encoded via java_set_file_encoding().
      *
      * @return The encoded string value.
-     * @see io.soluble.pjb.Options#getEncoding()
      */
     public String getStringValue() {
         return bridge.getString(string, off, length);
@@ -90,7 +89,6 @@ final class ParserString {
      * Returns the cached string encoded via java_set_file_encoding().
      *
      * @return The encoded string value.
-     * @see io.soluble.pjb.Options#getEncoding()
      */
     public String getCachedStringValue() {
         return bridge.getCachedString(string, off, length);

@@ -51,7 +51,7 @@ public final class Request implements IDocHandler {
      * There is only one response handle for each request object.
      * <code>response.reset()</code> or <code>response.flush()</code> must be called at the end of each packet.
      */
-    Response response = null;
+    public Response response = null;
 
 
     protected Object getGlobalRef(int i) {
@@ -189,6 +189,11 @@ public final class Request implements IDocHandler {
             case 'R': {
                 arg.type = ch;
                 arg.id.parseID(st[0]);
+                break;
+            }
+            case 'Z': {
+                arg.type=ch;
+                bridge.getContext().setExitCode(st[0].getIntValue());
                 break;
             }
 

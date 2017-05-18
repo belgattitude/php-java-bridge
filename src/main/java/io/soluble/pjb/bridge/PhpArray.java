@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-final class PhpArray extends AbstractMap { // for PHP's array()
+public final class PhpArray extends AbstractMap { // for PHP's array()
     private static final long serialVersionUID = 3905804162838115892L;
     private TreeMap t = new TreeMap(Request.PHP_ARRAY_KEY_COMPARATOR);
     private HashMap m = null;

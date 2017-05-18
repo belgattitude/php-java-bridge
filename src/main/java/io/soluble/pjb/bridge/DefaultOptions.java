@@ -29,7 +29,7 @@ package io.soluble.pjb.bridge;
  * @author jostb
  */
 
-final class DefaultOptions extends Options {
+public final class DefaultOptions extends Options {
 
     @Override
     public boolean base64Data() {

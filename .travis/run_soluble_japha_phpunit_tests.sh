@@ -42,7 +42,7 @@ install_soluble_japha_master() {
     git checkout master
 
     # 4. Run composer install
-    composer install
+    composer --ignore-platform-reqs install
 
     # 5. Restore path
     cd $PROJECT_DIR

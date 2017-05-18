@@ -66,6 +66,9 @@ public class Context implements IManaged, Invocable, IContext {
      */
     private Map engineScope;
 
+    private int exitCode;
+
+
     protected Context() {
     }
 
@@ -395,5 +398,14 @@ public class Context implements IManaged, Invocable, IContext {
      */
     public String getRedirectURL(String webPath) {
         return "http://127.0.0.1:" + getSocketName() + webPath;
+    }
+
+    @Override
+    public void setExitCode(int exitCode) {
+        this.exitCode = exitCode;
+    }
+    @Override
+    public int getExitCode() {
+        return exitCode;
     }
 }

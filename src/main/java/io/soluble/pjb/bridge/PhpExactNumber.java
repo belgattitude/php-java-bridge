@@ -22,7 +22,7 @@
 
 package io.soluble.pjb.bridge;
 
-final class PhpExactNumber extends Number {
+public final class PhpExactNumber extends Number {
 
     /**
      *

@@ -46,6 +46,8 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
 
     protected Continuation kont;
 
+    private int exitCode;
+
     /**
      * {@inheritDoc}
      */
@@ -129,4 +131,17 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
     public void setErrorWriter(Writer writer) {
         super.setErrorWriter(this.errorWriter = new PhpScriptWriter(new WriterOutputStream(writer)));
     }
+
+
+    @Override
+    public void setExitCode(int exitCode) {
+        this.exitCode = exitCode;
+
+    }
+    @Override
+    public int getExitCode() {
+        return exitCode;
+    }
+
+
 }

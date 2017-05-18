@@ -41,7 +41,7 @@ public final class PhpProcedure implements InvocationHandler {
     private Map names;
     protected String name;
 
-    protected PhpProcedure(IJavaBridgeFactory bridge, long object, String name, Map names) {
+    public PhpProcedure(IJavaBridgeFactory bridge, long object, String name, Map names) {
         this.bridge = bridge;
         this.object = object;
         this.names = names;
@@ -123,7 +123,7 @@ public final class PhpProcedure implements InvocationHandler {
         return invoke(proxy, method.getName(), method.getReturnType(), args);
     }
 
-    static long unwrap(Object ob) {
+    public static long unwrap(Object ob) {
         InvocationHandler handler = Proxy.getInvocationHandler(ob);
         PhpProcedure proc = (PhpProcedure) handler;
         return proc.object;

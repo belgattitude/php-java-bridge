@@ -22,7 +22,7 @@
 
 package io.soluble.pjb.bridge;
 
-final class SimplePhpString extends PhpString {
+public final class SimplePhpString extends PhpString {
     String s;
     JavaBridge bridge;
 
