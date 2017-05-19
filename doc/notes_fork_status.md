@@ -1,14 +1,12 @@
 # Fork status notes
 
 > This fork have been made on the sourceforge [CVS PHP/Java bridge repository](https://sourceforge.net/p/php-java-bridge/code/) and
-> is based on the latest official release (6.2.1) excluding all previous versions and history (cleanup from the CVS repo).
+> was based on the latest official release (6.2.1) at that time.
 > Since the fork the original maintainer has released new versions of the official release, see [changelog](http://php-java-bridge.cvs.sourceforge.net/viewvc/php-java-bridge/php-java-bridge/ChangeLog?view=log),
-> started a discussion [here](https://github.com/belgattitude/php-java-bridge/issues/47) to evaluate possibilities. 
+> a dicussion have been opened [here](https://github.com/belgattitude/php-java-bridge/issues/47) to evaluate future possibilities.  
 
 ## Status
-
-Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and mature. Here are some plans and statuses of the fork:  
-
+  
 - [x] Migration from sourceforge CVS to github.
 - [x] Support for PHP7 and rewrite of the client `Java.inc`, see [soluble-japha](https://github.com/belgattitude/soluble-japha)
 - [x] Gradle support for project builds.
@@ -20,8 +18,9 @@ Latest version 6.2.1 has been released long ago but, AFAIK, proved stable and ma
 - [x] Port and convert most of `./test.php5` in [soluble-japha](https://github.com/belgattitude/soluble-japha).
 - [x] Travis CI support with soluble-japha client suite [tests](https://github.com/belgattitude/php-java-bridge/blob/master/.travis/run_soluble_japha_phpunit_tests.sh)
 - [x] Clean-up of obsolete code and unused resources.
-- [x] Releases starting at 6.2.10 
-- [x] Merged upstream changes for 7.0.1 (without GPL debugger). See [#49](https://github.com/belgattitude/php-java-bridge/issues/49)
+- [x] Releases starting at **6.2.10** 
+- [x] Merged upstream changes for **7.0.1** (without GPL debugger). See [#49](https://github.com/belgattitude/php-java-bridge/issues/49)
+- [x] Merged upstream changes for **7.1.3** (without GPL debugger)
 - [ ] Deprecate and remove completely the `Java.inc` client.
 - [ ] Security review and safe practices.
 - [ ] Documentation (always a wip)

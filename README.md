@@ -1,3 +1,5 @@
+# PHP Java bridge
+
 [![Build Status](https://travis-ci.org/belgattitude/php-java-bridge.svg?branch=master)](https://travis-ci.org/belgattitude/php-java-bridge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.soluble.pjb/php-java-bridge)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/belgattitude/php-java-bridge/blob/master/LICENSE.md)
@@ -6,9 +8,21 @@
 
 The soluble PHPJavaBridge server fork allows PHP/JVM interoperability through a local network protocol between both runtimes.
 
-> Disclaimer: This fork is based on the robust and mature [sourceforge](https://sourceforge.net/p/php-java-bridge/code/) version made by Jost Boekemeier and 
-> was refactored to ease installation process, promote contributions and embrace more modern practices found in 
-> the Java ecosystem. To keep a track of differences, you can refer to the [fork status](./doc/notes_fork_status.md) page.   
+> **Disclaimer: Unofficial fork !!!**
+>  
+> This fork was initially made on the [sourceforge](https://sourceforge.net/p/php-java-bridge/code/) version made by Jost Boekemeier
+> as its development seemed to have stopped after version 6.2.1.
+>   
+> Be aware that since the project have been forked, the official repo looks to
+> be alive again with recent versions supporting PHP7. Unfortunately most of the 
+> the fixes and enhancements made on this fork have not been merged in upstream version.         
+>       
+> Feel free to choose which version you install (fork or official). 
+> To keep a track of differences, you can refer to the [fork status](./doc/notes_fork_status.md) page.
+>
+> Note that this fork have been specifically developped for PHP -> Java integration, so
+> so if you intend to use it from Java -> PHP, the best is to use the official version.    
+   
 
 ## Installation
 
