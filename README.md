@@ -20,8 +20,9 @@ The soluble PHPJavaBridge server fork allows PHP/JVM interoperability through a 
 > Feel free to choose which version you install (fork or official). 
 > To keep a track of differences, you can refer to the [fork status](./doc/notes_fork_status.md) page.
 >
-> Note that this fork have been specifically developped for PHP -> Java integration, so
-> so if you intend to use it from Java -> PHP, the best is to use the official version.    
+> Note that this fork have been specifically designed for PHP -> Java integration, so
+> so if you intend to use it from Java -> PHP, the best is to use the official version as
+> it looks better tested for that scenario.     
    
 
 ## Installation
