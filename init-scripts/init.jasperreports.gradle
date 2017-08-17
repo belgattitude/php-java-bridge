@@ -1,7 +1,8 @@
-/*
-Gradle init script to add jasperreports dependencies to the build
-*/
-
+/**
+ * Gradle init script build jasper reports servlet
+ *
+ * @author Vanvelthem Sébastien
+ */
 
 initscript {
     repositories {
@@ -14,36 +15,43 @@ initscript {
 allprojects {
     apply plugin: 'java'
     repositories {
+        mavenCentral()
         maven {
             url 'http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/'
         }
-
         maven {
-            url 'http://jasperreports.sourceforge.net/maven2'
+            url 'https://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases'
         }
     }
     dependencies {
-        runtime 'org.codehaus.groovy:groovy-all:2.4.+'
+        /**
+         * Jasper report base (required)
+         */
+        compile 'net.sf.jasperreports:jasperreports:6.+'
         runtime 'net.sf.jasperreports:jasperreports-fonts:6.+'
+        runtime 'net.sf.jasperreports:jasperreports-functions:6.+'
 
-        compile ('net.sf.jasperreports:jasperreports:6.+') {
-            exclude group: 'org.olap4j' // Generally don't need this
-        }
+        /**
+         * Jasper report complements (feel free to comment)
+         */
+        runtime 'net.sourceforge.barbecue:barbecue:1.5-beta1'
+        runtime 'net.sf.barcode4j:barcode4j:2.1'
+        runtime 'org.apache.poi:poi:3.+'
+        runtime 'org.apache.poi:poi-ooxml:3.16'
 
+        /**
+         * Jasper report language support (feel free to comment)
+         *   Note that groovy is a must for jasper... where javascript
+         *   (rhino) can be removed if not used
+         */
+        runtime 'org.codehaus.groovy:groovy-all:2.4.+'
+        runtime 'org.mozilla:rhino:1.7+'
 
-        // If you have a commercial license for iText or
-        // agree with the terms of iText AGLP license
-        // @see https://github.com/itext/itextpdf/blob/master/LICENSE.md
-        // You can upgrade the embedded LGPL iText to 5.5+ by
-        // commenting the previous line and uncommenting what's below
+        /**
+         * Other helpful libraries oy might need
+         * Add as needed
+         */
+        //runtime 'mysql:mysql-connector-java:6+'
 
-        /*
-        compile ('net.sf.jasperreports:jasperreports:6.+') {
-            exclude group: 'com.lowagie' // better to use latest com.itextpdf instead
-            exclude group: 'org.olap4j' // Generally don't need this
-        }
-        runtime 'com.itextpdf:itextpdf:5.5.+'
-        runtime 'com.itextpdf:itext-pdfa:5.5.+'
-        */
     }
 }
