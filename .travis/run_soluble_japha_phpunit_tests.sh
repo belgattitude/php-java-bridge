@@ -39,7 +39,10 @@ install_soluble_japha_master() {
     #latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
     #git checkout ${latestTag}
 
-    git checkout master
+    # Travis does not support php 7.1 for java image
+    # so let's get the lates php5.6 release to test
+    #git checkout master
+    git checkout tags/1.4.5
 
     # 4. Run composer install
     composer --ignore-platform-reqs install
