@@ -64,6 +64,12 @@ install_soluble_japha_latest() {
     cd $PROJECT_DIR
 }
 
+launchTomcatRun() {
+    echo "[*] Launching tomcatRun";
+    cd $PROJECT_DIR
+    ./gradlew clean tomcatRun
+    sudo netstat -nlp | grep :8093
+}
 
 runPHPUnit()  {
     cd $JAPHA_DIR
@@ -72,9 +78,17 @@ runPHPUnit()  {
     ./vendor/bin/phpunit -c ./phpunit.travis.xml -v
 }
 
+stopTomcat() {
+    echo "[*] Stopping tomcat";
+    cd $PROJECT_DIR
+    ./gradlew tomcatStop
+}
+
 
 # Here's the steps
 clean_soluble_japha_latest;
 install_soluble_japha_latest;
+launchTomcatRun;
 runPHPUnit;
+stopTomcat;
 
