@@ -31,6 +31,8 @@ script:
   - sleep 10
   - cat ./tomcat.log
   - sudo netstat -nlp | grep :8093
+  # debug travis
+  - sudo netstat -nlp
   # Launch the soluble-japha test suite
   - ./.travis/run_soluble_japha_phpunit_tests.sh
 
