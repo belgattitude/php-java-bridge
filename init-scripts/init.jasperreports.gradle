@@ -52,6 +52,28 @@ allprojects {
          * Add as needed
          */
         //runtime 'mysql:mysql-connector-java:6+'
+        //runtime 'org.mariadb.jdbc:mariadb-java-client:1.+'
+        //runtime group: 'org.postgresql', name: 'postgresql', version: '9.4.+'
+
+
+        /**
+         * NOT RECOMMENDED - FORCE UPGRADE to iTEXT 5.5+
+         * If you have a commercial license for iText or
+         * agree with the terms of iText AGLP license
+         * @see https://github.com/itext/itextpdf/blob/master/LICENSE.md
+         * You can upgrade the embedded LGPL iText to 5.5+ by
+         * commenting the compile 'net.sf.jasperreports:jasperreports:6.+'
+         * by this below
+         */
+        /*
+        compile ('net.sf.jasperreports:jasperreports:6.+') {
+            exclude group: 'com.lowagie' // better to use latest com.itextpdf instead
+            exclude group: 'org.olap4j' // Generally don't need this
+        }
+        runtime 'com.itextpdf:itextpdf:5.5.+'
+        runtime 'com.itextpdf:itext-pdfa:5.5.+'
+        */
 
     }
 }
+

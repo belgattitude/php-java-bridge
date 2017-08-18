@@ -68,7 +68,7 @@ launchTomcatRun() {
     echo "[*] Launching tomcatRun";
     cd $PROJECT_DIR
     ./gradlew clean tomcatRun
-    sudo netstat -nlp | grep :8093
+    netstat -nlp | grep :8093
 }
 
 runPHPUnit()  {

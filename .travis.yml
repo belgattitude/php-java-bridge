@@ -36,7 +36,7 @@ script:
   # debug travis
   - sudo netstat -nlp
   # Launch the soluble-japha test suite
-  - ./.travis/run_soluble_japha_phpunit_tests.sh
+  - sudo ./.travis/run_soluble_japha_phpunit_tests.sh
 
 after_failure:
   - cat ./tomcat.log
