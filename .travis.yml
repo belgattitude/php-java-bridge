@@ -1,5 +1,6 @@
 dist: trusty
 sudo: required
+group: edge
 
 language: java
 
@@ -26,6 +27,7 @@ script:
   - ./gradlew test
   # Launch a server
   - ./gradlew clean tomcatRun
+  - sudo netstat -nlp | grep :8093
   # Some debug to see if server has started
   - cat ./tomcat.log
   - sleep 10
