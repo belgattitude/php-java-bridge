@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## 7.x.x (Unreleased)
+
+### Updated
+
+- [dev] Gradle wrapper updated to 4.1
+- [dev] Internal TomcatRun update 7.0.79
+
+### Fixed
+
+- [dev] Travis builds supports only PHP5.6. soluble-japha is now tested at version 1.4.5
+
 ## 7.1.3 (2017-05-18)
 
 This release include merges from the original php-java-bridge 7.1.3. 

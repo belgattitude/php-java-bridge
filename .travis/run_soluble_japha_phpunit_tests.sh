@@ -22,7 +22,19 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$SCRIPT_DIR/.."
 JAPHA_DIR="$SCRIPT_DIR/soluble-japha"
 
-install_soluble_japha_master() {
+
+clean_soluble_japha_latest() {
+
+
+    # 1. Clone the soluble-japha project (if not already exists)
+    if [ -d $JAPHA_DIR ]; then
+        echo "[*] Clean soluble-japha";
+        rm -rf $JAPHA_DIR
+    fi
+}
+
+
+install_soluble_japha_latest() {
 
     echo "[*] Installing master branch of soluble-japha";
 
@@ -42,10 +54,11 @@ install_soluble_japha_master() {
     # Travis does not support php 7.1 for java image
     # so let's get the lates php5.6 release to test
     #git checkout master
-    git checkout tags/1.4.5
+
+    git checkout tags/1.4.5 -b travis_test
 
     # 4. Run composer install
-    composer install
+    composer update
 
     # 5. Restore path
     cd $PROJECT_DIR
@@ -61,6 +74,7 @@ runPHPUnit()  {
 
 
 # Here's the steps
-install_soluble_japha_master;
+clean_soluble_japha_latest;
+install_soluble_japha_latest;
 runPHPUnit;
 

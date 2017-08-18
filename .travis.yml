@@ -28,9 +28,9 @@ script:
   - ./gradlew clean tomcatRun
   # Some debug to see if server has started
   - cat ./tomcat.log
-  - sleep 7
+  - sleep 10
   - cat ./tomcat.log
-  - sudo netstat -nlp | grep :8090
+  - sudo netstat -nlp | grep :8093
   # Launch the soluble-japha test suite
   - ./.travis/run_soluble_japha_phpunit_tests.sh
 
