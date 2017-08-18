@@ -25,7 +25,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.3'
         //classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
         //classpath 'org.ajoberstar:gradle-git:1.6.0'
     }
@@ -37,7 +37,7 @@ tomcatRun {
     httpPort = 8093;
     outputFile = file('./tomcat.log')
 //    httpsPort = 8091
-//    enableSSL = true
+    enableSSL = false
     daemon = true
 }
 
