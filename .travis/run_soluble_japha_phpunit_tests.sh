@@ -96,5 +96,5 @@ clean_soluble_japha_latest;
 install_soluble_japha_latest;
 launchTomcatRun;
 runPHPUnit;
-//stopTomcat;
+#stopTomcat;
 
