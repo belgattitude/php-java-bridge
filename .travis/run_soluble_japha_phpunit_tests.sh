@@ -71,13 +71,6 @@ launchTomcatRun() {
     netstat -nlp | grep :8093
 }
 
-runPHPUnit()  {
-    cd $JAPHA_DIR
-    echo "[*] Running phpunit"
-    cp ../phpunit.travis.xml .
-    ./vendor/bin/phpunit -c ./phpunit.travis.xml -v
-}
-
 stopTomcat() {
     echo "[*] Stopping tomcat";
     cd $PROJECT_DIR
@@ -85,10 +78,23 @@ stopTomcat() {
 }
 
 
+runPHPUnit()  {
+    cd $JAPHA_DIR
+    echo "[*] Running phpunit"
+    cp ../phpunit.travis.xml .
+    ./vendor/bin/phpunit -c ./phpunit.travis.xml -v
+    if [ "$?" -ne "0" ]; then
+      exit 1;
+    fi
+    exit 0;
+}
+
+
+
 # Here's the steps
 clean_soluble_japha_latest;
 install_soluble_japha_latest;
 launchTomcatRun;
 runPHPUnit;
-stopTomcat;
+//stopTomcat;
 

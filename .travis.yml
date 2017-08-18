@@ -25,15 +25,12 @@ script:
   # Regular test suite
   - ./gradlew test
   # Launch a server
-  - ./gradlew clean tomcatRun
-  - sudo netstat -nlp | grep :8093
+  #- ./gradlew clean tomcatRun
   # Some debug to see if server has started
-  - cat ./tomcat.log
-  - sleep 10
-  - cat ./tomcat.log
-  - sudo netstat -nlp | grep :8093
+  #- sudo netstat -nlp | grep :8093
+  #- cat ./tomcat.log
   # debug travis
-  - sudo netstat -nlp
+  # - sudo netstat -nlp
   # Launch the soluble-japha test suite
   - sudo -E env "PATH=$PATH" ./.travis/run_soluble_japha_phpunit_tests.sh
 
