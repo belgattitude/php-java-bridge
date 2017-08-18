@@ -1,6 +1,5 @@
 dist: trusty
 sudo: required
-group: edge
 
 language: java
 
@@ -36,7 +35,7 @@ script:
   # debug travis
   - sudo netstat -nlp
   # Launch the soluble-japha test suite
-  - sudo ./.travis/run_soluble_japha_phpunit_tests.sh
+  - sudo -E env "PATH=$PATH" ./.travis/run_soluble_japha_phpunit_tests.sh
 
 after_failure:
   - cat ./tomcat.log
