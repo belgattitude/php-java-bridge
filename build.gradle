@@ -25,7 +25,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.3'
         //classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
         //classpath 'org.ajoberstar:gradle-git:1.6.0'
     }
@@ -34,10 +34,10 @@ buildscript {
 tomcatRun {
     dependsOn war, tomcatStop
     contextPath = '/'
-    httpPort = 8090;
+    httpPort = 8093;
     outputFile = file('./tomcat.log')
 //    httpsPort = 8091
-//    enableSSL = true
+    enableSSL = false
     daemon = true
 }
 
@@ -58,7 +58,7 @@ dependencies {
 
     providedCompile('javax.servlet:servlet-api:2.5')
 
-    def tomcatVersion = '7.0.73'    // must not exclude eclipse compiler since version 7.0.59
+    def tomcatVersion = '7.0.79'    // must not exclude eclipse compiler since version 7.0.59
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -103,7 +103,7 @@ jacocoTestReport {
         xml.enabled true
         csv.enabled false
         html.enabled true
-        html.destination "${buildDir}/reports/coverage"
+        html.destination file("${buildDir}/reports/coverage")
     }
 }
 
@@ -294,7 +294,7 @@ configure(rootProject) {
 
     task wrapper(type: Wrapper) {
         description = 'Generates gradlew and gradlew.bat scripts'
-        gradleVersion = '3.5'
+        gradleVersion = '4.1'
         //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
     }
 

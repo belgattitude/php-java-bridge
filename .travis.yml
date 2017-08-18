@@ -6,6 +6,8 @@ language: java
 jdk:
   - oraclejdk8
 
+#php: 7.1
+
 #services:
 #  - mysql
 
@@ -23,14 +25,14 @@ script:
   # Regular test suite
   - ./gradlew test
   # Launch a server
-  - ./gradlew clean tomcatRun
+  #- ./gradlew clean tomcatRun
   # Some debug to see if server has started
-  - cat ./tomcat.log
-  - sleep 5
-  - cat ./tomcat.log
-  - sudo netstat -nlp | grep :8090
+  #- sudo netstat -nlp | grep :8093
+  #- cat ./tomcat.log
+  # debug travis
+  # - sudo netstat -nlp
   # Launch the soluble-japha test suite
-  - ./.travis/run_soluble_japha_phpunit_tests.sh
+  - sudo -E env "PATH=$PATH" ./.travis/run_soluble_japha_phpunit_tests.sh
 
 after_failure:
   - cat ./tomcat.log
