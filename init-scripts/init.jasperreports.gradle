@@ -38,6 +38,9 @@ allprojects {
         runtime 'net.sf.barcode4j:barcode4j:2.1'
         runtime 'org.apache.poi:poi:3.+'
         runtime 'org.apache.poi:poi-ooxml:3.16'
+        runtime 'org.apache.xmlgraphics:batik-bridge:1.9.1'
+        runtime 'org.apache.xmlgraphics:batik-svggen:1.9.1'
+
 
         /**
          * Jasper report language support (feel free to comment)
