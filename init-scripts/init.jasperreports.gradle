@@ -46,9 +46,6 @@ allprojects {
         runtime 'jaxen:jaxen:1.1.6'
         runtime 'org.apache-extras.beanshell:bsh:2.0b6'
 
-
-
-
         /**
          * Jasper report language support (feel free to comment)
          *   Note that groovy is a must for jasper... where javascript
@@ -58,13 +55,18 @@ allprojects {
         runtime 'org.mozilla:rhino:1.7+'
 
         /**
-         * Other helpful libraries oy might need
-         * Add as needed
+         * Some jdbc drivers, uncomment as needed
          */
         //runtime 'mysql:mysql-connector-java:6+'
         //runtime 'org.mariadb.jdbc:mariadb-java-client:1.+'
         //runtime group: 'org.postgresql', name: 'postgresql', version: '9.4.+'
 
+
+        /**
+         * Some font examples, uncomment as needed
+         */
+        //runtime group: 'org.webjars', name: 'font-awesome', version: '4.7.0'
+        //runtime group: 'org.webjars.bower', name: 'github-com-polymerelements-font-roboto', version: '1.0.3'
 
         /**
          * NOT RECOMMENDED - FORCE UPGRADE to iTEXT 5.5+
