@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Updated
 
-- [dev] Gradle wrapper updated to 4.1
+- [dev] Gradle wrapper updated to 4.10
 - [dev] Internal TomcatRun update 7.0.79
 
 ### Fixed
