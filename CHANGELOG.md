@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- Example init-scripts/init.jasperreports.gradle missing dep fixed
 - [dev] Travis builds supports only PHP5.6. soluble-japha is now tested at version 1.4.5
 
 ## 7.1.3 (2017-05-18)
