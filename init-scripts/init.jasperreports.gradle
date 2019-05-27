@@ -27,33 +27,34 @@ allprojects {
         /**
          * Jasper report base (required)
          */
-        compile 'net.sf.jasperreports:jasperreports:6.+'
+        compile 'net.sf.jasperreports:jasperreports:6.8.+'
         runtime 'net.sf.jasperreports:jasperreports-fonts:6.+'
-        runtime 'net.sf.jasperreports:jasperreports-functions:6.+'
+        runtime 'net.sf.jasperreports:jasperreports-functions:6.8.+'
 
         /**
          * Jasper report complements (feel free to comment)
          */
         runtime 'net.sourceforge.barbecue:barbecue:1.5-beta1'
         runtime 'net.sf.barcode4j:barcode4j:2.1'
-        runtime 'xalan:xalan:2.7.2'
-        runtime 'org.apache.poi:poi:3.+'
-        runtime 'org.apache.poi:poi-ooxml:3.17'
+        runtime 'xalan:xalan:2.7.+'
         runtime  group: 'com.google.zxing', name: 'core', version: '3.3.3'
-        runtime 'org.apache.xmlgraphics:batik-bridge:1.9.1'
-        runtime 'org.apache.xmlgraphics:batik-svggen:1.9.1'
+        runtime 'org.apache.poi:poi:4.+'
+        runtime 'org.apache.poi:poi-ooxml:4.+'
+        runtime 'org.apache.xmlgraphics:batik-bridge:1.11'
+        runtime 'org.apache.xmlgraphics:batik-svggen:1.11'
         runtime 'org.apache.ant:ant:1.7.1'
-        runtime 'antlr:antlr:2.7.7'
-        runtime 'jaxen:jaxen:1.1.6'
-        runtime 'org.apache-extras.beanshell:bsh:2.0b6'
+        runtime 'antlr:antlr:2.7.+'
+        runtime 'jaxen:jaxen:1.1.+'
+
 
         /**
          * Jasper report language support (feel free to comment)
          *   Note that groovy is a must for jasper... where javascript
          *   (rhino) can be removed if not used
          */
-        runtime 'org.codehaus.groovy:groovy-all:2.4.+'
-        runtime 'org.mozilla:rhino:1.7+'
+        runtime 'org.codehaus.groovy:groovy-all:2.5.+'
+        runtime 'org.mozilla:rhino:1.7.+'
+
 
         /**
          * Some jdbc drivers, uncomment as needed
