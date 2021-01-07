@@ -290,13 +290,5 @@ model {
 
 task install(dependsOn: publishToMavenLocal)
 
-configure(rootProject) {
 
-    task wrapper(type: Wrapper) {
-        description = 'Generates gradlew and gradlew.bat scripts'
-        gradleVersion = '4.10'
-        //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
-    }
-
-}
 
