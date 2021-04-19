@@ -58,7 +58,7 @@ dependencies {
 
     providedCompile('javax.servlet:servlet-api:2.5')
 
-    def tomcatVersion = '7.0.79'    // must not exclude eclipse compiler since version 7.0.59
+    def tomcatVersion = '9.0.45'    // must not exclude eclipse compiler since version 7.0.59
 
     tomcat(
             "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
