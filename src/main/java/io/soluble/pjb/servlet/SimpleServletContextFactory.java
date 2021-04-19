@@ -65,9 +65,6 @@ public class SimpleServletContextFactory extends io.soluble.pjb.bridge.http.Simp
     protected void setSessionFactory(HttpServletRequest req) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public ISession getSimpleSession(String name, boolean clientIsNew,
                                      int timeout) {
         throw new IllegalStateException("Named sessions not supported by servlet.");

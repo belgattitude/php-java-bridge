@@ -48,9 +48,6 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
 
     private int exitCode;
 
-    /**
-     * {@inheritDoc}
-     */
     protected Writer writer;
 
     public Writer getWriter() {
@@ -59,9 +56,6 @@ public abstract class AbstractPhpScriptContext extends ScriptContextDecorator im
         return writer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected Writer errorWriter;
 
     public Writer getErrorWriter() {

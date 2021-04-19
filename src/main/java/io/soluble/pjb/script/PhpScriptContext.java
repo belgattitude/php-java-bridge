@@ -208,7 +208,6 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
     }
 
     /**
-     * @return 
      * @deprecated
      */
     @Override
@@ -218,7 +217,6 @@ public final class PhpScriptContext extends AbstractPhpScriptContext {
 
     /**
      * @param webPath
-     * @return 
      * @deprecated
      */
     @Override
