@@ -44,8 +44,8 @@ tomcatRun {
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -294,13 +294,5 @@ model {
 
 task install(dependsOn: publishToMavenLocal)
 
-configure(rootProject) {
 
-    task wrapper(type: Wrapper) {
-        description = 'Generates gradlew and gradlew.bat scripts'
-        gradleVersion = '4.10'
-        //jarFile = "${project.projectDir}/.infra/gradle/gradle-wrapper.jar"
-    }
-
-}
 
