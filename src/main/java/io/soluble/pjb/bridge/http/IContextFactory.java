@@ -26,6 +26,7 @@ package io.soluble.pjb.bridge.http;
 
 import io.soluble.pjb.bridge.IJavaBridgeFactory;
 import io.soluble.pjb.bridge.ISession;
+import io.soluble.pjb.bridge.JavaBridge;
 
 /**
  * Interface that the ContextFactories must implement.
@@ -41,7 +42,7 @@ public interface IContextFactory extends IJavaBridgeFactory {
      *
      * @param id The fresh id
      * @see io.soluble.pjb.bridge.http.ContextFactory#recycle()
-     * @see io.soluble.pjb.bridge.Request#setBridge(io.soluble.pjb.JavaBridge)
+     * @see io.soluble.pjb.bridge.Request#setBridge(JavaBridge)
      * @see io.soluble.pjb.bridge.Request#recycle()
      */
     public void recycle(String id);
